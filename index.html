@@ -4,10 +4,10 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.4 · MATCHDAY</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.5 · FULL-SIZE PITCH</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Play an upgraded 11v11 football match with animated players, broadcast cameras, responsive passing, defending, crosses and goalkeeper saves. Play with keyboard or controller.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.5</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size football at last: a bigger 11v11 pitch, wider 4-3-3 formations and a pulled-back TV camera. More space, fewer scrums.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
 <script type="module">
 let THREE;
 try {
@@ -28,10 +28,11 @@ try {
 
 
 // Striker FC pre-alpha: self-contained deterministic arcade match simulation.
-const FIELD_W = 96, FIELD_L = 156, GOAL_W = 19, MATCH_SECONDS = 240;
+// Full-size 105m x 68m pitch, at two world units per metre.
+const FIELD_W = 136, FIELD_L = 210, GOAL_W = 15, MATCH_SECONDS = 240;
 const HW=FIELD_W/2, HL=FIELD_L/2;
-const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',180,380);
-const camera = new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,600);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',245,460);
+const camera = new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,800);
 const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; document.querySelector('#game').append(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xc6fff0,0x24423a,2.1));
 const sun = new THREE.DirectionalLight(0xfff4df,2.8); sun.position.set(-45,90,25);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-110;sun.shadow.camera.right=110;sun.shadow.camera.top=110;sun.shadow.camera.bottom=-110;sun.shadow.normalBias=.025;scene.add(sun);
@@ -41,7 +42,7 @@ const plane=(w,h,m,x=0,z=0,y=0)=>{const o=new THREE.Mesh(new THREE.PlaneGeometry
 plane(270,340,mat('#103f30'),0,0,-.08);for(let i=0;i<16;i++)plane(FIELD_W,FIELD_L/16,turf[i%2],0,-HL+(i+.5)*FIELD_L/16,-.02);
 function line(x1,z1,x2,z2,width=.2){const dx=x2-x1,dz=z2-z1,l=Math.hypot(dx,dz);let o=new THREE.Mesh(new THREE.BoxGeometry(width,.04,l),white);o.rotation.y=Math.atan2(dx,dz);o.position.set((x1+x2)/2,.04,(z1+z2)/2);scene.add(o)}
 
-const boxW=33, boxD=23, smallW=13, smallD=7;
+const boxW=40, boxD=33, smallW=18, smallD=11;
 const markings=[
  [-HW,-HL,HW,-HL],[HW,-HL,HW,HL],[HW,HL,-HW,HL],[-HW,HL,-HW,-HL],
  [-HW,0,HW,0],
@@ -50,7 +51,7 @@ const markings=[
  [-smallW,-HL,-smallW,-HL+smallD],[smallW,-HL,smallW,-HL+smallD],[-smallW,-HL+smallD,smallW,-HL+smallD],
  [-smallW,HL,-smallW,HL-smallD],[smallW,HL,smallW,HL-smallD],[-smallW,HL-smallD,smallW,HL-smallD]
 ];for(const [a,b,c,d] of markings)line(a,b,c,d);
-function arc(cx,cz,r,a0,a1){let v=[];for(let i=0;i<=80;i++){let a=a0+(a1-a0)*i/80;v.push(new THREE.Vector3(cx+Math.cos(a)*r,.065,cz+Math.sin(a)*r))}let o=new THREE.Line(new THREE.BufferGeometry().setFromPoints(v),new THREE.LineBasicMaterial({color:0xdffbe8}));scene.add(o)}arc(0,0,12,0,Math.PI*2);plane(.75,.75,white,0,0,.06);plane(.75,.75,white,0,-HL+14,.06);plane(.75,.75,white,0,HL-14,.06);
+function arc(cx,cz,r,a0,a1){let v=[];for(let i=0;i<=80;i++){let a=a0+(a1-a0)*i/80;v.push(new THREE.Vector3(cx+Math.cos(a)*r,.065,cz+Math.sin(a)*r))}let o=new THREE.Line(new THREE.BufferGeometry().setFromPoints(v),new THREE.LineBasicMaterial({color:0xdffbe8}));scene.add(o)}arc(0,0,18.3,0,Math.PI*2);plane(.75,.75,white,0,0,.06);plane(.75,.75,white,0,-HL+22,.06);plane(.75,.75,white,0,HL-22,.06);
 function goal(z){let group=new THREE.Group();const post=mat('#ecfff7');function bar(x,y,zz,w,h,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),post);m.position.set(x,y,zz);m.castShadow=true;group.add(m)}const dir=Math.sign(z);bar(-GOAL_W/2,3.3,z,.48,6.6,.48);bar(GOAL_W/2,3.3,z,.48,6.6,.48);bar(0,6.6,z,GOAL_W+.48,.48,.48);const net=new THREE.LineBasicMaterial({color:0xbbffdd,transparent:true,opacity:.24});for(let i=-GOAL_W/2;i<=GOAL_W/2;i+=2){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i,0,z),new THREE.Vector3(i,5,z+dir*5),new THREE.Vector3(i,0,z+dir*5)]);group.add(new THREE.Line(g,net))}for(let h=1;h<=5;h++){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-GOAL_W/2,h,z+dir*5),new THREE.Vector3(GOAL_W/2,h,z+dir*5)]);group.add(new THREE.Line(g,net))}scene.add(group)}goal(-HL);goal(HL);
 const stands=mat('#102d38'); for(const side of [-1,1]){const m=new THREE.Mesh(new THREE.BoxGeometry(19,10,FIELD_L+32),stands);m.position.set(side*(HW+17),1,0);scene.add(m);for(let i=0;i<9;i++){const strip=new THREE.Mesh(new THREE.BoxGeometry(16,.35,FIELD_L+28),mat(i%2?'#204957':'#285361'));strip.position.set(side*(HW+12+i*.8),2+i*.9,0);scene.add(strip)}}
 // Lightweight crowd and LED boards use instanced geometry so school laptops survive.
@@ -72,7 +73,7 @@ let stadiumCrowd=null;
    const board=new THREE.Mesh(new THREE.PlaneGeometry(1.95,18.5),boardMaterials[i%boardMaterials.length]);
    board.rotation.y=side*Math.PI/2;
    board.rotation.z=Math.PI/2;
-   board.position.set(side*(HW+2.1),1.15,-HL+10.5+i*19.5);
+   board.position.set(side*(HW+2.1),1.15,-HL+12+i*(FIELD_L-24)/8);
    scene.add(board);
   }
  }
@@ -115,7 +116,7 @@ for(let row=0;row<3;row++)for(let col=0;col<8;col++){
  ballCtx.closePath();ballCtx.fill();
 }
 const ballTex=new THREE.CanvasTexture(ballCanvas);ballTex.colorSpace=THREE.SRGBColorSpace;
-const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,24,18),new THREE.MeshStandardMaterial({map:ballTex,roughness:.66}));ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0};
+const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,24,18),new THREE.MeshStandardMaterial({map:ballTex,roughness:.66}));ballMesh.scale.set(.30,.30,.30);ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0};
 const teams=[{name:'STRIKER',primary:'#57edaa',secondary:'#0e2540',dir:-1},{name:'RIVALS',primary:'#fb746c',secondary:'#fbe3d6',dir:1}];
 
 const names=[
@@ -125,18 +126,17 @@ const names=[
 // A real shape: 4 defenders, 3 midfielders, 3 forwards and a goalkeeper.
 // Coordinates are from Striker's perspective (attacking toward negative z).
 const formation=[
- // Kickoff shape stays in each team's own half; AI advances from here during play.
- {x:0,z:26,role:'STRIKER',no:9,group:'attack'},
- {x:-28,z:34,role:'LEFT WING',no:11,group:'attack'},
- {x:28,z:34,role:'RIGHT WING',no:7,group:'attack'},
- {x:0,z:37,role:'ATTACKING MID',no:10,group:'mid'},
- {x:-18,z:46,role:'CENTRAL MID',no:8,group:'mid'},
- {x:18,z:49,role:'HOLDING MID',no:6,group:'mid'},
- {x:-36,z:59,role:'LEFT BACK',no:3,group:'defence'},
- {x:-12,z:62,role:'CENTRE BACK',no:4,group:'defence'},
- {x:12,z:62,role:'CENTRE BACK',no:5,group:'defence'},
- {x:36,z:59,role:'RIGHT BACK',no:2,group:'defence'},
- {x:0,z:HL-8,role:'GOALKEEPER',no:1,group:'keeper'}
+ {x:0,z:13,role:'STRIKER',no:9,group:'attack'},
+ {x:-43,z:23,role:'LEFT WING',no:11,group:'attack'},
+ {x:43,z:23,role:'RIGHT WING',no:7,group:'attack'},
+ {x:0,z:49,role:'ATTACKING MID',no:10,group:'mid'},
+ {x:-26,z:58,role:'CENTRAL MID',no:8,group:'mid'},
+ {x:26,z:62,role:'HOLDING MID',no:6,group:'mid'},
+ {x:-51,z:83,role:'LEFT BACK',no:3,group:'defence'},
+ {x:-18,z:89,role:'CENTRE BACK',no:4,group:'defence'},
+ {x:18,z:89,role:'CENTRE BACK',no:5,group:'defence'},
+ {x:51,z:83,role:'RIGHT BACK',no:2,group:'defence'},
+ {x:0,z:HL-10,role:'GOALKEEPER',no:1,group:'keeper'}
 ];
 const players=[];
 
@@ -155,6 +155,7 @@ function jerseyTexture(team,number){
 }
 function makePlayer(team,index){
  const root=new THREE.Group();
+ root.scale.set(.83,.83,.83);
  const shirt=mat(teams[team].primary),shorts=mat(teams[team].secondary);
  const skin=mat(index%4===0?'#8e5132':index%3===0?'#c68b63':'#edc09b');
  const sock=team===0?shared.sockA:shared.sockB;
@@ -530,41 +531,34 @@ $('pause').addEventListener('click',togglePause);
 $('cam').addEventListener('click',changeCamera);
 function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=formation[p.index].group;
- const ownGoal=-side*HL;
- if(p.index===10){
-  return {x:clamp(ball.x*.32,-GOAL_W/2+2,GOAL_W/2-2),z:ownGoal+side*6.3,speed:15};
- }
- if(!owner&&ball.passTarget===p&&ball.passTime>0){
-  // Pass receiver makes an actual run to meet the trajectory.
-  return {x:clamp(ball.x+ball.vx*.23,-HW+3,HW-3),z:clamp(ball.z+ball.vz*.23,-HL+4,HL-4),speed:21};
- }
+ const ownGoal=-side*HL,progress=ball.z*side;
+ if(p.index===10)return {x:clamp(ball.x*.30,-GOAL_W/2+2,GOAL_W/2-2),z:ownGoal+side*8,speed:15};
+ if(!owner&&ball.passTarget===p&&ball.passTime>0)
+  return {x:clamp(ball.x+ball.vx*.23,-HW+4,HW-4),z:clamp(ball.z+ball.vz*.23,-HL+5,HL-5),speed:23};
  if(owner?.team!==p.team){
-  if(p===press1)return {x:ball.x,z:ball.z,speed:20};
-  if(p===press2){
-   const s=ball.x>=0?1:-1;
-   return {x:clamp(ball.x-s*8,-HW+5,HW-5),z:clamp(ball.z-side*9,-HL+5,HL-5),speed:15};
-  }
-  let x=h.x+ball.x*.13,z=h.z+clamp(ball.z-h.z,-22,22)*.27;
-  if(role==='defence'){
-   x=h.x+ball.x*.12;
-   z=clamp(h.z+clamp(ball.z-h.z,-20,14)*.30,-HL+11,HL-11);
-  }else if(role==='mid'){
-   x=h.x+ball.x*.22;z=h.z+clamp(ball.z-h.z,-27,27)*.40;
-  }else z=h.z+clamp(ball.z-h.z,-23,23)*.18;
-  return {x:clamp(x,-HW+4,HW-4),z:clamp(z,-HL+7,HL-7),speed:15};
+  if(p===press1)return {x:ball.x,z:ball.z,speed:21};
+  if(p===press2)return {x:clamp(ball.x+(ball.x>0?-10:10),-HW+7,HW-7),z:clamp(ball.z-side*10,-HL+7,HL-7),speed:18};
+  const blend=role==='defence'?.24:role==='mid'?.38:.22;
+  const x=h.x+ball.x*(role==='mid'?.13:.08);
+  const z=h.z+(ball.z-h.z)*blend;
+  return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+14,HL-14),speed:16};
  }
- let x=h.x+ball.x*.1,z=h.z+clamp(ball.z-h.z,-26,26)*.22;
+ let x=h.x,z=h.z;
  if(role==='attack'){
-  x=h.x*.87+ball.x*.13;
-  z=clamp(owner.z+side*(p.index===0?22:15),-HL+10,HL-10)*.67+
-    (h.z+clamp(ball.z-h.z,-24,24)*.16)*.33;
+  const advance=clamp(25+progress*.30,7,68);
+  const runZ=clamp(owner.z+side*(p.index===0?23:14),-HL+12,HL-12);
+  z=(h.z+side*advance)*.43+runZ*.57;
+  x=h.x*.85+ball.x*.15;
  }else if(role==='mid'){
-  x=h.x*.82+ball.x*.18;
-  z=clamp(owner.z-side*12,-HL+12,HL-12)*.57+h.z*.43;
- }else if(role==='defence'){
-  x=h.x+ball.x*.12;z=h.z+clamp(ball.z-h.z,-16,16)*.25;
+  const advance=clamp(20+progress*.20,8,46);
+  const supportZ=clamp(owner.z-side*21,-HL+14,HL-14);
+  z=(h.z+side*advance)*.72+supportZ*.28;
+  x=h.x*.84+ball.x*.16;
+ }else{
+  z=h.z+side*clamp(13+progress*.12,5,30);
+  x=h.x*.93+ball.x*.07;
  }
- return {x:clamp(x,-HW+5,HW-5),z:clamp(z,-HL+10,HL-10),speed:16};
+ return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+12,HL-12),speed:18};
 }
 function advance(dt){
  readController();
@@ -735,7 +729,7 @@ function advance(dt){
    }
   }
  }
- ballMesh.position.set(ball.x,ball.y,ball.z);
+ ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
  ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
  if(!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-22&&Math.abs(ball.x)<GOAL_W/2+8){
   // A goalkeeper tracks shots and may hold or palm away reachable attempts.
@@ -791,21 +785,21 @@ function drawCamera(dt){
  const t=1-Math.exp(-dt*3.7),look=1-Math.exp(-dt*5.5);
  if(cameraMode==='broadcast'){
   // Broadcast touchline camera pans across the whole field, including both goals.
-  const follow=clamp(ball.z*.83+p.z*.17,-HL*.80,HL*.80);
+  const follow=clamp(ball.z*.72+p.z*.28,-HL*.66,HL*.66);
   const focus=new THREE.Vector3(ball.x*.13,0,follow);
-  const desired=new THREE.Vector3(128*cameraZoom,78*cameraZoom,follow+8);
+  const desired=new THREE.Vector3(174*cameraZoom,113*cameraZoom,follow+8);
   camera.position.lerp(desired,t);
   cameraFocus.lerp(focus,look);
   camera.lookAt(cameraFocus);
  }else{
   const focus=new THREE.Vector3(ball.x*.55+p.x*.45,0,ball.z*.70+p.z*.30-11);
-  const desired=new THREE.Vector3(focus.x,83*cameraZoom,focus.z+95*cameraZoom);
+  const desired=new THREE.Vector3(focus.x,112*cameraZoom,focus.z+128*cameraZoom);
   camera.position.lerp(desired,t);
   cameraFocus.lerp(focus,look);
   camera.lookAt(cameraFocus);
  }
 }
-resetPositions();camera.position.set(128,86,7);camera.lookAt(0,0,0);updateRadar();
+resetPositions();camera.position.set(174,113,7);camera.lookAt(0,0,0);updateRadar();
 function frame(t){requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;if(state==='playing')advance(dt);if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}drawCamera(dt);renderer.render(scene,camera)}requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
