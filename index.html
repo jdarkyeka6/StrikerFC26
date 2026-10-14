@@ -59,16 +59,17 @@ const names=[
 // A real shape: 4 defenders, 3 midfielders, 3 forwards and a goalkeeper.
 // Coordinates are from Striker's perspective (attacking toward negative z).
 const formation=[
- {x:0,z:-31,role:'STRIKER',no:9,group:'attack'},
- {x:-28,z:-22,role:'LEFT WING',no:11,group:'attack'},
- {x:28,z:-22,role:'RIGHT WING',no:7,group:'attack'},
- {x:0,z:-4,role:'ATTACKING MID',no:10,group:'mid'},
- {x:-18,z:16,role:'CENTRAL MID',no:8,group:'mid'},
- {x:18,z:18,role:'HOLDING MID',no:6,group:'mid'},
- {x:-36,z:43,role:'LEFT BACK',no:3,group:'defence'},
- {x:-12,z:49,role:'CENTRE BACK',no:4,group:'defence'},
- {x:12,z:49,role:'CENTRE BACK',no:5,group:'defence'},
- {x:36,z:43,role:'RIGHT BACK',no:2,group:'defence'},
+ // Kickoff shape stays in each team's own half; AI advances from here during play.
+ {x:0,z:26,role:'STRIKER',no:9,group:'attack'},
+ {x:-28,z:34,role:'LEFT WING',no:11,group:'attack'},
+ {x:28,z:34,role:'RIGHT WING',no:7,group:'attack'},
+ {x:0,z:37,role:'ATTACKING MID',no:10,group:'mid'},
+ {x:-18,z:46,role:'CENTRAL MID',no:8,group:'mid'},
+ {x:18,z:49,role:'HOLDING MID',no:6,group:'mid'},
+ {x:-36,z:59,role:'LEFT BACK',no:3,group:'defence'},
+ {x:-12,z:62,role:'CENTRE BACK',no:4,group:'defence'},
+ {x:12,z:62,role:'CENTRE BACK',no:5,group:'defence'},
+ {x:36,z:59,role:'RIGHT BACK',no:2,group:'defence'},
  {x:0,z:HL-8,role:'GOALKEEPER',no:1,group:'keeper'}
 ];
 const players=[];
