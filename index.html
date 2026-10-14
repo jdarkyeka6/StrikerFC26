@@ -9,10 +9,10 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.7 · DIFFICULTY</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.8 · DIFFICULTY</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.7</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><div class="difficulty-panel">
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.8</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><div class="difficulty-panel">
 <label for="difficulty">MATCH DIFFICULTY</label>
 <select id="difficulty" aria-label="Match difficulty">
 <option value="beginner" selected>🟢 Beginner · Learning the controls</option>
@@ -170,25 +170,27 @@ function jerseyTexture(team,number){
  jerseyCanvases.set(key,t);return t;
 }
 function makePlayer(team,index){
- const root=new THREE.Group();
- root.scale.set(.83,.83,.83);
- const shirt=mat(teams[team].primary),shorts=mat(teams[team].secondary);
+ const root=new THREE.Group();root.scale.set(.83,.83,.83);
+ const keeper=index===10;
+ const shirt=mat(keeper?(team===0?'#ffb740':'#00b8d4'):teams[team].primary),shorts=mat(keeper?'#152d40':teams[team].secondary);
  const skin=mat(index%4===0?'#8e5132':index%3===0?'#c68b63':'#edc09b');
  const sock=team===0?shared.sockA:shared.sockB;
- const outfit=new THREE.Group();root.add(outfit);
+ const character=new THREE.Group();root.add(character);
+ const outfit=new THREE.Group();character.add(outfit);
  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.91,.76,1.90,12),shirt);torso.position.y=2.7;outfit.add(torso);
  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.29,.32,.35,8),skin);neck.position.y=3.8;outfit.add(neck);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.66,14,12),skin);head.position.y=4.32;outfit.add(head);
  const hair=new THREE.Mesh(new THREE.SphereGeometry(.68,12,10,0,Math.PI*2,0,Math.PI*.55),shared.hair[(index+team)%4]);hair.position.y=4.48;outfit.add(hair);
  const trunks=new THREE.Mesh(new THREE.CylinderGeometry(.79,.83,.72,10),shorts);trunks.position.y=1.51;outfit.add(trunks);
  const number=new THREE.Mesh(new THREE.PlaneGeometry(1.33,1.25),new THREE.MeshBasicMaterial({map:jerseyTexture(team,formation[index].no),transparent:true,depthWrite:false,side:THREE.DoubleSide}));
- number.position.set(0,2.72,.82);root.add(number);
+ number.position.set(0,2.72,.82);character.add(number);
  const limbs=[];
  for(const side of [-1,1]){
   const arm=new THREE.Group();arm.position.set(side*.97,3.5,0);outfit.add(arm);
-  const sleeve=new THREE.Mesh(new THREE.CylinderGeometry(.35,.33,.62,9),shirt);sleeve.position.y=-.29;arm.add(sleeve);
-  const forearm=new THREE.Mesh(new THREE.CylinderGeometry(.235,.20,.78,9),skin);forearm.position.y=-.95;arm.add(forearm);
-  const leg=new THREE.Group();leg.position.set(side*.43,1.37,0);root.add(leg);
+  const sleeve=new THREE.Mesh(new THREE.CylinderGeometry(.35,.33,keeper?1.0:.62,9),shirt);sleeve.position.y=keeper?-.48:-.29;arm.add(sleeve);
+  const forearm=new THREE.Mesh(new THREE.CylinderGeometry(.235,.20,.78,9),keeper?shirt:skin);forearm.position.y=-.95;arm.add(forearm);
+  if(keeper){const glove=new THREE.Mesh(new THREE.BoxGeometry(.58,.70,.53),mat(team===0?'#f7f9ef':'#e7ff52'));glove.position.y=-1.49;arm.add(glove);}
+  const leg=new THREE.Group();leg.position.set(side*.43,1.37,0);character.add(leg);
   const thigh=new THREE.Mesh(new THREE.CylinderGeometry(.34,.27,.70,9),skin);thigh.position.y=-.38;leg.add(thigh);
   const shin=new THREE.Mesh(new THREE.CylinderGeometry(.24,.22,.61,9),sock);shin.position.y=-1.02;leg.add(shin);
   const boot=new THREE.Mesh(new THREE.BoxGeometry(.47,.23,.80),shared.boot);boot.position.set(0,-1.37,.21);leg.add(boot);
@@ -205,22 +207,56 @@ function makePlayer(team,index){
  ownerMarker.rotation.x=-Math.PI/2;ownerMarker.position.y=.075;root.add(ownerMarker);
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
- const p={team,index,mesh:root,rig:{outfit,limbs,pointer,ownerMarker},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0};
+ const p={team,index,mesh:root,rig:{outfit,character,limbs,pointer,ownerMarker},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0};
  players.push(p);return p;
 }
+function startKeeperAnimation(p,action,dir=1,height=0){
+ if(p.index!==10)return;
+ p.keeperAction=action;p.keeperTime=0;p.keeperDir=dir||1;p.keeperHeight=height;
+ p.keeperDuration=action==='kick'?.55:action==='catch'?.83:.92;
+}
 function animatePlayer(p,dt){
- const speed=Math.hypot(p.vx,p.vz),phase=matchTime*10.5+(p.index*.7);
- const amount=Math.min(speed/18,1);
+ const speed=Math.hypot(p.vx,p.vz),phase=matchTime*10.5+p.index*.7;
+ const a=Math.min(speed/18,1),c=p.rig.character;
+ c.rotation.set(0,0,0);c.position.set(0,0,0);p.rig.outfit.position.y=0;p.rig.outfit.rotation.z=0;
  for(const {arm,leg,side} of p.rig.limbs){
-  const stride=Math.sin(phase+(side>0?Math.PI:0))*amount;
-  leg.rotation.x=stride*.64-(p.tackleWindow>0?.65:0);
-  arm.rotation.x=-stride*.48;
-  arm.rotation.z=-side*(.12+amount*.12);
+  const step=Math.sin(phase+(side>0?Math.PI:0))*a;
+  leg.rotation.x=step*.64-(p.tackleWindow>0?.65:0);leg.rotation.z=0;
+  arm.rotation.x=-step*.48;arm.rotation.z=-side*(.12+a*.12);
  }
- p.rig.outfit.position.y=Math.abs(Math.sin(phase))*amount*.12;
- p.rig.outfit.rotation.z=p.saveAnimation>0?Math.sin(p.saveAnimation*Math.PI/.55)*p.saveDirection*.47:0;
- p.rig.pointer.visible=p===controlledPlayer();
- p.rig.pointer.position.y=6.15+Math.sin(matchTime*5)*.15;
+ if(p.index===10){
+  if(p.keeperAction==='ready'){
+   const reacting=ball.owner?.team!==p.team||ball.isShot;
+   c.position.y=-(reacting?.21:.08)+Math.sin(matchTime*5+p.team)*.06;
+   c.rotation.x=reacting?-.10:0;
+   for(const {arm,leg,side} of p.rig.limbs){
+    arm.rotation.x=reacting?-.65:-.25;arm.rotation.z=-side*(reacting?.55:.23);
+    leg.rotation.x=(reacting?-.16:0)+Math.sin(phase+(side>0?Math.PI:0))*.19*a;
+   }
+  }else{
+   p.keeperTime+=dt;
+   const u=Math.min(1,p.keeperTime/p.keeperDuration);
+   const envelope=Math.pow(Math.sin(Math.PI*Math.min(u/.80,1)),.7)*(u>.62?Math.max(0,(1-u)/.38):1);
+   const side=p.keeperDir*(p.team===0?-1:1);
+   if(p.keeperAction==='catch'){
+    c.position.y=-.65*Math.sin(Math.PI*u);c.rotation.x=-.27*Math.sin(Math.PI*u);
+    for(const limb of p.rig.limbs){limb.arm.rotation.x=-1.05;limb.arm.rotation.z=-limb.side*.63;limb.leg.rotation.x=-.4*Math.sin(Math.PI*u)}
+   }else if(p.keeperAction==='parry'||p.keeperAction==='miss'){
+    const r=envelope*(p.keeperAction==='parry'?1:.9);
+    c.rotation.z=-side*(p.keeperHeight>3?1.28:1.04)*r;
+    c.position.x=side*3.65*r;
+    c.position.y=(p.keeperHeight>3?1.04:.42)*Math.sin(Math.PI*u);
+    for(const limb of p.rig.limbs){
+     limb.arm.rotation.x=-1.1*r;limb.arm.rotation.z=-side*(limb.side===p.keeperDir?.95:.46)*r;
+     limb.leg.rotation.x=limb.side*.45*r;limb.leg.rotation.z=limb.side*.34*r;
+    }
+   }else if(p.keeperAction==='kick'){
+    for(const limb of p.rig.limbs){limb.arm.rotation.z=-limb.side*.35;limb.leg.rotation.x=limb.side>0?Math.sin(Math.PI*u)*1.15:0}
+   }
+   if(u>=1){p.keeperAction='ready';p.keeperTime=0}
+  }
+ }else p.rig.outfit.position.y=Math.abs(Math.sin(phase))*a*.12;
+ p.rig.pointer.visible=p===controlledPlayer();p.rig.pointer.position.y=6.15+Math.sin(matchTime*5)*.15;
  p.rig.ownerMarker.visible=ball.owner===p;
 }
 for(let team=0;team<2;team++)for(let i=0;i<11;i++)makePlayer(team,i);
@@ -269,7 +305,8 @@ function resetPositions(kickoffTeam=0){
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
-  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:100,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0});
+  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:100,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0});
+  p.rig.character.rotation.set(0,0,0);p.rig.character.position.set(0,0,0);
   p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
  }
  const kicker=players[kickoffTeam*11];
@@ -660,7 +697,7 @@ function advance(dt){
    const side=teams[p.team].dir,cfg=difficultySettings();
    p.carryTime+=dt;p.decision-=dt;
    if(p.index===10){
-    if(p.carryTime>.5)kick(p,false);
+    if(p.carryTime>.68){startKeeperAnimation(p,'kick');kick(p,false)}
    }else{
     const toGoal=Math.abs(goalZ(p.team)-p.z);
     const canShoot=toGoal<(p.team===1?cfg.opponentShotRange:41)&&Math.abs(p.x)<GOAL_W*1.65;
@@ -707,7 +744,8 @@ function advance(dt){
   p.x=clamp(p.x+p.vx*dt,-HW+1.5,HW-1.5);
   p.z=clamp(p.z+p.vz*dt,-HL+1.5,HL-1.5);
   p.mesh.position.set(p.x,0,p.z);
-  if(Math.hypot(p.vx,p.vz)>2.2){
+  if(p.index===10)p.mesh.rotation.y=p.team===0?Math.PI:0;
+  if(p.index!==10&&Math.hypot(p.vx,p.vz)>2.2){
    const f=norm(p.vx,p.vz);
    p.faceX=f.x;p.faceZ=f.z;
    const target=Math.atan2(f.x,f.z);
