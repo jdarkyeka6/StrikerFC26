@@ -1,6 +1,18 @@
 # ⚽ Striker FC 26
 
-An original browser-first, 3D football game in **pre-alpha 0.7: DIFFICULTY**.
+An original browser-first, 3D football game in **pre-alpha 0.8: ANIMATED GOALKEEPERS**.
+
+## Goalkeeper animations (NEW in 0.8)
+
+- Goalkeepers wear contrasting kits with visible gloves and long sleeves.
+- In the ready stance, they bend their knees, bounce slightly and hold their hands out for a shot.
+- When a shot approaches, they anticipate it and dive left or right with full-body tilt, sideways movement, extended hands and legs.
+- Clean low saves crouch into a two-handed catch, with the ball visually held near the gloves.
+- Harder saves get parried back into play, and missed dives also have their own motion and recovery.
+- Goalkeeper distribution has a kicking motion.
+- Saves respect the selected difficulty. Shots no longer auto-stick to a goalkeeper through generic loose-ball pickup logic.
+
+These are procedural arcade-style animations, not professional motion-capture animations.
 
 ## Match difficulty (NEW in 0.7)
 
