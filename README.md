@@ -10,9 +10,9 @@ An original browser-first 3D football game. **Pre-alpha 0.3** has full 11v11 arc
 - **Smart receiving**: pass recipients run toward the ball when not being manually steered.
 - **Switching**: Q cycles nearby teammates; team possession returns control to the carrier.
 - **Defending**: limited pressing players, timed tackles, recovery/cooldowns and jockey movement.
-- **Charged shooting**: hold Space to build shot power, release to shoot toward the goal.
+- **Charged shooting**: hold Space to build shot power; release to shoot, or reach full power after ~0.6 seconds for an automatic shot.
 - **Full-field broadcast camera** with smoother tracking, plus a toggleable classic perspective.
-- **11v11 formation AI** with attackers, midfielders, defenders and goalkeepers.
+- **11v11 formation AI** with attackers, midfielders, defenders and goalkeepers. Kickoffs place both teams in their own halves.
 - 4-minute matches, scoreboard, minimap and restart.
 
 ## Controls
