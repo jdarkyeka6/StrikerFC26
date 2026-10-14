@@ -740,6 +740,7 @@ function advance(dt){
   }
   // Acceleration / braking prevent instant direction reversals but still respond fast.
   const response=1-Math.exp(-dt*(p===cp?13:9.5));
+  if(p.index===10&&['parry','miss','catch'].includes(p.keeperAction)){vx*=.12;vz*=.12}
   p.vx+=(vx-p.vx)*response;p.vz+=(vz-p.vz)*response;
   p.x=clamp(p.x+p.vx*dt,-HW+1.5,HW-1.5);
   p.z=clamp(p.z+p.vz*dt,-HL+1.5,HL-1.5);
@@ -796,6 +797,8 @@ function advance(dt){
     const px=before.x+dx*t,pz=before.z+dz*t;
     const d=Math.hypot(p.x-px,p.z-pz);
     const reach=p.index===10?4.0:(ball.passTarget===p?3.5:2.65);
+    // Do not bypass real keeper save checks with the generic loose-ball pickup.
+    if(p.index===10&&ball.isShot)continue;
     if(d<reach&&ball.y< (p.index===10?6.0:3.1))choices.push({p,d,t,rank:d-(ball.passTarget===p?.5:0)});
    }
    choices.sort((a,b)=>a.t-b.t||a.rank-b.rank);
@@ -808,27 +811,39 @@ function advance(dt){
  }
  ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
  ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
- if(!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-22&&Math.abs(ball.x)<GOAL_W/2+8){
-  // A goalkeeper tracks shots and may hold or palm away reachable attempts.
+ if(!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-29&&Math.abs(ball.x)<GOAL_W/2+10){
   const defendingTeam=ball.z<0?1:0,keeper=players[defendingTeam*11+10];
-  const incoming=Math.sign(ball.vz)===Math.sign(ball.z);
-  const d=distance(keeper,ball),withinHeight=ball.y<5.7;
-  if(incoming&&withinHeight&&d<5.25&&keeper.saveCooldown<=0){
-   const speed=Math.hypot(ball.vx,ball.vz);
+  const incoming=Math.sign(ball.vz)===Math.sign(ball.z),speedZ=Math.abs(ball.vz);
+  const arrival=speedZ>.001?(keeper.z-ball.z)/ball.vz:99;
+  const time=Math.max(0,arrival);
+  const impactX=ball.x+ball.vx*time;
+  const height=Math.max(1.05,ball.y+ball.vy*time-12.5*time*time);
+  const distanceX=Math.abs(impactX-keeper.x);
+  const possible=distanceX<GOAL_W/2+3&&height<6.2;
+  // Begin a physical dive before the incoming shot reaches the gloves.
+  if(incoming&&possible&&arrival>=0&&time<.35&&keeper.keeperAction==='ready'&&keeper.saveCooldown<=0){
+   startKeeperAnimation(keeper,'miss',impactX>=keeper.x?1:-1,height);
+   keeper.saveCooldown=1.0;
+  }
+  // Resolve at the keeper's line, not on the first animation frame.
+  if(incoming&&possible&&arrival>=0&&time<.105&&keeper.keeperAction==='miss'){
    const bonus=defendingTeam===1?difficultySettings().opponentKeeper:difficultySettings().homeKeeper;
-   const saveChance=clamp(.27+(5.25-d)*.07+(ball.y<2.3?.12:0)-(speed>95?.10:0)+bonus,.04,.85);
-   keeper.saveCooldown=.95;keeper.saveAnimation=.55;
-   keeper.saveDirection=(ball.x>=keeper.x?1:-1);
-   // A keeper can miss a well-placed finish. They must not stop every shot.
+   const pace=Math.hypot(ball.vx,ball.vz);
+   const saveChance=clamp(.41-distanceX*.062-(height>3?.11:0)-(pace>94?.05:0)+bonus,.04,.82);
    if(Math.random()<saveChance){
     saves[defendingTeam]++;
-    if(d<3.1&&speed<73){takePossession(keeper);say('SAFE HANDS',1)}
-    else{
-     ball.vz*=-.55;ball.vx+=(ball.x-keeper.x)*1.8;ball.vy=4;
-     ball.lastTouchTeam=defendingTeam;ball.lock=.22;say('WHAT A SAVE!',1.2);
+    const catchable=distanceX<2.4&&height<2.8&&pace<90;
+    startKeeperAnimation(keeper,catchable?'catch':'parry',impactX>=keeper.x?1:-1,height);
+    if(catchable){
+     takePossession(keeper);
+     say('SAFE HANDS!',1.0);
+    }else{
+     ball.vz*=-.60;ball.vx+=(ball.x-keeper.x)*2.0;ball.vy=4.0;
+     ball.lastTouchTeam=defendingTeam;ball.lock=.25;
+     say('WHAT A SAVE!',1.1);
     }
     playMatchSound('save');ball.isShot=false;
-   }
+   }else keeper.keeperTime=Math.max(keeper.keeperTime,.11);
   }
  }
  if(Math.abs(ball.z)>=HL){
