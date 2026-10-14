@@ -4,10 +4,10 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA · NO INSTALL</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
-<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Shoot / Tackle</div><div><kbd>E</kbd> Pass</div><div><kbd>Q</kbd> Switch</div><div><kbd>P</kbd> Pause</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.2 · 11v11</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Shoot / Tackle</div><div><kbd>E</kbd> Pass</div><div><kbd>Q</kbd> Switch</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.1</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Play a complete five-a-side match against AI, switch players, sprint, pass and score.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL NEEDED · INTERNET REQUIRED · 4-MINUTE MATCH</div></div></div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.2</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Play an 11v11 match on a full-size pitch with a FIFA-style sideline camera and smarter positional team AI. Switch players, sprint, pass and score.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL 11V11 AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · C TO CHANGE CAMERA</div></div></div>
 <script type="module">
 let THREE;
 try {
@@ -24,70 +24,364 @@ try {
 
 
 // Striker FC pre-alpha: self-contained deterministic arcade match simulation.
-const FIELD_W = 74, FIELD_L = 116, GOAL_W = 16, MATCH_SECONDS = 240;
-const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',140,270);
-const camera = new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,400);
+const FIELD_W = 96, FIELD_L = 156, GOAL_W = 19, MATCH_SECONDS = 240;
+const HW=FIELD_W/2, HL=FIELD_L/2;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',180,380);
+const camera = new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,600);
 const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; document.querySelector('#game').append(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xc6fff0,0x24423a,2.1));
 const sun = new THREE.DirectionalLight(0xfff4df,2.8); sun.position.set(-45,90,25);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-110;sun.shadow.camera.right=110;sun.shadow.camera.top=110;sun.shadow.camera.bottom=-110;sun.shadow.normalBias=.025;scene.add(sun);
 const mat=(color,roughness=1)=>new THREE.MeshStandardMaterial({color,roughness});
 const turf=[mat('#187648'),mat('#1b814d')], white=new THREE.MeshBasicMaterial({color:0xdffbe8});
 const plane=(w,h,m,x=0,z=0,y=0)=>{const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);o.receiveShadow=true;scene.add(o);return o};
-plane(200,230,mat('#103f30'),0,0,-.08);for(let i=0;i<12;i++)plane(FIELD_W,FIELD_L/12,turf[i%2],0,-FIELD_L/2+(i+.5)*FIELD_L/12,-.02);
+plane(270,340,mat('#103f30'),0,0,-.08);for(let i=0;i<16;i++)plane(FIELD_W,FIELD_L/16,turf[i%2],0,-HL+(i+.5)*FIELD_L/16,-.02);
 function line(x1,z1,x2,z2,width=.2){const dx=x2-x1,dz=z2-z1,l=Math.hypot(dx,dz);let o=new THREE.Mesh(new THREE.BoxGeometry(width,.04,l),white);o.rotation.y=Math.atan2(dx,dz);o.position.set((x1+x2)/2,.04,(z1+z2)/2);scene.add(o)}
-for(const [a,b,c,d] of [[-37,-58,37,-58],[37,-58,37,58],[37,58,-37,58],[-37,58,-37,-58],[-37,0,37,0],[-24,-58,-24,-38],[24,-58,24,-38],[-24,-38,24,-38],[-24,58,-24,38],[24,58,24,38],[-24,38,24,38],[-9,-58,-9,-52],[9,-58,9,-52],[-9,-52,9,-52],[-9,58,-9,52],[9,58,9,52],[-9,52,9,52]])line(a,b,c,d);
-function arc(cx,cz,r,a0,a1){let v=[];for(let i=0;i<=80;i++){let a=a0+(a1-a0)*i/80;v.push(new THREE.Vector3(cx+Math.cos(a)*r,.065,cz+Math.sin(a)*r))}let o=new THREE.Line(new THREE.BufferGeometry().setFromPoints(v),new THREE.LineBasicMaterial({color:0xdffbe8}));scene.add(o)}arc(0,0,10,0,Math.PI*2);
-function goal(z){let group=new THREE.Group();const post=mat('#ecfff7');function bar(x,y,zz,w,h,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),post);m.position.set(x,y,zz);m.castShadow=true;group.add(m)}const dir=Math.sign(z);bar(-GOAL_W/2,3.3,z,.48,6.6,.48);bar(GOAL_W/2,3.3,z,.48,6.6,.48);bar(0,6.6,z,GOAL_W+.48,.48,.48);const net=new THREE.LineBasicMaterial({color:0xbbffdd,transparent:true,opacity:.24});for(let i=-GOAL_W/2;i<=GOAL_W/2;i+=2){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i,0,z),new THREE.Vector3(i,5,z+dir*5),new THREE.Vector3(i,0,z+dir*5)]);group.add(new THREE.Line(g,net))}for(let h=1;h<=5;h++){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-8,h,z+dir*5),new THREE.Vector3(8,h,z+dir*5)]);group.add(new THREE.Line(g,net))}scene.add(group)}goal(-58);goal(58);
-const stands=mat('#102d38'); for(const side of [-1,1]){const m=new THREE.Mesh(new THREE.BoxGeometry(19,10,150),stands);m.position.set(side*53,1,0);scene.add(m);for(let i=0;i<9;i++){const strip=new THREE.Mesh(new THREE.BoxGeometry(16,.35,146),mat(i%2?'#204957':'#285361'));strip.position.set(side*(48+i*.8),2+i*.9,0);scene.add(strip)}}
+
+const boxW=33, boxD=23, smallW=13, smallD=7;
+const markings=[
+ [-HW,-HL,HW,-HL],[HW,-HL,HW,HL],[HW,HL,-HW,HL],[-HW,HL,-HW,-HL],
+ [-HW,0,HW,0],
+ [-boxW,-HL,-boxW,-HL+boxD],[boxW,-HL,boxW,-HL+boxD],[-boxW,-HL+boxD,boxW,-HL+boxD],
+ [-boxW,HL,-boxW,HL-boxD],[boxW,HL,boxW,HL-boxD],[-boxW,HL-boxD,boxW,HL-boxD],
+ [-smallW,-HL,-smallW,-HL+smallD],[smallW,-HL,smallW,-HL+smallD],[-smallW,-HL+smallD,smallW,-HL+smallD],
+ [-smallW,HL,-smallW,HL-smallD],[smallW,HL,smallW,HL-smallD],[-smallW,HL-smallD,smallW,HL-smallD]
+];for(const [a,b,c,d] of markings)line(a,b,c,d);
+function arc(cx,cz,r,a0,a1){let v=[];for(let i=0;i<=80;i++){let a=a0+(a1-a0)*i/80;v.push(new THREE.Vector3(cx+Math.cos(a)*r,.065,cz+Math.sin(a)*r))}let o=new THREE.Line(new THREE.BufferGeometry().setFromPoints(v),new THREE.LineBasicMaterial({color:0xdffbe8}));scene.add(o)}arc(0,0,12,0,Math.PI*2);plane(.75,.75,white,0,0,.06);plane(.75,.75,white,0,-HL+14,.06);plane(.75,.75,white,0,HL-14,.06);
+function goal(z){let group=new THREE.Group();const post=mat('#ecfff7');function bar(x,y,zz,w,h,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),post);m.position.set(x,y,zz);m.castShadow=true;group.add(m)}const dir=Math.sign(z);bar(-GOAL_W/2,3.3,z,.48,6.6,.48);bar(GOAL_W/2,3.3,z,.48,6.6,.48);bar(0,6.6,z,GOAL_W+.48,.48,.48);const net=new THREE.LineBasicMaterial({color:0xbbffdd,transparent:true,opacity:.24});for(let i=-GOAL_W/2;i<=GOAL_W/2;i+=2){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i,0,z),new THREE.Vector3(i,5,z+dir*5),new THREE.Vector3(i,0,z+dir*5)]);group.add(new THREE.Line(g,net))}for(let h=1;h<=5;h++){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-GOAL_W/2,h,z+dir*5),new THREE.Vector3(GOAL_W/2,h,z+dir*5)]);group.add(new THREE.Line(g,net))}scene.add(group)}goal(-HL);goal(HL);
+const stands=mat('#102d38'); for(const side of [-1,1]){const m=new THREE.Mesh(new THREE.BoxGeometry(19,10,FIELD_L+32),stands);m.position.set(side*(HW+17),1,0);scene.add(m);for(let i=0;i<9;i++){const strip=new THREE.Mesh(new THREE.BoxGeometry(16,.35,FIELD_L+28),mat(i%2?'#204957':'#285361'));strip.position.set(side*(HW+12+i*.8),2+i*.9,0);scene.add(strip)}}
 const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,20,16),mat('#ffffff',.6));ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0};
 const teams=[{name:'STRIKER',primary:'#57edaa',secondary:'#0e2540',dir:-1},{name:'RIVALS',primary:'#fb746c',secondary:'#fbe3d6',dir:1}];
-const names=[['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE'],['MAX RIVERS','RYAN CROSS','JORDAN BLAKE','ELI TURNER','FINN CLARK']];
-const starting=[[-25,20],[24,22],[-18,1],[19,-8],[0,49]];
+
+const names=[
+ ['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE','MICAH HAYES','OLLIE WEST','JAY CARTER','ETHAN COLE','RILEY FINCH','SAM BROOKS'],
+ ['MAX RIVERS','RYAN CROSS','JORDAN BLAKE','ELI TURNER','FINN CLARK','LUCA MASON','JESSE SHAW','HUGO KING','OSCAR DALE','THEO WATTS','BEN FORD']
+];
+// A real shape: 4 defenders, 3 midfielders, 3 forwards and a goalkeeper.
+// Coordinates are from Striker's perspective (attacking toward negative z).
+const formation=[
+ {x:0,z:-31,role:'STRIKER',no:9,group:'attack'},
+ {x:-28,z:-22,role:'LEFT WING',no:11,group:'attack'},
+ {x:28,z:-22,role:'RIGHT WING',no:7,group:'attack'},
+ {x:0,z:-4,role:'ATTACKING MID',no:10,group:'mid'},
+ {x:-18,z:16,role:'CENTRAL MID',no:8,group:'mid'},
+ {x:18,z:18,role:'HOLDING MID',no:6,group:'mid'},
+ {x:-36,z:43,role:'LEFT BACK',no:3,group:'defence'},
+ {x:-12,z:49,role:'CENTRE BACK',no:4,group:'defence'},
+ {x:12,z:49,role:'CENTRE BACK',no:5,group:'defence'},
+ {x:36,z:43,role:'RIGHT BACK',no:2,group:'defence'},
+ {x:0,z:HL-8,role:'GOALKEEPER',no:1,group:'keeper'}
+];
 const players=[];
-function makePlayer(team,index){const root=new THREE.Group(),shirt=mat(teams[team].primary),shorts=mat(teams[team].secondary),skin=mat(index%2?'#b57c56':'#e7b99a');const parts=[new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.3,2.35,10),shirt),new THREE.Mesh(new THREE.SphereGeometry(.83,12,8),skin),new THREE.Mesh(new THREE.BoxGeometry(2.2,.85,1.3),shorts)];parts[0].position.y=2.55;parts[1].position.y=4.4;parts[2].position.y=1.4;for(let p of parts){p.castShadow=true;root.add(p)}for(const side of [-1,1]){const l=new THREE.Mesh(new THREE.CylinderGeometry(.31,.36,1.15,8),skin);l.position.set(side*.63,.65,0);l.castShadow=true;root.add(l)}const ring=new THREE.Mesh(new THREE.RingGeometry(1.7,2,28),new THREE.MeshBasicMaterial({color:0x8dffbd,side:THREE.DoubleSide,transparent:true,opacity:.95}));ring.rotation.x=-Math.PI/2;ring.position.y=.09;root.add(ring);scene.add(root);let p={team,index,mesh:root,ring,x:0,z:0,vx:0,vz:0,stamina:100,hasBall:false,aiTimer:0,decision:0};players.push(p);return p}
-for(let team=0;team<2;team++)for(let i=0;i<5;i++)makePlayer(team,i);
-const $=id=>document.getElementById(id),keys=new Set();let state='menu',matchTime=0,score=[0,0],controlled=0,announcement=0,resetTimer=0,sideSwap=false,last=performance.now();
-const controlledPlayer=()=>players[controlled];const sq=(x)=>x*x;const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function resetPositions(){for(const p of players){const [x,z]=starting[p.index];p.x=p.team===0?x:-x;p.z=(p.team===0?z:-z);p.vx=p.vz=0;p.stamina=100;p.hasBall=false;p.mesh.position.set(p.x,0,p.z)}Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:.8});controlled=0;updatePlayerUI()}
-function newMatch(){score=[0,0];matchTime=0;$('home-score').textContent=0;$('away-score').textContent=0;resetPositions();state='playing';$('overlay').classList.add('hidden');$('status').textContent='LIVE MATCH';say('KICK OFF',1.25)}
+function makePlayer(team,index){
+ const root=new THREE.Group(),shirt=mat(teams[team].primary),shorts=mat(teams[team].secondary),skin=mat(index%3===0?'#b57c56':'#e7b99a');
+ const parts=[new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.15,2.4,10),shirt),new THREE.Mesh(new THREE.SphereGeometry(.77,12,8),skin),new THREE.Mesh(new THREE.BoxGeometry(2.0,.8,1.2),shorts)];
+ parts[0].position.y=2.5;parts[1].position.y=4.25;parts[2].position.y=1.37;
+ for(const part of parts){part.castShadow=true;root.add(part)}
+ for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,1.14,8),skin);leg.position.set(side*.56,.63,0);leg.castShadow=true;root.add(leg)}
+ const ring=new THREE.Mesh(new THREE.RingGeometry(1.65,1.97,28),new THREE.MeshBasicMaterial({color:0x8dffbd,side:THREE.DoubleSide,transparent:true,opacity:.95}));
+ ring.rotation.x=-Math.PI/2;ring.position.y=.09;root.add(ring);
+ scene.add(root);
+ const p={team,index,mesh:root,ring,x:0,z:0,vx:0,vz:0,stamina:100,hasBall:false,decision:0,carryTime:0};
+ players.push(p);return p;
+}
+for(let team=0;team<2;team++)for(let i=0;i<11;i++)makePlayer(team,i);
+
+const $=id=>document.getElementById(id), keys=new Set();
+let state='menu',matchTime=0,score=[0,0],controlled=0,announcement=0,last=performance.now(),cameraMode='broadcast';
+const controlledPlayer=()=>players[controlled],clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
+const base=(p)=>({x:p.team===0?formation[p.index].x:-formation[p.index].x,z:p.team===0?formation[p.index].z:-formation[p.index].z});
+const goalZ=(team)=>teams[team].dir*HL;
+function updatePlayerUI(){
+ const p=controlledPlayer(),f=formation[p.index];
+ $('player-number').textContent=String(f.no).padStart(2,'0');
+ $('player-name').textContent=names[p.team][p.index];
+ $('player-role').textContent=f.role;
+}
+function resetPositions(kickoffTeam=0){
+ for(const p of players){
+  const home=base(p);
+  p.x=home.x;p.z=home.z;p.vx=p.vz=0;p.stamina=100;p.hasBall=false;p.decision=.3;p.carryTime=0;
+  p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
+ }
+ const kicker=players.find(p=>p.team===kickoffTeam&&p.index===0);
+ kicker.x=0;kicker.z=-teams[kickoffTeam].dir*2;kicker.mesh.position.set(kicker.x,0,kicker.z);
+ kicker.mesh.rotation.y=kickoffTeam===0?Math.PI:0;
+ Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.55});
+ kicker.hasBall=true;
+ controlled=0;updatePlayerUI();
+}
+function newMatch(){
+ score=[0,0];matchTime=0;
+ $('home-score').textContent='0';$('away-score').textContent='0';
+ resetPositions(0);state='playing';$('overlay').classList.add('hidden');
+ $('status').textContent='LIVE MATCH';say('KICK OFF',1.25);
+}
 function say(message,seconds=1.5){$('message').textContent=message;$('message').classList.add('show');announcement=seconds}
-function updatePlayerUI(){const p=controlledPlayer();$('player-number').textContent=String([9,11,8,6,1][p.index]).padStart(2,'0');$('player-name').textContent=names[p.team][p.index];$('player-role').textContent=['STRIKER','WINGER','MIDFIELDER','DEFENDER','GOALKEEPER'][p.index];}
-function nearest(team,excludeKeeper=false){return players.filter(p=>p.team===team&&(!excludeKeeper||p.index!==4)).sort((a,b)=>distance(a,ball)-distance(b,ball))[0]}
-function switchPlayer(){const options=players.filter(p=>p.team===0&&p.index!==4&&p.index!==controlled);options.sort((a,b)=>distance(a,ball)-distance(b,ball));if(options[0]){controlled=players.indexOf(options[0]);updatePlayerUI()}}
-function kick(p,shoot){if(state!=='playing'||ball.owner!==p)return;let tx,tz,strength;
- if(shoot){tx=clamp((Math.random()-.5)*GOAL_W*.95,-GOAL_W/2+1,GOAL_W/2-1);tz=p.team===0?-64:64;strength=54;ball.vy=8.5;}else{let mates=players.filter(o=>o.team===p.team&&o!==p&&o.index!==4);mates.sort((a,b)=>distance(a,p)-distance(b,p));let target=mates.find(m=>(m.z-p.z)*teams[p.team].dir>2)||mates[0];tx=target.x+target.vx*.3;tz=target.z+target.vz*.3;strength=36;ball.vy=2.1;}
- const angle=Math.atan2(tx-p.x,tz-p.z);ball.owner=null;p.hasBall=false;ball.lock=.38;ball.vx=Math.sin(angle)*strength;ball.vz=Math.cos(angle)*strength;ball.x=p.x+Math.sin(angle)*2.2;ball.z=p.z+Math.cos(angle)*2.2;ball.y=1.7;}
-function tackle(p){if(ball.owner&&ball.owner.team!==p.team&&distance(p,ball.owner)<4.8){ball.owner.hasBall=false;ball.owner=null;ball.lock=0;ball.vx=(ball.x-p.x)*3;ball.vz=(ball.z-p.z)*3;return true}return false}
-window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(keys.has(e.code))return;keys.add(e.code);if(e.code==='KeyP'||e.code==='Escape'){togglePause();return}if(state!=='playing')return;if(e.code==='KeyQ')switchPlayer();if(e.code==='KeyE')kick(controlledPlayer(),false);if(e.code==='Space'){if(ball.owner===controlledPlayer())kick(controlledPlayer(),true);else tackle(controlledPlayer())}});
-window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>keys.clear());
-function togglePause(){if(state==='playing'){state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden')}else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden')}}
-$('start').addEventListener('click',()=>state==='paused'?togglePause():newMatch());$('pause').addEventListener('click',togglePause);
-function advance(dt){matchTime+=dt;let seconds=Math.floor(matchTime);$('clock').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
- if(matchTime>=MATCH_SECONDS){state='finished';$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');$('start').textContent='PLAY AGAIN ↗';document.querySelector('.panel h1').innerHTML=`FULL<br/><em>TIME.</em>`;document.querySelector('.panel p').textContent=`Final score: Striker ${score[0]} – ${score[1]} Rivals. Ready for the rematch?`;return}
- ball.lock=Math.max(0,ball.lock-dt);let cp=controlledPlayer();let axisX=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0),axisZ=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0);let norm=Math.hypot(axisX,axisZ)||1;axisX/=norm;axisZ/=norm;
- for(const p of players){let vx=0,vz=0,speed=15;let isHuman=p===cp;
- if(isHuman){let sprint=(keys.has('ShiftLeft')||keys.has('ShiftRight'))&&p.stamina>0;speed=sprint?24:16;p.stamina=clamp(p.stamina+(sprint&&norm===1&&(axisX||axisZ)?-20:12)*dt,0,100);vx=axisX*speed;vz=axisZ*speed;}
- else{const side=teams[p.team].dir;let targetX=0,targetZ=0;let chase=nearest(p.team,true)===p;
- if(ball.owner===p){targetX=clamp(ball.x*.55,-22,22);targetZ=side*55;speed=16.5;if(Math.abs(p.z-side*58)<27&&Math.random()<dt*1.5)kick(p,true);else if(Math.random()<dt*.28)kick(p,false)}
- else if(p.index===4){targetX=clamp(ball.x*.54,-GOAL_W/2,GOAL_W/2);targetZ=-side*52;speed=13;}
- else if(chase||ball.owner?.team!==p.team&&distance(p,ball)<22){targetX=ball.x;targetZ=ball.z;speed=18;}
- else{const [hx,hz]=starting[p.index];targetX=(p.team===0?hx:-hx)*.7+ball.x*.28;targetZ=(p.team===0?hz:-hz)*.45+ball.z*.45;speed=13.5}
- const dx=targetX-p.x,dz=targetZ-p.z,d=Math.hypot(dx,dz);if(d>.7){vx=dx/d*speed;vz=dz/d*speed}}
- p.vx=vx;p.vz=vz;p.x=clamp(p.x+vx*dt,-FIELD_W/2+1.2,FIELD_W/2-1.2);p.z=clamp(p.z+vz*dt,-FIELD_L/2+1,FIELD_L/2-1);p.mesh.position.set(p.x,0,p.z);if(Math.hypot(vx,vz)>1)p.mesh.rotation.y=Math.atan2(vx,vz);p.ring.visible=isHuman;
+function nearest(team,includeKeeper=false){
+ return players.filter(p=>p.team===team&&(includeKeeper||p.index!==10)).sort((a,b)=>distance(a,ball)-distance(b,ball))[0];
+}
+function switchPlayer(){
+ const options=players.filter(p=>p.team===0&&p.index!==10&&p!==controlledPlayer());
+ const target=ball.owner?.team===1?ball.owner:ball;
+ options.sort((a,b)=>distance(a,target)-distance(b,target));
+ if(options.length){controlled=players.indexOf(options[0]);updatePlayerUI()}
+}
+function bestPass(p){
+ const side=teams[p.team].dir;
+ const mates=players.filter(q=>q.team===p.team&&q!==p&&q.index!==10);
+ const options=mates.map(q=>{
+  const d=distance(q,p),forward=(q.z-p.z)*side;
+  const nearOpp=players.filter(o=>o.team!==p.team).reduce((v,o)=>Math.min(v,distance(q,o)),100);
+  const rating=forward*.36-Math.abs(d-24)*.32+Math.min(nearOpp,16)*.95+(formation[q.index].group==='attack'?2:0);
+  return {q,d,rating:rating-(d>65?70:0)-(d<5?45:0)};
+ }).sort((a,b)=>b.rating-a.rating);
+ return options[0]?.q||mates[0];
+}
+function kick(p,shoot){
+ if(state!=='playing'||ball.owner!==p)return;
+ const side=teams[p.team].dir;
+ let tx,tz,strength,receiver=null;
+ if(shoot){
+  const difficulty=clamp(Math.abs(p.x)/HW,0,1);
+  tx=clamp((Math.random()-.5)*(GOAL_W*.53+difficulty*4),-GOAL_W/2+1,GOAL_W/2-1);
+  tz=goalZ(p.team)+side*6;
+  strength=87;ball.vy=3.2;
+ }else{
+  receiver=bestPass(p);
+  if(!receiver)return;
+  tx=receiver.x+receiver.vx*.25;tz=receiver.z+receiver.vz*.25;
+  strength=clamp(distance(p,receiver)*1.85+19,36,79);
+  ball.vy=1.6;
  }
- if(ball.owner){const p=ball.owner;ball.x=p.x+Math.sin(p.mesh.rotation.y)*1.6;ball.z=p.z+Math.cos(p.mesh.rotation.y)*1.6;ball.y=1.07+Math.abs(Math.sin(matchTime*13))*.24;ball.vx=ball.vz=ball.vy=0}
- else{ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.y+=ball.vy*dt;ball.vy-=25*dt;if(ball.y<=1.05){ball.y=1.05;ball.vy=ball.vy< -2?-ball.vy*.4:0}const friction=Math.exp(-1.4*dt);ball.vx*=friction;ball.vz*=friction;
- if(Math.abs(ball.x)>FIELD_W/2-1.1){ball.x=clamp(ball.x,-FIELD_W/2+1.1,FIELD_W/2-1.1);ball.vx*=-.6}
- for(const p of players){if(ball.lock<=0&&Math.hypot(p.x-ball.x,p.z-ball.z)<2.45&&ball.y<3){ball.owner=p;p.hasBall=true;ball.vy=0;break}}
+ const angle=Math.atan2(tx-p.x,tz-p.z);
+ p.hasBall=false;ball.owner=null;ball.lock=.18;
+ ball.vx=Math.sin(angle)*strength;ball.vz=Math.cos(angle)*strength;
+ ball.x=p.x+Math.sin(angle)*2;ball.z=p.z+Math.cos(angle)*2;ball.y=1.55;
+ if(receiver?.team===0){controlled=players.indexOf(receiver);updatePlayerUI()}
+}
+function tackle(p){
+ if(ball.owner&&ball.owner.team!==p.team&&distance(p,ball.owner)<4.6){
+  ball.owner.hasBall=false;ball.owner=null;ball.lock=.1;
+  ball.vx=(ball.x-p.x)*2.2;ball.vz=(ball.z-p.z)*2.2;return true;
  }
- ballMesh.position.set(ball.x,ball.y,ball.z);ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
- if(Math.abs(ball.z)>FIELD_L/2){if(Math.abs(ball.x)<GOAL_W/2&&ball.y<6.3){const who=ball.z<0?0:1;score[who]++;$('home-score').textContent=score[0];$('away-score').textContent=score[1];say(who===0?'GOOOAL! ⚽':'RIVALS SCORE',2);resetPositions()}else{ball.z=clamp(ball.z,-FIELD_L/2,FIELD_L/2);ball.vz*=-.45}}
- $('stamina-bar').style.height=cp.stamina+'%';updateRadar();
+ return false;
+}
+window.addEventListener('keydown',e=>{
+ if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
+ if(keys.has(e.code))return;keys.add(e.code);
+ if(e.code==='KeyP'||e.code==='Escape'){togglePause();return}
+ if(e.code==='KeyC'){changeCamera();return}
+ if(state!=='playing')return;
+ if(e.code==='KeyQ')switchPlayer();
+ if(e.code==='KeyE')kick(controlledPlayer(),false);
+ if(e.code==='Space'){
+  if(ball.owner===controlledPlayer())kick(controlledPlayer(),true);
+  else tackle(controlledPlayer());
+ }
+});
+window.addEventListener('keyup',e=>keys.delete(e.code));
+window.addEventListener('blur',()=>keys.clear());
+function changeCamera(){
+ cameraMode=cameraMode==='broadcast'?'classic':'broadcast';
+ $('cam').textContent=cameraMode==='broadcast'?'📹':'🎥';
+ say(cameraMode==='broadcast'?'BROADCAST CAMERA':'CLASSIC CAMERA',.9);
+}
+function togglePause(){
+ if(state==='playing'){state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden')}
+ else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden')}
+}
+$('start').addEventListener('click',()=>state==='paused'?togglePause():newMatch());
+$('pause').addEventListener('click',togglePause);
+$('cam').addEventListener('click',changeCamera);
+
+function roleTarget(p,press1,press2){
+ const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=formation[p.index].group;
+ const ownGoal=-side*HL;
+ if(p.index===10){
+  return {x:clamp(ball.x*.27,-GOAL_W/2+2,GOAL_W/2-2),z:ownGoal+side*7,speed:12};
+ }
+ // No team-wide ball swarm: one presser attacks the ball; one supports it.
+ if(owner?.team!==p.team){
+  if(p===press1)return {x:ball.x,z:ball.z,speed:20};
+  if(p===press2){
+   const s=ball.x>=0?1:-1;
+   return {x:clamp(ball.x-s*7,-HW+5,HW-5),z:clamp(ball.z-side*8,-HL+5,HL-5),speed:15.5};
+  }
+  const bx=ball.x*.16;
+  const shiftZ=clamp(ball.z-h.z,-24,24)*.27;
+  let x=h.x+bx,z=h.z+shiftZ;
+  if(role==='defence'){
+   // Back four maintain depth and their own lanes instead of chasing strikers.
+   x=h.x+ball.x*.13;
+   z=clamp(h.z+clamp(ball.z-h.z,-22,15)*.32,-HL+11,HL-11);
+  }else if(role==='mid'){
+   x=h.x+ball.x*.20;
+   z=h.z+clamp(ball.z-h.z,-28,28)*.4;
+  }else{
+   z=h.z+clamp(ball.z-h.z,-24,24)*.18;
+  }
+  return {x:clamp(x,-HW+5,HW-5),z:clamp(z,-HL+7,HL-7),speed:14};
+ }
+ // In possession, width and forward runs. Defenders retain cover.
+ const carrier=owner;
+ let x=h.x+ball.x*.1,z=h.z+clamp(ball.z-h.z,-27,27)*.22;
+ if(role==='attack'){
+  x=h.x*.88+ball.x*.12;
+  z=clamp(carrier.z+side*(p.index===0?21:12),-HL+12,HL-12);
+  z=z*.63+(h.z+clamp(ball.z-h.z,-24,24)*.16)*.37;
+ }else if(role==='mid'){
+  x=h.x*.82+ball.x*.18;
+  z=clamp(carrier.z-side*12,-HL+12,HL-12)*.57+h.z*.43;
+ }else if(role==='defence'){
+  x=h.x+ball.x*.12;
+  z=h.z+clamp(ball.z-h.z,-16,16)*.25;
+ }
+ return {x:clamp(x,-HW+5,HW-5),z:clamp(z,-HL+10,HL-10),speed:15};
+}
+function advance(dt){
+ matchTime+=dt;
+ const seconds=Math.floor(matchTime);
+ $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+ if(matchTime>=MATCH_SECONDS){
+  state='finished';$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
+  $('start').textContent='PLAY AGAIN ↗';
+  document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
+  document.querySelector('.panel p').textContent='Final score: Striker '+score[0]+' – '+score[1]+' Rivals. Ready for the rematch?';
+  return;
+ }
+ ball.lock=Math.max(0,ball.lock-dt);
+ const cp=controlledPlayer(),sideA=teams[0].dir;
+ // The sideways FIFA-style camera makes D/Right move to the right of the screen.
+ let axisX=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0);
+ let axisZ=(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)-(keys.has('KeyD')||keys.has('ArrowRight')?1:0);
+ if(cameraMode==='classic'){
+  axisX=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0);
+  axisZ=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0);
+ }
+ const norm=Math.hypot(axisX,axisZ)||1;axisX/=norm;axisZ/=norm;
+ const marker=ball.owner||ball;
+ const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&p!==ball.owner)
+  .sort((a,b)=>{
+   const rank=p=>distance(p,marker)+(formation[p.index].group==='defence'?8:0)+(p===cp?3:0);
+   return rank(a)-rank(b);
+  }).slice(0,2));
+ for(const p of players){
+  let vx=0,vz=0,speed=15;
+  if(p===cp){
+   const moving=axisX!==0||axisZ!==0;
+   const sprint=(keys.has('ShiftLeft')||keys.has('ShiftRight'))&&p.stamina>0;
+   speed=sprint?25:17;
+   p.stamina=clamp(p.stamina+(sprint&&moving?-19:12)*dt,0,100);
+   vx=axisX*speed;vz=axisZ*speed;
+  }else if(ball.owner===p){
+   const side=teams[p.team].dir;
+   p.carryTime+=dt;p.decision-=dt;
+   if(p.index===10){
+    if(p.carryTime>.65)kick(p,false);
+   }else{
+    const toGoal=Math.abs(goalZ(p.team)-p.z);
+    const canShoot=toGoal<43&&Math.abs(p.x)<GOAL_W*1.7;
+    const oppNear=players.some(q=>q.team!==p.team&&distance(p,q)<10);
+    if(p.decision<=0){
+     p.decision=.45+Math.random()*.45;
+     if(canShoot&&Math.random()<.58){kick(p,true)}
+     else if((oppNear||p.carryTime>3.5)&&Math.random()<.65){kick(p,false)}
+    }
+    if(ball.owner===p){
+     const opposition=players.filter(q=>q.team!==p.team&&q.index!==10).sort((a,b)=>distance(a,p)-distance(b,p))[0];
+     let openX=p.x;
+     if(opposition&&distance(opposition,p)<16)openX+=p.x>opposition.x?7:-7;
+     openX=clamp(openX,-HW+10,HW-10);
+     const goalward=clamp(p.z+side*21,-HL+8,HL-8);
+     const dx=openX-p.x,dz=goalward-p.z,d=Math.hypot(dx,dz);
+     if(d>.7){vx=dx/d*16.8;vz=dz/d*16.8}
+    }
+   }
+  }else{
+   // Never send everyone to ball: keep the shape and press with limited players.
+   const defending=ball.owner?.team!==p.team;
+   const selectedPress=defending?pressers[p.team]:[];
+   const first=selectedPress[0],second=selectedPress[1];
+   const target=roleTarget(p,first,second);
+   const dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz);
+   if(d>.85){speed=Math.min(target.speed,d*2.6);vx=dx/d*speed;vz=dz/d*speed}
+   if(first===p&&ball.owner&&ball.owner.team!==p.team&&distance(p,ball.owner)<3.6){
+    // Time-delayed tackles avoid every contact becoming an instant turnover.
+    if(Math.random()<dt*1.4)tackle(p);
+   }
+  }
+  // Light same-team separation keeps players from standing on top of one another.
+  if(p!==cp&&ball.owner!==p){
+   for(const q of players){
+    if(q===p||q.team!==p.team)continue;
+    const dx=p.x-q.x,dz=p.z-q.z,d=Math.hypot(dx,dz);
+    if(d>0.01&&d<5){vx+=dx/d*(5-d)*1.9;vz+=dz/d*(5-d)*1.9}
+   }
+  }
+  p.vx=vx;p.vz=vz;
+  p.x=clamp(p.x+vx*dt,-HW+1.5,HW-1.5);
+  p.z=clamp(p.z+vz*dt,-HL+1.5,HL-1.5);
+  p.mesh.position.set(p.x,0,p.z);
+  if(Math.hypot(vx,vz)>1)p.mesh.rotation.y=Math.atan2(vx,vz);
+  p.ring.visible=p===cp;
+ }
+ if(ball.owner){
+  const p=ball.owner;
+  ball.x=p.x+Math.sin(p.mesh.rotation.y)*1.6;
+  ball.z=p.z+Math.cos(p.mesh.rotation.y)*1.6;
+  ball.y=1.07+Math.abs(Math.sin(matchTime*13))*.24;ball.vx=ball.vz=ball.vy=0;
+ }else{
+  ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.y+=ball.vy*dt;
+  ball.vy-=25*dt;
+  if(ball.y<=1.05){ball.y=1.05;ball.vy=ball.vy< -2?-ball.vy*.33:0}
+  const friction=Math.exp(-.65*dt);ball.vx*=friction;ball.vz*=friction;
+  if(Math.abs(ball.x)>HW-1){
+   ball.x=clamp(ball.x,-HW+1,HW-1);ball.vx*=-.55;
+  }
+  if(ball.lock<=0){
+   const candidates=players.filter(p=>distance(p,ball)<2.65&&ball.y<3.5).sort((a,b)=>distance(a,ball)-distance(b,ball));
+   const taker=candidates[0];
+   if(taker){
+    ball.owner=taker;taker.hasBall=true;taker.carryTime=0;taker.decision=.55;
+    if(taker.team===0&&taker.index!==10&&distance(taker,cp)<8){
+     controlled=players.indexOf(taker);updatePlayerUI();
+    }
+   }
+  }
+ }
+ ballMesh.position.set(ball.x,ball.y,ball.z);
+ ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
+ if(Math.abs(ball.z)>=HL){
+  if(Math.abs(ball.x)<GOAL_W/2&&ball.y<6.4){
+   const who=ball.z<0?0:1;score[who]++;
+   $('home-score').textContent=score[0];$('away-score').textContent=score[1];
+   say(who===0?'GOOOAL! ⚽':'RIVALS SCORE',2);resetPositions(1-who);
+  }else{ball.z=clamp(ball.z,-HL+1,HL-1);ball.vz*=-.45}
+ }
+ $('stamina-bar').style.height=controlledPlayer().stamina+'%';
+ updateRadar();
 }
 const dots=players.map(p=>{const el=document.createElement('div');el.className='dot '+(p.team===0?'a':'b');$('radar').append(el);return el});const ballDot=document.createElement('div');ballDot.className='dot ball';$('radar').append(ballDot);
 function updateRadar(){players.forEach((p,i)=>{dots[i].style.left=(50+p.x/FIELD_W*88)+'%';dots[i].style.top=(50+p.z/FIELD_L*86)+'%';dots[i].classList.toggle('active',p===controlledPlayer())});ballDot.style.left=(50+ball.x/FIELD_W*88)+'%';ballDot.style.top=(50+ball.z/FIELD_L*86)+'%'}
-function drawCamera(dt){const p=controlledPlayer(),focus=new THREE.Vector3(ball.x*.5+p.x*.5,0,ball.z*.65+p.z*.35);const desired=new THREE.Vector3(focus.x+0,68,focus.z+69);camera.position.lerp(desired,Math.min(1,dt*2.7));camera.lookAt(focus.x,0,focus.z-12)}
-resetPositions();camera.position.set(0,84,88);camera.lookAt(0,0,0);updateRadar();
+
+function drawCamera(dt){
+ const p=controlledPlayer();
+ if(cameraMode==='broadcast'){
+  // Side-on broadcast angle: goals are at the left/right edges, not top/bottom.
+  const follow=clamp(ball.z*.67+p.z*.17,-HL*.36,HL*.36);
+  const focus=new THREE.Vector3(ball.x*.12,0,follow);
+  const desired=new THREE.Vector3(128,86,follow+7);
+  camera.position.lerp(desired,Math.min(1,dt*2.7));
+  camera.lookAt(focus);
+ }else{
+  const focus=new THREE.Vector3(ball.x*.5+p.x*.5,0,ball.z*.65+p.z*.35);
+  const desired=new THREE.Vector3(focus.x,83,focus.z+84);
+  camera.position.lerp(desired,Math.min(1,dt*2.7));
+  camera.lookAt(focus.x,0,focus.z-12);
+ }
+}
+resetPositions();camera.position.set(128,86,7);camera.lookAt(0,0,0);updateRadar();
 function frame(t){requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;if(state==='playing')advance(dt);if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}drawCamera(dt);renderer.render(scene,camera)}requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
