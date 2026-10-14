@@ -29,7 +29,7 @@
 <div class="message" id="message">KICK OFF</div>
 <div class="replay-screen hidden" id="replay-screen" aria-live="polite">
  <div class="replay-top"><span class="replay-marker">● INSTANT REPLAY</span><strong id="replay-title">GOAL REPLAY</strong><span id="replay-counter">0 / 0</span></div>
- <div class="replay-bottom"><span>STRIKER FC 26 · MATCH REPLAY</span><div class="replay-progress"><span id="replay-progress"></span></div><button id="skip-replay" aria-label="Skip replay">SKIP REPLAY <span>↗</span></button></div>
+ <div class="replay-bottom"><span>STRIKER FC 26 · MATCH REPLAY</span><div class="replay-progress"><span id="replay-progress"></span></div><button id="skip-replay" aria-label="Skip replay">SKIP REPLAY · R / ESC <span>↗</span></button></div>
 </div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
 <div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.9</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><div class="difficulty-panel">
 <label for="difficulty">MATCH DIFFICULTY</label>
@@ -358,7 +358,8 @@ function startReplay(clip,mode='goal',queue=[]){
  $('overlay').classList.add('hidden');
  $('replay-screen').classList.remove('hidden');
  $('replay-title').textContent=(clip.type==='GOAL'?'⚽ GOAL':'🧤 BIG SAVE')+' · '+(clip.team===0?'STRIKER':'RIVALS');
- $('replay-counter').textContent=mode==='highlights'?'HIGHLIGHT REEL':'AUTOMATIC REPLAY';
+ const reelTotal=Math.min(6,highlightClips.length);
+ $('replay-counter').textContent=mode==='highlights'?('HIGHLIGHT '+(reelTotal-queue.length)+' / '+reelTotal):'AUTOMATIC REPLAY';
  $('replay-progress').style.width='0%';
  $('status').textContent='REPLAY';
  return true;
@@ -461,7 +462,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.8. New animated keepers dive, catch, parry and recover. Choose your match difficulty before kickoff.';
+ document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.9. Goals trigger replays, and after full-time you can watch the best goals and saves. Choose your match difficulty before kickoff.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
