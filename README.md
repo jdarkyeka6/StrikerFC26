@@ -1,6 +1,19 @@
 # ⚽ Striker FC 26
 
-An original browser-first, 3D football game in **pre-alpha 0.6: FOLLOW CAM**.
+An original browser-first, 3D football game in **pre-alpha 0.7: DIFFICULTY**.
+
+## Match difficulty (NEW in 0.7)
+
+Choose the difficulty before starting a game, or change it any time while **paused (P / Escape)**. The HUD displays your current difficulty. **Beginner is the default**.
+
+| Difficulty | What it changes |
+| --- | --- |
+| Beginner 🟢 | Slower opponents, only one presser, rare tackles, forgiving shots/passes, weaker opposition keeper and stronger support from your teammates |
+| Amateur 🔵 | Casual football with some pressure, more accurate opponents and modestly quicker decisions |
+| Professional 🟠 | Faster press, two defenders closing the ball, sharper passing and more dangerous shots |
+| Legend 🔴 | Maximum pressure, quick decisions, accurate passing, stronger opponent keeper and aggressive finishing |
+
+The modes change real AI behaviour (speed, pressers, tackling, decision delay, shot/pass quality, keepers) rather than just changing labels. Results vary by player performance.
 
 ## What's playable now
 
