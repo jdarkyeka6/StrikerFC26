@@ -728,16 +728,21 @@ function advance(dt){
   const defendingTeam=ball.z<0?1:0,keeper=players[defendingTeam*11+10];
   const incoming=Math.sign(ball.vz)===Math.sign(ball.z);
   const d=distance(keeper,ball),withinHeight=ball.y<5.7;
-  if(incoming&&withinHeight&&d<5.5&&keeper.saveCooldown<=0){
-   const close=d<3.15;
-   keeper.saveCooldown=.8;keeper.saveAnimation=.55;keeper.saveDirection=(ball.x>=keeper.x?1:-1);saves[defendingTeam]++;
-   if(close&&Math.hypot(ball.vx,ball.vz)<75){
-    takePossession(keeper);say('SAFE HANDS',1);
-   }else{
-    ball.vz*=-.55;ball.vx+=(ball.x-keeper.x)*1.8;ball.vy=4;ball.lastTouchTeam=defendingTeam;ball.lock=.22;
-    say('WHAT A SAVE!',1.2);
+  if(incoming&&withinHeight&&d<5.25&&keeper.saveCooldown<=0){
+   const speed=Math.hypot(ball.vx,ball.vz);
+   const saveChance=clamp(.27+(5.25-d)*.07+(ball.y<2.3?.12:0)-(speed>95?.10:0),.18,.64);
+   keeper.saveCooldown=.95;keeper.saveAnimation=.55;
+   keeper.saveDirection=(ball.x>=keeper.x?1:-1);
+   // A keeper can miss a well-placed finish. They must not stop every shot.
+   if(Math.random()<saveChance){
+    saves[defendingTeam]++;
+    if(d<3.1&&speed<73){takePossession(keeper);say('SAFE HANDS',1)}
+    else{
+     ball.vz*=-.55;ball.vx+=(ball.x-keeper.x)*1.8;ball.vy=4;
+     ball.lastTouchTeam=defendingTeam;ball.lock=.22;say('WHAT A SAVE!',1.2);
+    }
+    playMatchSound('save');ball.isShot=false;
    }
-   playMatchSound('save');ball.isShot=false;
   }
  }
  if(Math.abs(ball.z)>=HL){
