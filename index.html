@@ -5,14 +5,33 @@
 .difficulty-panel label{font-size:12px;color:#94ffd1;letter-spacing:1.7px;font-weight:900}
 .difficulty-panel select{display:block;margin-top:9px;width:100%;min-height:44px;background:#143444;color:#f1fff8;border:1px solid #60b995;border-radius:7px;padding:10px;font:700 13px 'DM Sans',Arial;cursor:pointer}
 .difficulty-panel select:focus-visible{outline:3px solid #75ffc4}
-.difficulty-note{font-size:10px!important;color:#accfc6!important;line-height:1.35!important;margin:7px 0 0!important}.primary{background:#83fac3;color:#07382b;border:0;border-radius:6px;padding:16px 22px;font:900 20px 'Barlow Condensed';letter-spacing:2px;cursor:pointer;min-width:220px;display:flex;justify-content:space-between;align-items:center;transition:transform .1s}.primary:hover{transform:translateY(-2px);background:#adffdb}.hint{font-size:10px;color:#829aa1;letter-spacing:1px;margin-top:18px}.message{position:absolute;z-index:2;top:22%;width:100%;text-align:center;font:900 80px 'Barlow Condensed';letter-spacing:4px;pointer-events:none;color:white;text-shadow:0 4px 30px #000a;opacity:0;transform:scale(.8);transition:all .22s}.message.show{opacity:1;transform:scale(1)}.commentary-line{position:absolute;z-index:3;left:50%;top:79px;transform:translateX(-50%);min-width:240px;text-align:center;padding:8px 18px;border:1px solid #52cda544;border-radius:4px;background:#061d2acb;color:#9bf2cc;font:800 10px 'DM Sans';letter-spacing:2px;pointer-events:none;opacity:.95}.top-right #audio{font-size:15px}.match-stats{position:absolute;z-index:3;right:24px;bottom:136px;text-align:right;background:#021924d7;border:1px solid #5ff4b129;padding:9px 12px;color:#d7f8e7;font:800 10px 'DM Sans';letter-spacing:1.3px;pointer-events:none}@media(max-width:1000px){.controls{display:none}.action-hint{bottom:80px;font-size:9px}.brand,.top-right{min-width:unset}.brand small{display:none}.radar{width:120px}.club{padding:10px;font-size:13px}.clock{padding:10px}.hud,.bottom{left:12px;right:12px}}@media(max-width:620px){.brand{display:none}.scoreboard{margin:auto}.top-right{position:absolute;right:0;top:60px}.radar{display:none}.panel{margin:20px}.panel h1{font-size:70px}}
+.difficulty-note{font-size:10px!important;color:#accfc6!important;line-height:1.35!important;margin:7px 0 0!important}.primary{background:#83fac3;color:#07382b;border:0;border-radius:6px;padding:16px 22px;font:900 20px 'Barlow Condensed';letter-spacing:2px;cursor:pointer;min-width:220px;display:flex;justify-content:space-between;align-items:center;transition:transform .1s}.primary:hover{transform:translateY(-2px);background:#adffdb}.hint{font-size:10px;color:#829aa1;letter-spacing:1px;margin-top:18px}.message{position:absolute;z-index:2;top:22%;width:100%;text-align:center;font:900 80px 'Barlow Condensed';letter-spacing:4px;pointer-events:none;color:white;text-shadow:0 4px 30px #000a;opacity:0;transform:scale(.8);transition:all .22s}.message.show{opacity:1;transform:scale(1)}.commentary-line{position:absolute;z-index:3;left:50%;top:79px;transform:translateX(-50%);min-width:240px;text-align:center;padding:8px 18px;border:1px solid #52cda544;border-radius:4px;background:#061d2acb;color:#9bf2cc;font:800 10px 'DM Sans';letter-spacing:2px;pointer-events:none;opacity:.95}.top-right #audio{font-size:15px}.match-stats{position:absolute;z-index:3;right:24px;bottom:136px;text-align:right;background:#021924d7;border:1px solid #5ff4b129;padding:9px 12px;color:#d7f8e7;font:800 10px 'DM Sans';letter-spacing:1.3px;pointer-events:none}[hidden]{display:none!important}
+.highlights-btn{margin-top:12px;background:#143c4b;color:#b9ffe0;border:1px solid #57c9a3}
+.highlights-btn:hover{background:#235566}
+.replay-screen{position:fixed;z-index:4;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.26),transparent 24%,transparent 75%,rgba(0,0,0,.47))}
+.replay-screen.hidden{display:none}
+.replay-top{position:absolute;left:24px;right:24px;top:93px;display:flex;align-items:center;gap:18px;color:#f5fff8;letter-spacing:1.4px;font:800 15px 'Barlow Condensed',Arial}
+.replay-marker{background:#10262bcf;color:#7bffc8;border-left:4px solid #71fac2;padding:9px 12px;font-size:12px}
+#replay-title{font-size:19px}
+#replay-counter{margin-left:auto;color:#daffee;font-size:13px}
+.replay-bottom{position:absolute;bottom:118px;left:24px;right:24px;display:flex;align-items:center;gap:14px;color:#f2fff7;font:800 11px 'DM Sans',Arial}
+.replay-progress{height:5px;background:#31535f;flex:1;border-radius:10px;overflow:hidden}
+.replay-progress span{display:block;width:0;height:100%;background:#7affc6}
+#skip-replay{pointer-events:auto;background:#042630d9;color:#e3fff0;border:1px solid #67ebaf;border-radius:8px;padding:13px 16px;cursor:pointer;font-weight:800;letter-spacing:.6px}
+#skip-replay:hover{background:#134b56}
+@media(max-width:620px){.replay-top{top:112px;left:12px;right:12px}.replay-bottom{bottom:116px;left:12px;right:12px;gap:8px}.replay-bottom>span{display:none}}
+@media(max-width:1000px){.controls{display:none}.action-hint{bottom:80px;font-size:9px}.brand,.top-right{min-width:unset}.brand small{display:none}.radar{width:120px}.club{padding:10px;font-size:13px}.clock{padding:10px}.hud,.bottom{left:12px;right:12px}}@media(max-width:620px){.brand{display:none}.scoreboard{margin:auto}.top-right{position:absolute;right:0;top:60px}.radar{display:none}.panel{margin:20px}.panel h1{font-size:70px}}
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.8 · ANIMATED KEEPERS</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.9 · REPLAYS</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
-<div class="message" id="message">KICK OFF</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.8</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><div class="difficulty-panel">
+<div class="message" id="message">KICK OFF</div>
+<div class="replay-screen hidden" id="replay-screen" aria-live="polite">
+ <div class="replay-top"><span class="replay-marker">● INSTANT REPLAY</span><strong id="replay-title">GOAL REPLAY</strong><span id="replay-counter">0 / 0</span></div>
+ <div class="replay-bottom"><span>STRIKER FC 26 · MATCH REPLAY</span><div class="replay-progress"><span id="replay-progress"></span></div><button id="skip-replay" aria-label="Skip replay">SKIP REPLAY <span>↗</span></button></div>
+</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.9</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><div class="difficulty-panel">
 <label for="difficulty">MATCH DIFFICULTY</label>
 <select id="difficulty" aria-label="Match difficulty">
 <option value="beginner" selected>🟢 Beginner · Learning the controls</option>
@@ -23,7 +42,8 @@
 <p class="difficulty-note" id="difficulty-description">Slow opponents, less pressure and more time on the ball</p>
 <p class="difficulty-note">Change difficulty any time while paused.</p>
 </div>
-<button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
+<button class="primary" id="start">START MATCH <span>↗</span></button>
+<button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
 <script type="module">
 let THREE;
 try {
@@ -267,6 +287,125 @@ let state='menu',matchTime=0,score=[0,0],controlled=0,announcement=0,last=perfor
 let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0;
 let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
 let possessionTime=[0,0],shots=[0,0],saves=[0,0];
+// 12fps rolling match recording: stores actual positions and articulated poses.
+const REPLAY_STEP=1/12,REPLAY_WINDOW=8,MAX_HIGHLIGHTS=10;
+let replayHistory=[],highlightClips=[],replaySample=0,replaySession=null;
+function captureReplayFrame(){
+ return {t:matchTime,
+  ball:[ball.x,ball.y,ball.z,ball.vx,ball.vz],
+  controlled,
+  players:players.map(p=>{
+   const c=p.rig.character,l=p.rig.limbs;
+   return [p.x,p.z,p.mesh.rotation.y,p.vx,p.vz,c.position.x,c.position.y,c.position.z,
+    c.rotation.x,c.rotation.z,p.rig.outfit.position.y,
+    l[0].arm.rotation.x,l[0].arm.rotation.z,l[0].leg.rotation.x,l[0].leg.rotation.z,
+    l[1].arm.rotation.x,l[1].arm.rotation.z,l[1].leg.rotation.x,l[1].leg.rotation.z];
+  })
+ };
+}
+function recordReplayFrame(dt=0,forced=false){
+ if(state!=='playing')return;
+ replaySample+=dt;
+ if(!forced&&replaySample<REPLAY_STEP)return;
+ replaySample=0;
+ replayHistory.push(captureReplayFrame());
+ const edge=matchTime-REPLAY_WINDOW;
+ while(replayHistory.length>1&&replayHistory[0].t<edge)replayHistory.shift();
+}
+function highlightClip(type,team){
+ recordReplayFrame(0,true);
+ if(replayHistory.length<2)return null;
+ const end=matchTime;
+ const frames=replayHistory.filter(frame=>frame.t>=end-6);
+ if(frames.length<2)return null;
+ const clip={type,team,frames};
+ highlightClips.push(clip);
+ if(highlightClips.length>MAX_HIGHLIGHTS)highlightClips.shift();
+ return clip;
+}
+function setReplayPose(frameA,frameB,blend){
+ const lerp=(a,b)=>a+(b-a)*blend;
+ const pos=frameA.ball.map((v,i)=>lerp(v,frameB.ball[i]));
+ ball.x=pos[0];ball.y=pos[1];ball.z=pos[2];ball.vx=pos[3];ball.vz=pos[4];
+ ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
+ for(let j=0;j<players.length;j++){
+  const p=players[j],a=frameA.players[j],b=frameB.players[j];
+  const v=a.map((value,i)=>lerp(value,b[i]));
+  p.x=v[0];p.z=v[1];p.vx=v[3];p.vz=v[4];
+  p.mesh.position.set(p.x,0,p.z);
+  const yawDelta=Math.atan2(Math.sin(b[2]-a[2]),Math.cos(b[2]-a[2]));
+  p.mesh.rotation.y=a[2]+yawDelta*blend;
+  const c=p.rig.character;
+  c.position.set(v[5],v[6],v[7]);
+  c.rotation.set(v[8],0,v[9]);p.rig.outfit.position.y=v[10];
+  for(let side=0;side<2;side++){
+   const off=11+side*4,l=p.rig.limbs[side];
+   l.arm.rotation.x=v[off];l.arm.rotation.z=v[off+1];
+   l.leg.rotation.x=v[off+2];l.leg.rotation.z=v[off+3];
+  }
+  p.ring.visible=j===frameA.controlled;
+  p.rig.pointer.visible=j===frameA.controlled;
+  p.rig.ownerMarker.visible=false;
+ }
+ updateRadar();
+}
+function startReplay(clip,mode='goal',queue=[]){
+ if(!clip||clip.frames.length<2)return false;
+ cancelShot();
+ const saved=mode==='highlights'&&!replaySession?captureReplayFrame():replaySession?.saved;
+ replaySession={clip,mode,queue:[...queue],saved,playTime:clip.frames[0].t,index:0,hold:0};
+ state='replay';
+ $('overlay').classList.add('hidden');
+ $('replay-screen').classList.remove('hidden');
+ $('replay-title').textContent=(clip.type==='GOAL'?'⚽ GOAL':'🧤 BIG SAVE')+' · '+(clip.team===0?'STRIKER':'RIVALS');
+ $('replay-counter').textContent=mode==='highlights'?'HIGHLIGHT REEL':'AUTOMATIC REPLAY';
+ $('replay-progress').style.width='0%';
+ $('status').textContent='REPLAY';
+ return true;
+}
+function endReplay(){
+ if(state!=='replay'||!replaySession)return;
+ const session=replaySession;
+ if(session.mode==='highlights'&&session.queue.length){
+  const next=session.queue.shift();startReplay(next,'highlights',session.queue);return;
+ }
+ replaySession=null;
+ $('replay-screen').classList.add('hidden');
+ if(session.mode==='goal'){
+  resetPositions(1-session.clip.team);
+  state='playing';
+  $('status').textContent='LIVE MATCH';
+  say('KICK OFF',.9);
+ }else{
+  if(session.saved)setReplayPose(session.saved,session.saved,0);
+  state='finished';
+  $('status').textContent='FULL TIME';
+  $('overlay').classList.remove('hidden');
+ }
+}
+function updateReplay(dt){
+ const s=replaySession;
+ if(!s||state!=='replay')return;
+ const frames=s.clip.frames,last=frames[frames.length-1];
+ s.playTime+=dt*.76;
+ if(s.playTime>=last.t){
+  s.playTime=last.t;s.hold+=dt;
+  if(s.hold>.55){endReplay();return}
+ }
+ while(s.index<frames.length-2&&frames[s.index+1].t<s.playTime)s.index++;
+ const a=frames[s.index],b=frames[Math.min(s.index+1,frames.length-1)];
+ const blend=b.t>a.t?Math.max(0,Math.min(1,(s.playTime-a.t)/(b.t-a.t))):0;
+ setReplayPose(a,b,blend);
+ const progress=(s.playTime-frames[0].t)/Math.max(.01,last.t-frames[0].t);
+ $('replay-progress').style.width=(progress*100).toFixed(1)+'%';
+}
+function watchHighlights(){
+ if(state!=='finished'||highlightClips.length===0)return;
+ const clips=highlightClips.slice(-6);
+ startReplay(clips[0],'highlights',clips.slice(1));
+}
+$('skip-replay').addEventListener('click',endReplay);
+$('highlights').addEventListener('click',watchHighlights);
 const DIFFICULTIES={
  beginner:{name:'BEGINNER',description:'Slow opponents, less pressure and more time on the ball',opponentSpeed:.60,opponentPressers:1,opponentTackle:.08,opponentTackleRange:2.8,opponentPassError:.3,opponentShootChance:.13,opponentShotRange:26,opponentThink:1.8,opponentCarry:5.0,opponentKeeper:-.21,teammateSpeed:1.20,homeTackle:1.25,homeKeeper:.2},
  amateur:{name:'AMATEUR',description:'Gentler defending with opportunities to attack',opponentSpeed:.78,opponentPressers:1,opponentTackle:.34,opponentTackleRange:3.7,opponentPassError:.14,opponentShootChance:.35,opponentShotRange:35,opponentThink:1.3,opponentCarry:4.0,opponentKeeper:-.10,teammateSpeed:1.10,homeTackle:1.12,homeKeeper:.10},
@@ -302,6 +441,7 @@ function updatePlayerUI(){
  $('player-name').textContent=names[p.team][p.index];$('player-role').textContent=f.role;
 }
 function resetPositions(kickoffTeam=0){
+ replayHistory=[];replaySample=0;
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
@@ -317,6 +457,7 @@ function resetPositions(kickoffTeam=0){
 function newMatch(){
  cameraFocus.set(0,0,0);
  score=[0,0];possessionTime=[0,0];shots=[0,0];saves=[0,0];matchTime=0;lastManualSwitch=-10;
+ highlightClips=[];replaySession=null;$('replay-screen').classList.add('hidden');$('highlights').hidden=true;
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
@@ -560,6 +701,10 @@ window.addEventListener('keydown',e=>{
  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
  if(keys.has(e.code))return;
  keys.add(e.code);
+ if(state==='replay'){
+  if(['KeyR','Escape','Space','Enter'].includes(e.code))endReplay();
+  return;
+ }
  if(e.code==='KeyP'||e.code==='Escape'){togglePause();return}
  if(e.code==='KeyC'){changeCamera();return}
  if(e.code==='KeyM'){$('audio').click();return}
@@ -644,6 +789,7 @@ function advance(dt){
  $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
  if(matchTime>=MATCH_SECONDS){
   state='finished';cancelShot();$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
+  $('highlights').hidden=highlightClips.length===0;
   $('start').textContent='PLAY AGAIN ↗';
   document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
   const total=possessionTime[0]+possessionTime[1]||1;
@@ -848,15 +994,18 @@ function advance(dt){
      say('WHAT A SAVE!',1.1);
     }
     playMatchSound('save');ball.isShot=false;
+    highlightClip('SAVE',defendingTeam);
    }else keeper.keeperTime=Math.max(keeper.keeperTime,.11);
   }
  }
+ recordReplayFrame(dt);
  if(Math.abs(ball.z)>=HL){
   if(Math.abs(ball.x)<GOAL_W/2&&ball.y<6.35){
    const who=ball.z<0?0:1;score[who]++;
    $('home-score').textContent=score[0];$('away-score').textContent=score[1];
    say(who===0?'GOOOAL! ⚽':'RIVALS SCORE',2);playMatchSound('goal');
-   resetPositions(1-who);
+   const clip=highlightClip('GOAL',who);
+   if(!clip||!startReplay(clip,'goal'))resetPositions(1-who);
   }else{
    const defendingTeam=ball.z<0?1:0,attackingTeam=1-defendingTeam;
    const touchedBy=ball.lastTouchTeam??attackingTeam;
@@ -879,6 +1028,16 @@ function updateRadar(){players.forEach((p,i)=>{dots[i].style.left=(50+p.x/FIELD_
 
 // FIFA-inspired "Tele Broadcast": closer to the players and continuously follows the play.
 const cameraFocus=new THREE.Vector3(0,0,0);
+function drawReplayCamera(dt){
+ const followRate=1-Math.exp(-dt*5.2),aimRate=1-Math.exp(-dt*6.5);
+ const sx=clamp(ball.x,-HW+6,HW-6),sz=clamp(ball.z,-HL+6,HL-6);
+ const goalSide=replaySession?.clip.team===0?-1:1;
+ const aim=new THREE.Vector3(sx,0,sz+goalSide*3);
+ const target=new THREE.Vector3(sx+80,51,sz+12);
+ camera.position.lerp(target,followRate);
+ cameraFocus.lerp(aim,aimRate);
+ camera.lookAt(cameraFocus);
+}
 function drawCamera(dt){
  const p=controlledPlayer();
  const followRate=1-Math.exp(-dt*5.2);
@@ -908,7 +1067,14 @@ function drawCamera(dt){
  }
 }
 resetPositions();camera.position.set(104,72,9);camera.lookAt(0,0,0);updateRadar();
-function frame(t){requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;if(state==='playing')advance(dt);if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}drawCamera(dt);renderer.render(scene,camera)}requestAnimationFrame(frame);
+function frame(t){
+ requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;
+ if(state==='playing')advance(dt);
+ else if(state==='replay')updateReplay(dt);
+ if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}
+ if(state==='replay')drawReplayCamera(dt);else drawCamera(dt);
+ renderer.render(scene,camera);
+}requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
 </script></body></html>
