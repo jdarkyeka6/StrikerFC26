@@ -4,10 +4,10 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.5 · FULL-SIZE PITCH</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.6 · FOLLOW CAM</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.5</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size football at last: a bigger 11v11 pitch, wider 4-3-3 formations and a pulled-back TV camera. More space, fewer scrums.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.6</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Full-size 11v11 with a closer FIFA-inspired TV camera that follows the ball and the player. Your formations stay spread across the pitch, while the view moves with the action.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
 <script type="module">
 let THREE;
 try {
@@ -245,6 +245,7 @@ function resetPositions(kickoffTeam=0){
  kicker.hasBall=true;selectPlayer(players[0]);
 }
 function newMatch(){
+ cameraFocus.set(0,0,0);
  score=[0,0];possessionTime=[0,0];shots=[0,0];saves=[0,0];matchTime=0;lastManualSwitch=-10;
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
@@ -779,27 +780,37 @@ function advance(dt){
 const dots=players.map(p=>{const el=document.createElement('div');el.className='dot '+(p.team===0?'a':'b');$('radar').append(el);return el});const ballDot=document.createElement('div');ballDot.className='dot ball';$('radar').append(ballDot);
 function updateRadar(){players.forEach((p,i)=>{dots[i].style.left=(50+p.x/FIELD_W*88)+'%';dots[i].style.top=(50+p.z/FIELD_L*86)+'%';dots[i].classList.toggle('active',p===controlledPlayer())});ballDot.style.left=(50+ball.x/FIELD_W*88)+'%';ballDot.style.top=(50+ball.z/FIELD_L*86)+'%'}
 
+// FIFA-inspired "Tele Broadcast": closer to the players and continuously follows the play.
 const cameraFocus=new THREE.Vector3(0,0,0);
 function drawCamera(dt){
  const p=controlledPlayer();
- const t=1-Math.exp(-dt*3.7),look=1-Math.exp(-dt*5.5);
+ const followRate=1-Math.exp(-dt*5.2);
+ const aimRate=1-Math.exp(-dt*7.0);
  if(cameraMode==='broadcast'){
-  // Broadcast touchline camera pans across the whole field, including both goals.
-  const follow=clamp(ball.z*.72+p.z*.28,-HL*.66,HL*.66);
-  const focus=new THREE.Vector3(ball.x*.13,0,follow);
-  const desired=new THREE.Vector3(174*cameraZoom,113*cameraZoom,follow+8);
-  camera.position.lerp(desired,t);
-  cameraFocus.lerp(focus,look);
+  // Ball-first tracking with a little player bias and movement look-ahead.
+  // Unlike the old fixed camera, BOTH position and target travel up/downfield.
+  const leadZ=clamp(ball.owner?.vz??ball.vz,-45,45)*.14;
+  const leadX=clamp(ball.owner?.vx??ball.vx,-32,32)*.10;
+  const followZ=clamp(ball.z+clamp(p.z-ball.z,-22,22)*.16+leadZ,-HL+9,HL-9);
+  const followX=clamp(ball.x+clamp(p.x-ball.x,-18,18)*.12+leadX,-HW+7,HW-7);
+  // Close touchline broadcast angle; 105×68 metre pitch remains unchanged.
+  const focus=new THREE.Vector3(followX,0,followZ);
+  const desired=new THREE.Vector3(followX+104*cameraZoom,72*cameraZoom,followZ+9);
+  camera.position.lerp(desired,followRate);
+  cameraFocus.lerp(focus,aimRate);
   camera.lookAt(cameraFocus);
  }else{
-  const focus=new THREE.Vector3(ball.x*.55+p.x*.45,0,ball.z*.70+p.z*.30-11);
-  const desired=new THREE.Vector3(focus.x,112*cameraZoom,focus.z+128*cameraZoom);
-  camera.position.lerp(desired,t);
-  cameraFocus.lerp(focus,look);
+  // Classic camera also follows the action instead of staring from midfield.
+  const followX=clamp(ball.x*.72+p.x*.28,-HW+8,HW-8);
+  const followZ=clamp(ball.z*.78+p.z*.22,-HL+10,HL-10);
+  const focus=new THREE.Vector3(followX,0,followZ-6);
+  const desired=new THREE.Vector3(followX,80*cameraZoom,followZ+87*cameraZoom);
+  camera.position.lerp(desired,followRate);
+  cameraFocus.lerp(focus,aimRate);
   camera.lookAt(cameraFocus);
  }
 }
-resetPositions();camera.position.set(174,113,7);camera.lookAt(0,0,0);updateRadar();
+resetPositions();camera.position.set(104,72,9);camera.lookAt(0,0,0);updateRadar();
 function frame(t){requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;if(state==='playing')advance(dt);if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}drawCamera(dt);renderer.render(scene,camera)}requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
