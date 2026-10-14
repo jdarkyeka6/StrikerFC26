@@ -1,40 +1,47 @@
 # Striker FC 26 ⚽
 
-An original 3D football game in browser-first pre-alpha development.
+An original browser-first 3D football game. **Pre-alpha 0.3** has full 11v11 arcade matches.
 
-## Pre-alpha 0.2
+## Gameplay in 0.3
 
-- **11v11**: Two full teams in 4-3-3 with named players, attackers, midfielders, defenders and a goalkeeper.
-- **Larger pitch**: 96 × 156 world-unit pitch, new scaled field markings, expanded stadium.
-- **Broadcast camera**: A sideline FIFA-style view as the default; press **C** to toggle the original camera.
-- **Positional AI**: At most two defenders per side press/cover the ball while the rest hold positions. Attackers make runs, midfielders support, and defenders hold a line.
-- **Gameplay**: Passing, shooting, tackling, player switching, scoreboard, match clock and four-minute matches.
-
-## Play
-
-Open the deployed website, or save `index.html` and open it in an up-to-date browser. No local Node.js installation is needed. The Three.js library is loaded from a public CDN, so an internet connection and access to jsDelivr are required.
+- **Smoother dribbling**: improved acceleration, turning, momentum and ball touches.
+- **Directional passing**: pass selection weighs your movement direction, open receivers and intercepted passing lanes.
+- **Through balls**: lead a teammate into space.
+- **Smart receiving**: pass recipients run toward the ball when not being manually steered.
+- **Switching**: Q cycles nearby teammates; team possession returns control to the carrier.
+- **Defending**: limited pressing players, timed tackles, recovery/cooldowns and jockey movement.
+- **Charged shooting**: hold Space to build shot power, release to shoot toward the goal.
+- **Full-field broadcast camera** with smoother tracking, plus a toggleable classic perspective.
+- **11v11 formation AI** with attackers, midfielders, defenders and goalkeepers.
+- 4-minute matches, scoreboard, minimap and restart.
 
 ## Controls
 
 | Key | Action |
 | --- | --- |
-| WASD / Arrow keys | Move relative to active camera |
+| WASD / arrow keys | Move (camera-relative in broadcast or classic view) |
 | Shift | Sprint |
-| Space | Shoot / Tackle |
-| E | Pass to best available teammate |
-| Q | Switch player |
-| C | Switch between broadcast and classic camera |
+| E | Directional pass |
+| R | Through ball |
+| Hold and release Space | Charge and shoot while possessing the ball |
+| Space | Timed tackle while defending |
+| F (hold) | Jockey while defending |
+| Q | Cycle nearby players / return to ball carrier |
+| C | Broadcast/classic camera |
 | P / Escape | Pause |
 
-## Deploy from GitHub to Vercel
+## Deploy to Vercel without installing Node.js
 
-1. Go to https://vercel.com/new and import `jdarkyeka6/StrikerFC26`.
-2. Use framework preset **Other**, with repository root `./`.
-3. Leave the Build Command and Output Directory blank (static HTML).
-4. Deploy. Any subsequent commit to `main` automatically updates the site once Git integration is connected.
+1. Open https://vercel.com/new.
+2. Import the GitHub repository `jdarkyeka6/StrikerFC26`.
+3. Framework preset **Other**; root directory `./`.
+4. Leave Build Command and Output Directory empty/default for a static HTML deployment.
+5. Deploy. Future pushes to `main` deploy automatically when Git integration is connected.
 
-## Future
+The entire current prototype lives in the root `index.html`. It requires an internet connection to load Three.js from jsDelivr; networks that block the CDN can prevent gameplay.
 
-Better keeper reactions, offsides, fouls, gamepad support, tactical formations, career mode, clubs, animations and online multiplayer.
+## Status and known limits
 
-Original independent project, not affiliated with FIFA or EA SPORTS.
+This is an arcade football prototype, **not** a complete FIFA/EA Sports FC replacement. It has no offside, fouls, substitutions, realistic character animations, multiplayer or full career mode yet. Directional passes and possession are simplified and will need real-device playtesting.
+
+Independent original game project; not affiliated with FIFA or EA SPORTS.
