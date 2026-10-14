@@ -339,8 +339,14 @@ function advance(dt){
  if(shotCharging){
   if(ball.owner!==controlledPlayer())cancelShot();
   else{
-   shotCharge=clamp(shotCharge+dt*.85,0,1);
+   // Fast arcade charge: full power in about 0.56s, then fire automatically.
+   shotCharge=clamp(shotCharge+dt*1.8,0,1);
    $('shot-fill').style.width=(shotCharge*100)+'%';
+   if(shotCharge>=1){
+    const shooter=controlledPlayer();
+    cancelShot();
+    if(ball.owner===shooter)kick(shooter,true,false,1);
+   }
   }
  }
  ball.lock=Math.max(0,ball.lock-dt);
