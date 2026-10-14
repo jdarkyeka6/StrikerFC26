@@ -1,6 +1,16 @@
 # ⚽ Striker FC 26
 
-An original browser-first, 3D football game in **pre-alpha 0.8: ANIMATED GOALKEEPERS**.
+An original browser-first, 3D football game in **pre-alpha 0.9: INSTANT REPLAYS & MATCH HIGHLIGHTS**.
+
+## Replays and match highlights (NEW in 0.9)
+
+- **Instant goal replays:** Every goal automatically triggers a closer, slower TV-style replay of the preceding action. The match clock pauses while it plays, and the next kickoff only starts after the replay or a skip.
+- **Post-match highlight reel:** The full-time panel offers **WATCH MATCH HIGHLIGHTS** if any goals or saves were recorded. Watch a selection of the last six goals or notable saves.
+- **Real recordings:** The game samples the positions and animated poses of all 22 players, plus the ball, at 12 frames per second using a rolling 8-second buffer. Replays interpolate the samples for smoother playback.
+- **Big saves:** Significant goalkeeper catches and parries are saved for the final reel rather than automatically interrupting live play.
+- **Replay controls:** Press **R**, **Escape**, **Space**, or **Enter** to skip, or click/tap **SKIP REPLAY**.
+- **Replay status:** A visible replay banner, event label, and progress indicator appear during playback.
+- Highlights are kept in memory for the current match. They are not exported as video files and are cleared when you start another match.
 
 ## Goalkeeper animations (NEW in 0.8)
 
@@ -40,7 +50,7 @@ The modes change real AI behaviour (speed, pressers, tackling, decision delay, s
 - Dribbling, sprinting, aim-assisted passes, through balls, lofted crosses, charged shooting, jockeying, timed tackling and player switching
 - Goalkeepers that react to shots and can make saves (and can be beaten!)
 - Throw-ins, corners, goal kicks, goal scoring, basic kickoffs and a four-minute match clock
-- Scoreboard, 2D minimap, match messages, possession / shot / save statistics and basic audio cues
+- Scoreboard, 2D minimap, match messages, possession / shot / save statistics, basic audio cues, automatic goal replays, and post-match highlights
 - Optional Standard Gamepad support (e.g., Xbox-style controllers)
 - Performance mode for slower school laptops
 
