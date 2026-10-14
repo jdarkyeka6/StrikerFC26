@@ -123,6 +123,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
+ document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.3: 11v11 positional AI, better dribbling, directed passes, through balls, charged shooting and timed defending.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -176,11 +177,11 @@ function passOptions(p,through=false){
 function bestPass(p,through=false){return passOptions(p,through)[0]}
 function takePossession(p){
  if(ball.owner===p)return;
+ if(shotCharging&&p!==controlledPlayer())cancelShot();
  if(ball.owner)ball.owner.hasBall=false;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;
  p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;
  if(p.team===0&&p.index!==10)selectPlayer(p);
- if(shotCharging&&p!==controlledPlayer())cancelShot();
 }
 function kick(p,shoot=false,through=false,power=.45){
  if(state!=='playing'||ball.owner!==p)return false;
@@ -188,8 +189,10 @@ function kick(p,shoot=false,through=false,power=.45){
  let tx,tz,strength,receiver=null;
  if(shoot){
   const steering=p===controlledPlayer()?playerMoveInput():null;
-  const aimX=steering?.moving?steering.x:p.faceX;
-  tx=clamp(p.x*.12+aimX*GOAL_W*.32+(Math.random()-.5)*(2.5+power*2),-GOAL_W/2+.8,GOAL_W/2-.8);
+  const aimX=steering?.moving?steering.x:0;
+  // Aim to the far post by default. Up/down while shooting steers the finish.
+  const post=aimX>.2?1:aimX<-.2?-1:(p.x<=0?1:-1);
+  tx=clamp(post*GOAL_W*.35+(Math.random()-.5)*(2.1+power*1.6),-GOAL_W/2+.7,GOAL_W/2-.7);
   tz=goalZ(p.team)+side*7;
   strength=79+power*23;
   ball.vy=2.8+power*1.9;
@@ -486,20 +489,24 @@ function advance(dt){
 const dots=players.map(p=>{const el=document.createElement('div');el.className='dot '+(p.team===0?'a':'b');$('radar').append(el);return el});const ballDot=document.createElement('div');ballDot.className='dot ball';$('radar').append(ballDot);
 function updateRadar(){players.forEach((p,i)=>{dots[i].style.left=(50+p.x/FIELD_W*88)+'%';dots[i].style.top=(50+p.z/FIELD_L*86)+'%';dots[i].classList.toggle('active',p===controlledPlayer())});ballDot.style.left=(50+ball.x/FIELD_W*88)+'%';ballDot.style.top=(50+ball.z/FIELD_L*86)+'%'}
 
+const cameraFocus=new THREE.Vector3(0,0,0);
 function drawCamera(dt){
  const p=controlledPlayer();
+ const t=1-Math.exp(-dt*3.7),look=1-Math.exp(-dt*5.5);
  if(cameraMode==='broadcast'){
-  // Side-on broadcast angle: goals are at the left/right edges, not top/bottom.
-  const follow=clamp(ball.z*.67+p.z*.17,-HL*.36,HL*.36);
-  const focus=new THREE.Vector3(ball.x*.12,0,follow);
-  const desired=new THREE.Vector3(128,86,follow+7);
-  camera.position.lerp(desired,Math.min(1,dt*2.7));
-  camera.lookAt(focus);
+  // Broadcast touchline camera pans across the whole field, including both goals.
+  const follow=clamp(ball.z*.83+p.z*.17,-HL*.80,HL*.80);
+  const focus=new THREE.Vector3(ball.x*.13,0,follow);
+  const desired=new THREE.Vector3(132,87,follow+8);
+  camera.position.lerp(desired,t);
+  cameraFocus.lerp(focus,look);
+  camera.lookAt(cameraFocus);
  }else{
-  const focus=new THREE.Vector3(ball.x*.5+p.x*.5,0,ball.z*.65+p.z*.35);
-  const desired=new THREE.Vector3(focus.x,83,focus.z+84);
-  camera.position.lerp(desired,Math.min(1,dt*2.7));
-  camera.lookAt(focus.x,0,focus.z-12);
+  const focus=new THREE.Vector3(ball.x*.55+p.x*.45,0,ball.z*.70+p.z*.30-11);
+  const desired=new THREE.Vector3(focus.x,83,focus.z+95);
+  camera.position.lerp(desired,t);
+  cameraFocus.lerp(focus,look);
+  camera.lookAt(cameraFocus);
  }
 }
 resetPositions();camera.position.set(128,86,7);camera.lookAt(0,0,0);updateRadar();
