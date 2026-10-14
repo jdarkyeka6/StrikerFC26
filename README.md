@@ -1,6 +1,6 @@
 # ⚽ Striker FC 26
 
-An original browser-first, 3D football game in **pre-alpha 0.5: FULL-SIZE PITCH**.
+An original browser-first, 3D football game in **pre-alpha 0.6: FOLLOW CAM**.
 
 ## What's playable now
 
@@ -8,7 +8,8 @@ An original browser-first, 3D football game in **pre-alpha 0.5: FULL-SIZE PITCH*
 - Smaller proportionate player and ball models, making the field feel genuinely full-sized
 - Re-spaced 4-3-3 formations: wider wingers and full-backs; separated attacking, midfield and defensive lines
 - Tactical players shifting forward with possession and dropping back without it, rather than gathering around the ball
-- Wider, pulled-back default broadcast camera; zoom still adjustable using Z / X
+- FIFA-inspired broadcast camera brought closer to the pitch: it smoothly tracks the ball and controlled player, with forward movement look-ahead
+- Full-size pitch and spaced formations retained; zoom is still adjustable with Z / X
 - Humanoid player models with shirts, numbered kits, animated running legs and arms, and on-pitch selection markers
 - FIFA-style sideline broadcast camera with adjustable zoom; an optional classic camera
 - Dribbling, sprinting, aim-assisted passes, through balls, lofted crosses, charged shooting, jockeying, timed tackling and player switching
