@@ -247,7 +247,7 @@ function animatePlayer(p,dt){
     c.position.x=side*3.65*r;
     c.position.y=(p.keeperHeight>3?1.04:.42)*Math.sin(Math.PI*u);
     for(const limb of p.rig.limbs){
-     limb.arm.rotation.x=-1.1*r;limb.arm.rotation.z=-side*(limb.side===p.keeperDir?.95:.46)*r;
+     limb.arm.rotation.x=-1.1*r;limb.arm.rotation.z=-side*(limb.side===p.keeperDir ? .95 : .46)*r;
      limb.leg.rotation.x=limb.side*.45*r;limb.leg.rotation.z=limb.side*.34*r;
     }
    }else if(p.keeperAction==='kick'){
@@ -320,7 +320,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.7. Pick your difficulty to control how aggressive and accurate the opponents are.';
+ document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.8. New animated keepers dive, catch, parry and recover. Choose your match difficulty before kickoff.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -809,7 +809,12 @@ function advance(dt){
    }
   }
  }
- ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
+ // If the keeper cleanly catches a shot, show the ball held between the gloves.
+ const keeperCarry=ball.owner?.index===10&&ball.owner.keeperAction==='catch';
+ if(keeperCarry){
+  const k=ball.owner;
+  ballMesh.position.set(k.x+k.faceX*.45,1.62,k.z+k.faceZ*.55);
+ }else ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
  ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
  if(!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-29&&Math.abs(ball.x)<GOAL_W/2+10){
   const defendingTeam=ball.z<0?1:0,keeper=players[defendingTeam*11+10];
