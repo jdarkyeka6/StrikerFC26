@@ -5,21 +5,25 @@
 </style></head><body>
 <div id="game"></div>
 <header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>PRE-ALPHA 0.4 · MATCHDAY</small></div></div><div class="scoreboard"><div class="club home">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
-<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
+<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE</kbd> Hold/release shoot · Tackle</div><div><kbd>E</kbd> Directional pass</div><div><kbd>R</kbd> Through ball</div><div><kbd>T</kbd> Cross</div><div><kbd>Q</kbd> Switch</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
 <div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / PRE-ALPHA 0.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>Our own 3D football game begins here. Play an upgraded 11v11 football match with animated players, broadcast cameras, responsive passing, defending, crosses and goalkeeper saves. Play with keyboard or controller.</p><div class="features"><span>⚽ 3D MATCH ENGINE</span><span>🧠 POSITIONAL TEAM AI</span><span>🎮 KEYBOARD CONTROLS</span></div><button class="primary" id="start">START MATCH <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
 <script type="module">
 let THREE;
 try {
   THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-} catch (error) {
-  const panel = document.querySelector('.panel');
+} catch (primaryError) {
+  try {
+    THREE = await import('https://esm.sh/three@0.180.0');
+  } catch (error) {
+    const panel = document.querySelector('.panel');
   if (panel) {
     panel.querySelector('h1').innerHTML = 'CONNECTION<br/><em>NEEDED.</em>';
     panel.querySelector('p').textContent = 'This no-install build loads its 3D engine from the internet. The library could not be reached. Check your internet connection, or try a network where the game library is permitted.';
     panel.querySelector('#start').style.display = 'none';
   }
-  throw error;
+    throw error;
+  }
 }
 
 
@@ -50,6 +54,7 @@ function arc(cx,cz,r,a0,a1){let v=[];for(let i=0;i<=80;i++){let a=a0+(a1-a0)*i/8
 function goal(z){let group=new THREE.Group();const post=mat('#ecfff7');function bar(x,y,zz,w,h,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),post);m.position.set(x,y,zz);m.castShadow=true;group.add(m)}const dir=Math.sign(z);bar(-GOAL_W/2,3.3,z,.48,6.6,.48);bar(GOAL_W/2,3.3,z,.48,6.6,.48);bar(0,6.6,z,GOAL_W+.48,.48,.48);const net=new THREE.LineBasicMaterial({color:0xbbffdd,transparent:true,opacity:.24});for(let i=-GOAL_W/2;i<=GOAL_W/2;i+=2){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i,0,z),new THREE.Vector3(i,5,z+dir*5),new THREE.Vector3(i,0,z+dir*5)]);group.add(new THREE.Line(g,net))}for(let h=1;h<=5;h++){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-GOAL_W/2,h,z+dir*5),new THREE.Vector3(GOAL_W/2,h,z+dir*5)]);group.add(new THREE.Line(g,net))}scene.add(group)}goal(-HL);goal(HL);
 const stands=mat('#102d38'); for(const side of [-1,1]){const m=new THREE.Mesh(new THREE.BoxGeometry(19,10,FIELD_L+32),stands);m.position.set(side*(HW+17),1,0);scene.add(m);for(let i=0;i<9;i++){const strip=new THREE.Mesh(new THREE.BoxGeometry(16,.35,FIELD_L+28),mat(i%2?'#204957':'#285361'));strip.position.set(side*(HW+12+i*.8),2+i*.9,0);scene.add(strip)}}
 // Lightweight crowd and LED boards use instanced geometry so school laptops survive.
+let stadiumCrowd=null;
 (function buildStadium(){
  const boardMaterials=[];
  for(const title of ['STRIKER FC 26','THE NEXT MATCH','BUILT BY JAKE','FOOTBALL IS OURS']){
@@ -85,7 +90,7 @@ const stands=mat('#102d38'); for(const side of [-1,1]){const m=new THREE.Mesh(ne
  }
  crowd.instanceMatrix.needsUpdate=true;
  if(crowd.instanceColor)crowd.instanceColor.needsUpdate=true;
- scene.add(crowd);
+ scene.add(crowd);stadiumCrowd=crowd;
  // Visible end stands and four floodlight gantries frame the full field.
  for(const side of [-1,1]){
   const end=new THREE.Mesh(new THREE.BoxGeometry(FIELD_W+39,12,16),mat('#123747'));
@@ -207,7 +212,7 @@ for(let team=0;team<2;team++)for(let i=0;i<11;i++)makePlayer(team,i);
 const $=id=>document.getElementById(id), keys=new Set();
 let state='menu',matchTime=0,score=[0,0],controlled=0,announcement=0,last=performance.now(),cameraMode='broadcast';
 let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0;
-let cameraZoom=1,muted=false,matchAudio=null;
+let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
 let possessionTime=[0,0],shots=[0,0],saves=[0,0];
 const padHeld=new Set();
 const controlledPlayer=()=>players[controlled];
@@ -481,6 +486,7 @@ window.addEventListener('keydown',e=>{
  if(e.code==='KeyP'||e.code==='Escape'){togglePause();return}
  if(e.code==='KeyC'){changeCamera();return}
  if(e.code==='KeyM'){$('audio').click();return}
+ if(e.code==='KeyG'){toggleGraphics();return}
  if(e.code==='KeyZ'){cameraZoom=clamp(cameraZoom*1.12,.75,1.55);return}
  if(e.code==='KeyX'){cameraZoom=clamp(cameraZoom/1.12,.75,1.55);return}
  if(state!=='playing')return;
@@ -501,6 +507,14 @@ window.addEventListener('keyup',e=>{
  }
 });
 window.addEventListener('blur',()=>{keys.clear();cancelShot()});
+function toggleGraphics(){
+ lowGraphics=!lowGraphics;
+ renderer.setPixelRatio(Math.min(devicePixelRatio,lowGraphics?1:2));
+ renderer.shadowMap.enabled=!lowGraphics;
+ sun.castShadow=!lowGraphics;
+ if(stadiumCrowd)stadiumCrowd.visible=!lowGraphics;
+ say(lowGraphics?'PERFORMANCE MODE':'HIGH GRAPHICS MODE',1);
+}
 function changeCamera(){
  cameraMode=cameraMode==='broadcast'?'classic':'broadcast';
  $('cam').textContent=cameraMode==='broadcast'?'📹':'🎥';
