@@ -75,7 +75,7 @@
 </style></head><body>
 <div id="game"></div>
 <header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.4 · MATCHDAY</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
-<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
+<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span><small id="player-energy">ENERGY 100%</small></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
 <div class="half-panel hidden" id="half-panel"><div class="half-card"><div class="eyebrow" id="half-eyebrow">HALF TIME</div><h2 id="half-heading">THE BREAK</h2><div class="half-score" id="half-score">0 : 0</div><p id="half-subtitle">Time to change the game plan.</p>
 <div class="half-coach"><label class="setup-control">SECOND-HALF TACTIC
@@ -582,7 +582,7 @@ function makeSubstitution(prefix='pause'){
  if(!p||p.sentOff)return false;
  // Substitute assumes the on-pitch spot, without changing possession.
  if(setPiece?.taker===p)setPiece.taker=p;
- names[0][slot]=b.name;p.stamina=100;p.paceBonus=b.pace;
+ names[0][slot]=b.name;p.squadNumber=b.number;p.stamina=100;p.paceBonus=b.pace;
  p.tackleWindow=0;p.tackleCooldown=0;p.tackleRecover=0;
  p.vx*=.35;p.vz*=.35;
  const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
@@ -854,7 +854,7 @@ function selectPlayer(p,manual=false){
 }
 function updatePlayerUI(){
  const p=controlledPlayer(),f=roleOf(p);
- $('player-number').textContent=String(f.no).padStart(2,'0');
+ $('player-number').textContent=String(p.squadNumber||f.no).padStart(2,'0');
  $('player-name').textContent=names[p.team][p.index];$('player-role').textContent=f.role;
 }
 function resetPositions(kickoffTeam=0){
@@ -902,7 +902,7 @@ function newMatch(){
  subsUsed=0;usedBench.clear();replacedSlots.clear();
  for(let i=0;i<11;i++)names[0][i]=INITIAL_HOME_NAMES[i];
  for(const p of players){
-  p.stamina=100;p.paceBonus=1;
+  p.stamina=100;p.paceBonus=1;p.squadNumber=formation[p.index].no;
   if(p.team===0&&p.index<10){
    const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
    if(numberMesh){numberMesh.material.map=jerseyTexture(0,formation[p.index].no);numberMesh.material.needsUpdate=true}
@@ -1011,13 +1011,14 @@ function crossBall(p){
  if(!targets)return false;
  let tx=targets.bx,tz=targets.bz;
  const dir=norm(tx-p.x,tz-p.z);
+ pendingOffside=isOffsideAtKick(targets.q,p)?{team:p.team,receiver:targets.q,expires:matchTime+4}:null;
  startPlayerAction(p,'cross',.9);
  p.hasBall=false;ball.owner=null;ball.lock=.28;
  ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;ball.passTime=2.3;
  passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
  ball.vx=dir.x*clamp(targets.d*1.25+27,45,90);
  ball.vz=dir.z*clamp(targets.d*1.25+27,45,90);
- ball.vy=12;ball.y=1.3;ball.x=p.x+dir.x*2.2;ball.z=p.z+dir.z*2.2;
+ ball.vy=12;ball.y=1.3;ball.restartKind=null;ball.x=p.x+dir.x*2.2;ball.z=p.z+dir.z*2.2;
  if(targets.q.team===0)selectPlayer(targets.q);
  playMatchSound('shot');say('CROSS INTO THE BOX',.85);return true;
 }
@@ -1126,6 +1127,7 @@ function takePossession(p){
    return;
   }
  }
+ ball.restartKind=null;
  if(lastPass){
   if(p.team===lastPass.team&&matchTime-lastPass.t<=4)passesCompleted[p.team]++;
   lastPass=null;
@@ -1732,6 +1734,8 @@ function advance(dt){
   }
  }
  $('stamina-bar').style.height=controlledPlayer().stamina+'%';
+ $('stamina-bar').style.background=controlledPlayer().stamina<25?'#ff6d6d':controlledPlayer().stamina<55?'#f6d66a':'#82fac4';
+ $('player-energy').textContent='ENERGY '+Math.round(controlledPlayer().stamina)+'%';
  const possessionTotal=possessionTime[0]+possessionTime[1]||1;
  $('match-stats').textContent='POSSESSION '+Math.round(possessionTime[0]*100/possessionTotal)+' / '+Math.round(possessionTime[1]*100/possessionTotal)+'  ·  SHOTS '+shots[0]+' - '+shots[1]+'  ·  SAVES '+saves[0]+' - '+saves[1];
  const possession=ball.owner?.team===0&&ball.owner===controlledPlayer();
