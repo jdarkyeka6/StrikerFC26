@@ -1363,28 +1363,35 @@ function isOffsideAtKick(receiver,passer){
  return secondLast!==undefined&&advanced>secondLast+1.1;
 }
 function passOptions(p,through=false){
- const face=norm(p.faceX,p.faceZ),side=teams[p.team].dir;
- const moving=(p===controlledPlayer()&&playerMoveInput().moving);
- const aim=moving?norm(playerMoveInput().x,playerMoveInput().z):face;
+ const face=norm(p.faceX,p.faceZ),side=teams[p.team].dir,manual=p===controlledPlayer();
+ const input=manual?playerMoveInput():null;
+ const moving=!!input?.moving;
+ const aim=moving?norm(input.x,input.z):face;
  return teamMates(p).map(q=>{
   const d=distance(p,q),flight=clamp(d/67,.2,1.15);
-  const lead=through?1.0:.52;
+  // Predict a runner's position when the ball actually reaches them.
+  const lead=through?1.12:.50;
   const tx=clamp(q.x+q.vx*flight*lead,-HW+3,HW-3);
-  const tz=clamp(q.z+q.vz*flight*lead+(through?side*8:0),-HL+5,HL-5);
+  const tz=clamp(q.z+q.vz*flight*lead+(through?side*(7+Math.min(6,d*.08)):0),-HL+5,HL-5);
   const v=norm(tx-p.x,tz-p.z);
   const dot=aim.x*v.x+aim.z*v.z;
   const forward=(tz-p.z)*side;
   const open=practiceMode?30:players.filter(o=>o.team!==p.team&&!o.sentOff).reduce((m,o)=>Math.min(m,distance(o,{x:tx,z:tz})),30);
   const lane=passLaneRisk(p,{x:tx,z:tz},q);
   // Direction outweighs simple closeness; passing into crowded lanes is penalised.
-  let score=dot*40+forward*.14-Math.abs(d-(through?35:25))*.22+Math.min(open,19)*.75-lane*2;
-  if(d>76||d<7)score-=45;
+  let score=dot*(manual&&moving?72:34)+forward*(through?.22:.12)
+   -Math.abs(d-(through?37:25))*.20+Math.min(open,19)*1.1-lane*2.65;
+  if(d>83||d<6)score-=54;
+  if(manual&&moving&&dot<.05)score-=100; // Avoid passes against the player's stick direction.
   if(q.index===0&&forward>4)score+=3;
-  if(isOffsideAtKick(q,p))score-=120;
+  if(isOffsideAtKick(q,p))score-=180;
   return {q,tx,tz,d,score,lane,forward};
  }).sort((a,b)=>b.score-a.score);
 }
-function bestPass(p,through=false){return passOptions(p,through)[0]}
+function bestPass(p,through=false){
+ const options=passOptions(p,through);
+ return options.find(o=>!isOffsideAtKick(o.q,p))||options[0];
+}
 
 // V1.6 ball control: touches are physics impulses, not ball ownership teleports.
 // Better dribblers keep the ball closer at pace and while changing direction.
@@ -1461,9 +1468,16 @@ function kick(p,shoot=false,through=false,power=.45){
   if(!chosen)return false;
   receiver=chosen.q;tx=chosen.tx;tz=chosen.tz;
   passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
-  if(p.team===1&&cfg.opponentPassError>0){const err=cfg.opponentPassError*distance(p,receiver)*Math.max(.6,1.25-(p.profile?.stats.passing||65)/100);tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err}
-  strength=clamp(chosen.d*(through?2.0:1.8)+28,44,through?103:84);
-  ball.vy=through?1.15:1.5;
+  const passing=clamp(p.profile?.stats.passing??69,30,95);
+  const dist=distance(p,receiver),press=Math.min(8,players.filter(o=>o.team!==p.team&&!o.sentOff).reduce((m,o)=>Math.min(m,distance(p,o)),20));
+  // Skilled passers thread narrow lanes. Pressure, a weak passing rating and
+  // difficult long balls increase error instead of always targeting perfectly.
+  const err=(dist*.011+(100-passing)*.015+Math.max(0,6-press)*.10)
+   *(p.team===1?1+cfg.opponentPassError*4:1);
+  tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err;
+  const driven=p===controlledPlayer()&&(keys.has('ShiftLeft')||keys.has('ShiftRight'));
+  strength=clamp(dist*(through?1.92:driven?1.9:1.55)+(through?31:driven?33:24),39,through?108:driven?102:84);
+  ball.vy=through?.95:driven?.70:1.4;
  }
  const dir=norm(tx-p.x,tz-p.z);
  // Only penalise offside if the player actually receives the attempted pass.
@@ -1773,6 +1787,29 @@ $('resume-half').addEventListener('click',()=>{
  $('status').textContent='SECOND HALF';say('SECOND HALF',1.2);
 });
 applyClubs();setTactic('balanced');selectStadium('day');$('squad-club-select').value=$('home-select').value;openMenuTab('home');
+
+// Score-aware opponent tactics. The AI never needs to secretly read inputs.
+function aiPlan(team){
+ const goalDifference=score[team]-score[1-team];
+ const remaining=Math.max(0,1-matchTime/Math.max(1,MATCH_SECONDS));
+ return {urgency:goalDifference<0?1+(1-remaining)*.55:1,
+   protect:goalDifference>0&&remaining<.45,
+   pressBonus:goalDifference<0&&remaining<.40?1:0};
+}
+function keepRunOnside(p,z){
+ if(p.index===10)return z;
+ const side=teams[p.team].dir;
+ const defenders=players.filter(q=>q.team!==p.team&&!q.sentOff).map(q=>q.z*side).sort((a,b)=>b-a);
+ const line=defenders[1];
+ return line===undefined?z:side*Math.min(z*side,line-2.5);
+}
+function aiShouldShoot(p,opponent){
+ const side=teams[p.team].dir,toGoal=(goalZ(p.team)-p.z)*side;
+ const pressure=opponent?distance(opponent,p):30;
+ const inRange=toGoal<difficultySettings().opponentShotRange+3&&Math.abs(p.x)<GOAL_W*1.7;
+ const hasAngle=pressure>4||toGoal<14;
+ return inRange&&hasAngle;
+}
 function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
@@ -1780,19 +1817,30 @@ function roleTarget(p,press1,press2){
  if(!owner&&ball.passTarget===p&&ball.passTime>0)
   return {x:clamp(ball.x+ball.vx*.23,-HW+4,HW-4),z:clamp(ball.z+ball.vz*.23,-HL+5,HL-5),speed:23};
  if(owner?.team!==p.team){
-  if(p===press1)return {x:ball.x,z:ball.z,speed:21};
-  if(p===press2)return {x:clamp(ball.x+(ball.x>0?-10:10),-HW+7,HW-7),z:clamp(ball.z-side*10,-HL+7,HL-7),speed:18};
-  const blend=role==='defence'?.24:role==='mid'?.38:.22;
-  const x=h.x+ball.x*(role==='mid'?.13:.08);
+  const plan=aiPlan(p.team);
+  const predicted={x:clamp(ball.x+(owner?.vx||ball.vx)*.17,-HW+4,HW-4),
+   z:clamp(ball.z+(owner?.vz||ball.vz)*.17,-HL+4,HL-4)};
+  if(p===press1)return {x:predicted.x,z:predicted.z,speed:21*plan.urgency};
+  if(p===press2){
+   // Cover the inside passing lane rather than doubling the same attacker.
+   const towardGoal=-side*HL;
+   return {x:clamp(predicted.x*.75,-HW+7,HW-7),
+    z:clamp(predicted.z*.70+towardGoal*.30,-HL+8,HL-8),speed:18*plan.urgency};
+  }
+  const blend=role==='defence'?.29:role==='mid'?.43:.24;
+  const x=h.x+ball.x*(role==='mid'?.19:.12);
   const z=h.z+(ball.z-h.z)*blend;
-  return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+14,HL-14),speed:16};
+  return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+14,HL-14),
+   speed:plan.protect?15:17};
  }
  let x=h.x,z=h.z;
  if(role==='attack'){
   const advance=clamp(25+progress*.30,7,68);
   const runZ=clamp(owner.z+side*(p.index===0?23:14),-HL+12,HL-12);
   z=(h.z+side*advance)*.43+runZ*.57;
-  x=h.x*.85+ball.x*.15;
+  x=h.x*.78+ball.x*.22;
+  // Forwards read the offside line while looking for space behind it.
+  if(!practiceMode)z=keepRunOnside(p,z);
  }else if(role==='mid'){
   const advance=clamp(20+progress*.20,8,46);
   const supportZ=clamp(owner.z-side*21,-HL+14,HL-14);
@@ -1850,7 +1898,7 @@ function advance(dt){
   .sort((a,b)=>{
    const priority=p=>distance(p,aim)+(roleOf(p).group==='defence'?7:0)+(p===cp?3:0);
    return priority(a)-priority(b);
-  }).slice(0,team===1?difficultySettings().opponentPressers:tactic().pressers));
+  }).slice(0,team===1?Math.min(3,difficultySettings().opponentPressers+aiPlan(1).pressBonus):tactic().pressers));
  for(const p of players){
   if(p.sentOff||(practiceMode&&p.team===1))continue;
   p.tackleCooldown=Math.max(0,p.tackleCooldown-dt);
@@ -1885,14 +1933,18 @@ function advance(dt){
    if(p.index===10){
     if(p.carryTime>.68){startKeeperAnimation(p,'kick');kick(p,false)}
    }else{
-    const toGoal=Math.abs(goalZ(p.team)-p.z);
-    const canShoot=toGoal<(p.team===1?cfg.opponentShotRange:41)&&Math.abs(p.x)<GOAL_W*1.65;
     const opposition=players.filter(q=>q.team!==p.team&&q.index!==10&&!q.sentOff).sort((a,b)=>distance(a,p)-distance(b,p))[0];
-    const pressured=opposition&&distance(opposition,p)<10;
+    const pressed=opposition&&distance(opposition,p)<9;
+    const plan=aiPlan(p.team),opts=passOptions(p,false);
+    const clearOption=opts.find(o=>o.lane<2.5&&o.score>10&&!isOffsideAtKick(o.q,p));
     if(p.decision<=0){
-     p.decision=(p.team===1?cfg.opponentThink:.55)*(1+Math.random()*.35);
-     if(canShoot&&Math.random()<(p.team===1?cfg.opponentShootChance:.62))kick(p,true,false,.35+Math.random()*.55);
-     else if((pressured&&p.carryTime>(p.team===1?cfg.opponentThink:.3))||p.carryTime>(p.team===1?cfg.opponentCarry:2.6))kick(p,false);
+     p.decision=(p.team===1?cfg.opponentThink:.55)*(1+Math.random()*.25)/plan.urgency;
+     if(aiShouldShoot(p,opposition)&&Math.random()<Math.min(.92,(p.team===1?cfg.opponentShootChance:.62)*plan.urgency))
+      kick(p,true,false,.4+Math.random()*.45);
+     else if((pressed&&clearOption&&p.carryTime>.2)||
+       (clearOption&&p.carryTime>(p.team===1?cfg.opponentCarry:2.6)*(plan.protect?.65:1))||
+       p.carryTime>(p.team===1?cfg.opponentCarry:2.6)+1)
+      kick(p,false,!!(clearOption&&clearOption.forward>25&&Math.random()<.30));
     }
     if(ball.owner===p){
      const drift=opposition&&distance(opposition,p)<15?(p.x>=opposition.x?8:-8):0;
