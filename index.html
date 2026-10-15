@@ -575,9 +575,9 @@ function startKeeperAnimation(p,action,dir=1,height=0){
 // Blended, jointed procedural football animations: no external animation downloads.
 function startPlayerAction(p,kind,power=.5){
  if(!p||p.sentOff)return;
- if(!['pass','through','cross','shoot','tackle','slide','receive','stumble'].includes(kind))return;
+ if(!['pass','through','cross','shoot','tackle','slide','receive','stumble','finesse','chip','driven','header','volley','bicycle','stepover','ballroll','fake','roulette','dragback','trap','stretch'].includes(kind))return;
  p.actionKind=kind;p.actionTime=0;p.actionPower=Math.max(0,Math.min(1,power));
- p.actionDuration=kind==='shoot'?.48:kind==='cross'?.58:kind==='slide'?.91:kind==='tackle'?.48:kind==='stumble'?.58:kind==='receive'?.32:.36;
+ p.actionDuration=kind==='bicycle'?.96:kind==='volley'?.55:kind==='header'?.49:kind==='roulette'?.65:kind==='slide'?.91:kind==='cross'?.58:kind==='tackle'?.48:kind==='stumble'?.58:['stepover','ballroll','fake','dragback'].includes(kind)?.45:['receive','trap','stretch'].includes(kind)?.38:.45;
 }
 function animatePlayer(p,dt){
  const speed=Math.hypot(p.vx,p.vz),c=p.rig.character,rig=p.rig;
@@ -672,8 +672,8 @@ function animatePlayer(p,dt){
    const pre=1-u,force=.7+.3*p.actionPower;
    const striking=rig.limbs[(p.index+p.team)%2];
    const plant=rig.limbs[(p.index+p.team+1)%2];
-   if(p.actionKind==='shoot'||p.actionKind==='pass'||p.actionKind==='through'||p.actionKind==='cross'){
-    const kickStrength=(p.actionKind==='shoot'?1.75:p.actionKind==='cross'?1.55:p.actionKind==='through'?1.18:.98)*force;
+   if(['shoot','pass','through','cross','finesse','chip','driven','volley'].includes(p.actionKind)){
+    const kickStrength=(['shoot','driven','volley'].includes(p.actionKind)?1.75:p.actionKind==='chip'?1.10:p.actionKind==='cross'?1.55:p.actionKind==='through'?1.18:.98)*force;
     const windup=u<.38?-(1-u/.38)*.63:0;
     striking.leg.rotation.x=windup+kickStrength*impact;
     striking.knee.rotation.x=Math.max(0,.78*(1-u))*impact;
@@ -687,6 +687,22 @@ function animatePlayer(p,dt){
      limb.arm.rotation.z=-limb.side*(.38+.33*impact);
      limb.elbow.rotation.x=-.25-.32*impact;
     }
+   }else if(p.actionKind==='header'||p.actionKind==='bicycle'){
+    const leap=Math.sin(Math.PI*u);
+    c.position.y+=leap*(p.actionKind==='bicycle'?1.3:.85);
+    c.rotation.x+=(p.actionKind==='bicycle'?-.95:.42)*leap;
+    for(const limb of rig.limbs){
+     limb.arm.rotation.z=-limb.side*(.65+.42*leap);
+     limb.leg.rotation.x=(limb.side>0?1:-1)*leap*(p.actionKind==='bicycle'?1.5:.40);
+     limb.knee.rotation.x=leap*.6;
+    }
+   }else if(['stepover','ballroll','fake','roulette','dragback'].includes(p.actionKind)){
+    const sway=Math.sin(Math.PI*u),direction=(p.index%2?1:-1);
+    c.rotation.y+=p.actionKind==='roulette'?Math.PI*2*u:direction*.35*sway;
+    c.rotation.z+=direction*.16*sway;
+    striking.leg.rotation.x=(p.actionKind==='fake'?1.2:.48)*sway;
+    striking.foot.rotation.z=direction*.32*sway;
+    plant.knee.rotation.x=.26*sway;
    }else if(p.actionKind==='slide'){
     // Full-body football slide: low hips, a planted/dragging leg, extended boot
     // and balancing arms. The player's world position moves independently.
@@ -726,8 +742,10 @@ function animatePlayer(p,dt){
      limb.leg.rotation.x=limb.side*.42*impact;
      limb.knee.rotation.x=.32*impact;
     }
-   }else if(p.actionKind==='receive'){
+   }else if(['receive','trap','stretch'].includes(p.actionKind)){
     c.position.y-=.09*impact;
+    c.rotation.y+=p.firstTouchTurn||0;
+    c.rotation.z+=p.actionKind==='stretch'?(p.index%2?-.22:.22)*impact:0;
     striking.leg.rotation.x=-.40*impact;striking.knee.rotation.x=.50*impact;
     striking.foot.rotation.x=-.35*impact;
     rig.headPivot.rotation.x=-.22*impact;
@@ -1309,6 +1327,38 @@ function restartPlay(kind,team,x,z){
  }
  say(kind==='PENALTY KICK'?'PENALTY!':kind,1.1);playMatchSound('whistle');
 }
+// Air battles only connect when the football is airborne and reachable.
+// The player physically heads or volleys the flying ball: no ball teleporting.
+function attemptAerial(p,kind='header'){
+ if(state!=='playing'||!p||p.sentOff||p.index===10||ball.owner||setPiece)return false;
+ if(p.aerialCooldown>0||ball.aerialCooldown>0)return false;
+ const height=ball.y;
+ if(height<1.85||height>(kind==='bicycle'?5.9:kind==='volley'?4.1:5.4))return false;
+ const future={x:ball.x+ball.vx*.075,z:ball.z+ball.vz*.075};
+ if(distance(p,future)>4.35)return false;
+ const attack=kind==='bicycle'||kind==='volley'||(p.team===0&&p===controlledPlayer())||
+   (ball.passTarget===p&&Math.abs(goalZ(p.team)-p.z)<44);
+ let dir;
+ if(attack){
+  const x=clamp((p.x>=0?-1:1)*GOAL_W*.29,-GOAL_W*.43,GOAL_W*.43);
+  dir=norm(x-p.x,goalZ(p.team)-p.z);
+  shots[p.team]++;lastShooter={team:p.team,index:p.index};
+ }else{
+  const side=teams[p.team].dir;
+  dir=norm((p.x<0?-1:1)*17,side*33);
+ }
+ const accuracy=clamp((p.profile?.stats.shooting??67)/100,.3,.95);
+ const pace=kind==='bicycle'?83:kind==='volley'?88:kind==='header'?67:63;
+ p.aerialCooldown=1.15;ball.aerialCooldown=.48;
+ ball.lock=.22;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;
+ ball.vx=dir.x*pace+(Math.random()-.5)*(1-accuracy)*9;
+ ball.vz=dir.z*pace;ball.vy=kind==='bicycle'?5.8:kind==='volley'?3.9:kind==='header'?3.2:6.5;
+ ball.isShot=attack;ball.spin=0;ball.lastTouchTeam=p.team;ball.releasedBy=p;
+ pendingOffside=null;lastPass=null;
+ startPlayerAction(p,kind,accuracy);
+ if(p.team===0)say(attack?(kind==='bicycle'?'BICYCLE KICK!':kind==='volley'?'VOLLEY!':'HEADER!'):'HEADER CLEARANCE',.8);
+ return true;
+}
 function crossBall(p){
  if(state!=='playing'||ball.owner!==p||p.sentOff||setPiece?.kind==='PENALTY KICK')return false;
  // Select an attacking runner, favouring central targets inside the box.
@@ -1327,7 +1377,7 @@ function crossBall(p){
  pendingOffside=isOffsideAtKick(targets.q,p)?{team:p.team,receiver:targets.q,expires:matchTime+4}:null;
  startPlayerAction(p,'cross',.9);
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.28;
- ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;
+ ball.lastTouchTeam=p.team;ball.isShot=false;ball.spin=0;ball.passTarget=targets.q;
  ball.passStarted=matchTime;ball.passTime=clamp(targets.d/42+1.1,1.8,3.25);
  passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
  ball.vx=dir.x*clamp(targets.d*1.25+27,45,90);
@@ -1519,7 +1569,7 @@ function takePossession(p){
  p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;p.dribbleTouch=matchTime;ball.releasedBy=null;
  if(p.team===0&&p.index!==10)selectPlayer(p);
 }
-function kick(p,shoot=false,through=false,power=.45){
+function kick(p,shoot=false,through=false,power=.45,shotType='normal'){
  if(state!=='playing'||ball.owner!==p||p.sentOff)return false;
  // Penalties must be shots. Passes and crosses are not valid attempts.
  if(setPiece?.kind==='PENALTY KICK'&&setPiece.taker===p&&!shoot)return false;
@@ -1534,8 +1584,20 @@ function kick(p,shoot=false,through=false,power=.45){
   tx=clamp(post*GOAL_W*.35+(Math.random()-.5)*(2.1+power*1.6)*Math.max(.55,1.38-(p.profile?.stats.shooting||65)/100),-GOAL_W/2+.7,GOAL_W/2-.7);
   if(p.team===1)tx+=(Math.random()-.5)*GOAL_W*cfg.opponentPassError*2.6;
   tz=goalZ(p.team)+side*7;
-  strength=79+power*23;
-  ball.vy=2.8+power*1.9;
+  const style=['finesse','chip','driven','normal'].includes(shotType)?shotType:'normal';
+  const rating=clamp(p.profile?.stats.shooting??70,30,95);
+  if(style==='finesse'){
+   // Bending finish: accurate but less powerful, with lateral spin in flight.
+   tx=clamp(tx+(post>0?.40:-.40),-GOAL_W/2+.5,GOAL_W/2-.5);
+   strength=69+power*16;ball.vy=3.4+power*1.2;
+   ball.spin=(post>0?1:-1)*(.85+rating*.012);
+  }else if(style==='chip'){
+   strength=51+power*14;ball.vy=13.2+power*3.2;ball.spin=0;
+  }else if(style==='driven'){
+   strength=92+power*22;ball.vy=.55+power*.45;ball.spin=0;
+  }else{
+   strength=79+power*23;ball.vy=2.8+power*1.9;ball.spin=0;
+  }
  }else{
   const chosen=bestPass(p,through);
   if(!chosen)return false;
@@ -1550,13 +1612,13 @@ function kick(p,shoot=false,through=false,power=.45){
   tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err;
   const driven=p===controlledPlayer()&&(keys.has('ShiftLeft')||keys.has('ShiftRight'));
   strength=clamp(dist*(through?1.92:driven?1.9:1.55)+(through?31:driven?33:24),39,through?108:driven?102:84);
-  ball.vy=through?.95:driven?.70:1.4;
+  ball.vy=through?.95:driven?.70:1.4;ball.spin=0;
  }
  const dir=norm(tx-p.x,tz-p.z);
  // Only penalise offside if the player actually receives the attempted pass.
  const illegalReceiver=!shoot&&receiver&&isOffsideAtKick(receiver,p);
  pendingOffside=illegalReceiver?{team:p.team,receiver,expires:matchTime+4}:null;
- startPlayerAction(p,shoot?'shoot':through?'through':'pass',power);
+ startPlayerAction(p,shoot?(shotType==='chip'?'chip':shotType==='finesse'?'finesse':shotType==='driven'?'driven':'shoot'):through?'through':'pass',power);
  if(setPiece?.taker===p)setPiece=null;
  playMatchSound(shoot?'shot':'kick');
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
@@ -2065,6 +2127,7 @@ function advance(dt){
   }else if(setPiece.kind==='FREE KICK'&&matchTime-setPiece.t>20)setPiece=null;
  }
  ball.lock=Math.max(0,ball.lock-dt);
+ ball.aerialCooldown=Math.max(0,(ball.aerialCooldown||0)-dt);
  ball.passTime=Math.max(0,ball.passTime-dt);
  if(ball.passTime<=0){ball.passTarget=null;ball.passStarted=0}
  if(pendingOffside&&matchTime>pendingOffside.expires)pendingOffside=null;
@@ -2079,6 +2142,7 @@ function advance(dt){
   p.tackleCooldown=Math.max(0,p.tackleCooldown-dt);
   p.tackleWindow=Math.max(0,p.tackleWindow-dt);
   p.tackleRecover=Math.max(0,p.tackleRecover-dt);
+  p.aerialCooldown=Math.max(0,(p.aerialCooldown||0)-dt);
   p.saveCooldown=Math.max(0,(p.saveCooldown||0)-dt);
   p.saveAnimation=Math.max(0,(p.saveAnimation||0)-dt);
   let vx=0,vz=0;
@@ -2262,6 +2326,13 @@ function advance(dt){
   } // close normal dribble branch; set-piece ball is stationary
  }else{
   const before={x:ball.x,z:ball.z};
+  // Curve is a lateral acceleration perpendicular to ball flight.
+  if(ball.spin&&ball.isShot){
+   const dir=norm(ball.vx,ball.vz);
+   ball.vx+=-dir.z*ball.spin*dt*2.4;
+   ball.vz+= dir.x*ball.spin*dt*2.4;
+   ball.spin*=Math.exp(-1.6*dt);
+  }
   ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.y+=ball.vy*dt;
   ball.vy-=25*dt;
   if(ball.y<=1.05){ball.y=1.05;ball.vy=ball.vy< -2?-ball.vy*.25:0}
@@ -2285,7 +2356,7 @@ function advance(dt){
     if(p.sentOff||(practiceMode&&p.team===1))continue;
     if(p.index===10&&ball.isShot)continue;
     if(ball.releasedBy===p&&ball.lock<.12&&Math.hypot(ball.vx,ball.vz)>7)continue;
-    if(d<reach&&ball.y< (p.index===10?6.0:3.1))choices.push({p,d,t,rank:d-(ball.passTarget===p?.5:0)});
+    if(d<reach&&ball.y<(p.index===10?6.0:1.84))choices.push({p,d,t,rank:d-(ball.passTarget===p?.5:0)});
    }
    choices.sort((a,b)=>a.t-b.t||a.rank-b.rank);
    if(choices.length){
@@ -2296,6 +2367,14 @@ function advance(dt){
     if(ball.owner===p){ball.x=p.x;ball.z=p.z;ball.y=1.05;}
    }
   }
+ }
+ // Before the standard ground pickup, let players meet crosses in the air.
+ // Only one contact per frame; a clearance remains a real travelling ball.
+ if(!ball.owner&&ball.lock<=0&&ball.y>=1.85&&ball.aerialCooldown<=0){
+  const airborne=players.filter(p=>!p.sentOff&&p.index!==10&&(!practiceMode||p.team===0))
+   .filter(p=>distance(p,{x:ball.x+ball.vx*.075,z:ball.z+ball.vz*.075})<4.35)
+   .sort((a,b)=>distance(a,ball)-distance(b,ball));
+  if(airborne.length)attemptAerial(airborne[0],'header');
  }
  // If the keeper cleanly catches a shot, show the ball held between the gloves.
  const keeperCarry=ball.owner?.index===10&&ball.owner.keeperAction==='catch';
