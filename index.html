@@ -415,7 +415,7 @@ for(let row=0;row<3;row++)for(let col=0;col<8;col++){
  ballCtx.closePath();ballCtx.fill();
 }
 const ballTex=new THREE.CanvasTexture(ballCanvas);ballTex.colorSpace=THREE.SRGBColorSpace;
-const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,24,18),new THREE.MeshStandardMaterial({map:ballTex,roughness:.66}));ballMesh.scale.set(.30,.30,.30);ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0};
+const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,24,18),new THREE.MeshStandardMaterial({map:ballTex,roughness:.66}));ballMesh.scale.set(.30,.30,.30);ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0,secureOwner:null,secureUntil:0,lastDribbleTouch:0,releasedBy:null};
 const CLUBS={
  striker:{name:'STRIKER FC',short:'STRIKER',primary:'#57edaa',secondary:'#0e2540'},
  tide:{name:'TIDE CITY',short:'TIDE',primary:'#35b9e8',secondary:'#eefaff'},
@@ -448,12 +448,12 @@ function buildProfile(club,i){
  const base=70+n(0,13)+(i<11?3:0)+(i===0?3:0);
  const overall=Math.min(91,base);
  const stats=goalie?{
-  pace:35+n(5,17),shooting:21+n(8,18),passing:54+n(11,19),defending:29+n(14,16),physical:69+n(17,17),goalkeeping:overall
+  pace:35+n(5,17),shooting:21+n(8,18),passing:54+n(11,19),defending:29+n(14,16),physical:69+n(17,17),dribbling:30+n(9,28),goalkeeping:overall
  }:{
   pace:61+n(3,33),shooting:(position==='ST'||position==='LW'||position==='RW'?69:45)+n(7,24),
   passing:(position==='CM'||position==='CAM'||position==='CDM'?68:52)+n(11,25),
   defending:(position==='CB'||position==='LB'||position==='RB'||position==='CDM'?67:30)+n(15,25),
-  physical:56+n(19,33),goalkeeping:8+n(23,18)
+  physical:56+n(19,33),dribbling:56+n(2,36),goalkeeping:8+n(23,18)
  };
  return Object.freeze({id:club+':'+i,club,name:CLUB_ROSTER_NAMES[club][i],number:PROFILE_NUMBERS[i],
   position,overall,age:18+n(5,15),height:169+n(11,26),nation:NATIONALITIES[(n(17,12)+Object.keys(CLUB_ROSTER_NAMES).indexOf(club))%12],
@@ -563,7 +563,7 @@ function makePlayer(team,index){
  ownerMarker.rotation.x=-Math.PI/2;ownerMarker.position.y=.075;root.add(ownerMarker);
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
- const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts,skinMaterial:skin,hairMesh:hair,numberMesh:number},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
+ const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts,skinMaterial:skin,hairMesh:hair,numberMesh:number},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,dribbleTouch:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
  animCycle:index*.87+team*1.31,animBlend:0,animTurn:0,prevYaw:0,actionKind:'',actionTime:0,actionDuration:0,actionPower:0};
  players.push(p);return p;
 }
@@ -1137,7 +1137,7 @@ function resetPositions(kickoffTeam=0){
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
-  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:p.stamina,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
+  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:p.stamina,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,dribbleTouch:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
   p.rig.character.rotation.set(0,0,0);p.rig.character.position.set(0,0,0);
   p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
   // Sent-off players stay off the pitch.
@@ -1147,7 +1147,7 @@ function resetPositions(kickoffTeam=0){
  const kicker=players.slice(kickoffTeam*11,kickoffTeam*11+10).find(q=>!q.sentOff)||players[kickoffTeam*11];
  kicker.x=0;kicker.z=-teams[kickoffTeam].dir*2;kicker.mesh.position.set(kicker.x,0,kicker.z);
  pendingOffside=null;
- Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,secureOwner:null,secureUntil:0,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
+ Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,secureOwner:null,secureUntil:0,releasedBy:null,lastDribbleTouch:0,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
  kicker.hasBall=true;selectPlayer(players.slice(0,10).find(q=>!q.sentOff)||players[0]);
 }
 function startTraining(){
@@ -1385,6 +1385,34 @@ function passOptions(p,through=false){
  }).sort((a,b)=>b.score-a.score);
 }
 function bestPass(p,through=false){return passOptions(p,through)[0]}
+
+// V1.6 ball control: touches are physics impulses, not ball ownership teleports.
+// Better dribblers keep the ball closer at pace and while changing direction.
+function dribbleRating(p){return clamp(p?.profile?.stats.dribbling??69,30,95)}
+function dribbleGap(p){
+ const running=Math.hypot(p.vx,p.vz);
+ const skill=dribbleRating(p)/100;
+ return 1.48+Math.min(running/23,1)*(.55+(1-skill)*1.25);
+}
+function loseHeavyTouch(p){
+ if(!p||ball.owner!==p||setPiece?.taker===p||p.index===10)return false;
+ const speed=Math.hypot(p.vx,p.vz),skill=dribbleRating(p);
+ const nearest=players.filter(q=>q.team!==p.team&&!q.sentOff&&q.index!==10)
+  .reduce((v,q)=>Math.min(v,distance(q,p)),99);
+ // A very fast/poor touch under active pressure can break possession naturally.
+ // There is no random ball ownership change and no loss for an ordinary walk.
+ if(speed<15||nearest>5.2||matchTime-p.dribbleTouch<.3||skill>89)return false;
+ const excessive=speed*(1-skill/145)+(5.2-nearest)*1.4;
+ if(excessive<14.5)return false;
+ const facing=norm(p.faceX,p.faceZ),side=p.index%2?-1:1;
+ p.dribbleTouch=matchTime;p.hasBall=false;ball.owner=null;
+ ball.secureOwner=null;ball.secureUntil=0;
+ ball.x=p.x+facing.x*dribbleGap(p);ball.z=p.z+facing.z*dribbleGap(p);
+ ball.vx=p.vx*.8-facing.z*side*2.5;ball.vz=p.vz*.8+facing.x*side*2.5;
+ ball.vy=.35;ball.y=1.15;ball.lock=.2;ball.releasedBy=p;
+ ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=null;ball.passTime=0;
+ return true;
+}
 function takePossession(p){
  if(ball.owner===p)return;
  if(pendingOffside){
@@ -1408,7 +1436,7 @@ function takePossession(p){
  // Ordinary interceptions and passes cancel any previous tackle security.
  ball.secureOwner=null;ball.secureUntil=0;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=p.team;ball.isShot=false;
- p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;
+ p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;p.dribbleTouch=matchTime;ball.releasedBy=null;
  if(p.team===0&&p.index!==10)selectPlayer(p);
 }
 function kick(p,shoot=false,through=false,power=.45){
@@ -1445,7 +1473,7 @@ function kick(p,shoot=false,through=false,power=.45){
  if(setPiece?.taker===p)setPiece=null;
  playMatchSound(shoot?'shot':'kick');
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
- ball.releaseTeam=p.team;ball.passTarget=receiver;ball.passTime=through?2.2:1.65;
+ ball.releaseTeam=p.team;ball.releasedBy=p;ball.passTarget=receiver;ball.passTime=through?2.2:1.65;
  ball.vx=dir.x*strength;ball.vz=dir.z*strength;ball.restartKind=null;
  ball.x=p.x+dir.x*2.35;ball.z=p.z+dir.z*2.35;ball.y=1.3;
  if(receiver?.team===0)selectPlayer(receiver);
@@ -1939,17 +1967,19 @@ function advance(dt){
    // Dead balls must remain on the awarded spot until the taker kicks.
    ball.x=p.x;ball.z=p.z;ball.y=1.05;ball.vx=ball.vz=ball.vy=0;
   }else{
-  const moving=Math.hypot(p.vx,p.vz)>2.2;
-  // Touch-based dribbling: sprinting takes a slightly heavier touch than normal pace.
-  const stride=moving?Math.sin(matchTime*15)*.29:0;
-  const reach=moving?2.05+Math.max(0,stride):1.7;
-  const lateral=moving?Math.cos(matchTime*15)*.20:0;
+  const speed=Math.hypot(p.vx,p.vz),moving=speed>2.2;
+  const skill=dribbleRating(p);
+  const reach=dribbleGap(p)+(moving?Math.max(0,Math.sin(matchTime*14))*.19:0);
+  const lateral=moving?Math.cos(matchTime*14)*(.12+(100-skill)*.002):0;
   const tx=p.x+p.faceX*reach-p.faceZ*lateral;
   const tz=p.z+p.faceZ*reach+p.faceX*lateral;
-  const follow=1-Math.exp(-dt*(moving?16:23));
+  // Better first touches track at higher speeds, while poor touches visibly lag.
+  const follow=1-Math.exp(-dt*(13+skill*.13)*(moving?.90:1));
+  const oldX=ball.x,oldZ=ball.z;
   ball.x+=(tx-ball.x)*follow;ball.z+=(tz-ball.z)*follow;
-  ball.y=1.07+(moving?Math.abs(Math.sin(matchTime*15))*.22:0);
-  ball.vx=ball.vz=ball.vy=0;
+  ball.y=1.07+(moving?Math.abs(Math.sin(matchTime*14))*.20:0);
+  ball.vx=(ball.x-oldX)/Math.max(dt,.001);ball.vz=(ball.z-oldZ)/Math.max(dt,.001);ball.vy=0;
+  if(loseHeavyTouch(p)){ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;}
   if(Math.abs(ball.x)>=HW||Math.abs(ball.z)>=HL){
    if(Math.abs(ball.x)>=HW)
     restartPlay('THROW IN',1-(ball.lastTouchTeam??p.team),ball.x<0?-HW+3:HW-3,clamp(ball.z,-HL+8,HL-8));
@@ -1963,7 +1993,7 @@ function advance(dt){
   ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.y+=ball.vy*dt;
   ball.vy-=25*dt;
   if(ball.y<=1.05){ball.y=1.05;ball.vy=ball.vy< -2?-ball.vy*.25:0}
-  const friction=Math.exp(-.59*dt);ball.vx*=friction;ball.vz*=friction;
+  const friction=Math.exp(-(ball.isShot?.33:.77)*dt);ball.vx*=friction;ball.vz*=friction;
   // Real out-of-play restarts rather than invisible wall rebounds.
   if(Math.abs(ball.x)>=HW){
    const x=ball.x<0?-HW+3:HW-3,z=clamp(ball.z,-HL+8,HL-8);
@@ -1981,6 +2011,7 @@ function advance(dt){
     // Do not bypass real keeper save checks with the generic loose-ball pickup.
     if(p.sentOff||(practiceMode&&p.team===1))continue;
     if(p.index===10&&ball.isShot)continue;
+    if(ball.releasedBy===p&&ball.lock<.12&&Math.hypot(ball.vx,ball.vz)>7)continue;
     if(d<reach&&ball.y< (p.index===10?6.0:3.1))choices.push({p,d,t,rank:d-(ball.passTarget===p?.5:0)});
    }
    choices.sort((a,b)=>a.t-b.t||a.rank-b.rank);
