@@ -1391,8 +1391,9 @@ function passOptions(p,through=false){
   const d=distance(p,q),flight=clamp(d/67,.2,1.15);
   // Predict a runner's position when the ball actually reaches them.
   const lead=through?1.12:.50;
-  const tx=clamp(q.x+q.vx*flight*lead,-HW+3,HW-3);
-  const tz=clamp(q.z+q.vz*flight*lead+(through?side*(7+Math.min(6,d*.08)):0),-HL+5,HL-5);
+  // Keep intended reception points inside the pitch, not on the touchline.
+  const tx=clamp(q.x+q.vx*flight*lead,-HW+(through?5:8),HW-(through?5:8));
+  const tz=clamp(q.z+q.vz*flight*lead+(through?side*(7+Math.min(6,d*.08)):0),-HL+8,HL-8);
   const v=norm(tx-p.x,tz-p.z);
   const dot=aim.x*v.x+aim.z*v.z;
   const forward=(tz-p.z)*side;
@@ -1440,6 +1441,33 @@ function loseHeavyTouch(p){
  ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=null;ball.passTime=0;
  return true;
 }
+// FIFA-style assisted reception: forecast the moving ball's path and find
+// the first reachable intercept. This moves players, never teleports the ball.
+// It works for the selected footballer and the off-ball AI of either team.
+function passReceptionTarget(p){
+ if(!p||p.sentOff||p.index===10||ball.owner||ball.isShot||
+   ball.passTarget!==p||ball.passTime<=0)return null;
+ const movingSpeed=Math.hypot(ball.vx,ball.vz);
+ if(movingSpeed<1)return {x:clamp(ball.x,-HW+2,HW-2),z:clamp(ball.z,-HL+2,HL-2),speed:16};
+ const friction=.77,reach=2.8;
+ // Estimate reachable time with actual player speed; difficult through-balls
+ // need a sprinting run, but the footballer cannot run faster than their pace.
+ const pace=clamp(p.profile?.stats.pace??74,35,99);
+ const runnerSpeed=(17+pace*.085)*(p.stamina<20?.83:1);
+ const limit=Math.min(2.35,Math.max(.35,ball.passTime));
+ let best=null,minimumCost=Infinity;
+ for(let t=.06;t<=limit+.001;t+=.075){
+  const displacement=(1-Math.exp(-friction*t))/friction;
+  const x=ball.x+ball.vx*displacement,z=ball.z+ball.vz*displacement;
+  if(Math.abs(x)>HW-1.6||Math.abs(z)>HL-1.6)break;
+  const separation=Math.hypot(x-p.x,z-p.z);
+  const gap=separation-(runnerSpeed*t+reach);
+  const cost=gap>0?gap*3.5+t:t*.92;
+  if(cost<minimumCost){best={x,z,t,separation,reachable:gap<=0,speed:runnerSpeed};minimumCost=cost}
+  if(gap<=0)break;
+ }
+ return best;
+}
 function takePossession(p){
  if(ball.owner===p)return;
  if(pendingOffside){
@@ -1462,7 +1490,7 @@ function takePossession(p){
  if(p.index!==10&&p.actionKind!=='receive'&&p.actionKind!=='slide')startPlayerAction(p,'receive');
  // Ordinary interceptions and passes cancel any previous tackle security.
  ball.secureOwner=null;ball.secureUntil=0;
- ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=p.team;ball.isShot=false;
+ ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;ball.lastTouchTeam=p.team;ball.isShot=false;
  p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;p.dribbleTouch=matchTime;ball.releasedBy=null;
  if(p.team===0&&p.index!==10)selectPlayer(p);
 }
@@ -1507,10 +1535,15 @@ function kick(p,shoot=false,through=false,power=.45){
  if(setPiece?.taker===p)setPiece=null;
  playMatchSound(shoot?'shot':'kick');
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
- ball.releaseTeam=p.team;ball.releasedBy=p;ball.passTarget=receiver;ball.passTime=through?2.2:1.65;
+ ball.releaseTeam=p.team;ball.releasedBy=p;ball.passTarget=receiver;
+ // Keep the receiving run alive until a long pass can reach its intended player.
+ ball.passStarted=matchTime;
+ ball.passTime=receiver?clamp(distance(p,receiver)/42+1.05,1.35,3.25):0;
  ball.vx=dir.x*strength;ball.vz=dir.z*strength;ball.restartKind=null;
  ball.x=p.x+dir.x*2.35;ball.z=p.z+dir.z*2.35;ball.y=1.3;
- if(receiver?.team===0)selectPlayer(receiver);
+ if(receiver?.team===0&&receiver!==controlledPlayer())selectPlayer(receiver);
+ // The selected receiver is immediately assisted toward the flight path; the
+ // player can still deliberately steer in a different direction at any time.
  return true;
 }
 // Committed slide tackle: a separate, controlled ball-first challenge.
@@ -1925,8 +1958,10 @@ function roleTarget(p,press1,press2){
   }
   return {x,z,speed:incoming?20:15};
  }
- if(!owner&&ball.passTarget===p&&ball.passTime>0)
-  return {x:clamp(ball.x+ball.vx*.23,-HW+4,HW-4),z:clamp(ball.z+ball.vz*.23,-HL+5,HL-5),speed:23};
+ if(!owner&&ball.passTarget===p&&ball.passTime>0){
+  const reception=passReceptionTarget(p);
+  if(reception)return {x:reception.x,z:reception.z,speed:reception.speed};
+ }
  if(owner?.team!==p.team){
   const plan=aiPlan(p.team);
   const predicted={x:clamp(ball.x+(owner?.vx||ball.vx)*.17,-HW+4,HW-4),
@@ -2002,7 +2037,7 @@ function advance(dt){
  }
  ball.lock=Math.max(0,ball.lock-dt);
  ball.passTime=Math.max(0,ball.passTime-dt);
- if(ball.passTime<=0)ball.passTarget=null;
+ if(ball.passTime<=0){ball.passTarget=null;ball.passStarted=0}
  if(pendingOffside&&matchTime>pendingOffside.expires)pendingOffside=null;
  const cp=controlledPlayer(),input=playerMoveInput(),aim=ball.owner||ball;
  const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner)
@@ -2029,11 +2064,23 @@ function advance(dt){
    vx=input.x*speed*energyScale*(p.paceBonus||1);vz=input.z*speed*energyScale*(p.paceBonus||1);
    // A set-piece taker stays at the spot until passing or shooting.
    if(setPiece?.taker===p){vx=0;vz=0;p.vx=0;p.vz=0}
-   // When receiving a pass, let the runner meet the ball without making E feel unresponsive.
-   if(!input.moving&&!ball.owner&&ball.passTarget===p){
-    const dx=ball.x+ball.vx*.19-p.x,dz=ball.z+ball.vz*.19-p.z;
-    const d=Math.hypot(dx,dz);
-    if(d>1){vx=dx/d*Math.min(19,d*3);vz=dz/d*Math.min(19,d*3)}
+   // Assisted first touch, including immediately after the control switch.
+   // A deliberate opposite direction still overrides assistance instantly.
+   const receiving=passReceptionTarget(p);
+   if(receiving){
+    const dx=receiving.x-p.x,dz=receiving.z-p.z,d=Math.hypot(dx,dz);
+    const runSpeed=Math.min(receiving.speed,Math.max(0,d*3.8));
+    if(d>.28){
+     const assistX=dx/d*runSpeed,assistZ=dz/d*runSpeed;
+     if(!input.moving){vx=assistX;vz=assistZ}
+     else{
+      const alignment=(input.x*dx+input.z*dz)/d;
+      const elapsed=Math.max(0,matchTime-(ball.passStarted||matchTime));
+      const assist=alignment<-.35?0:clamp(.68-elapsed*.38,.22,.68);
+      vx=vx*(1-assist)+assistX*assist;
+      vz=vz*(1-assist)+assistZ*assist;
+     }
+    }else if(!input.moving){vx=0;vz=0}
    }
    }else if(ball.owner===p&&setPiece&&p===setPiece.taker){
    vx=0;vz=0;p.vx=p.vz=0; // Dead-ball restart: taker stays at the spot.
@@ -2079,7 +2126,13 @@ function advance(dt){
     }
    }
    const dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz);
-   if(d>.8){const cfg=difficultySettings(),scale=p.team===1?cfg.opponentSpeed:cfg.teammateSpeed;const v=Math.min(target.speed,d*2.9)*scale*(p.team===0?tactic().speed:1);vx=dx/d*v;vz=dz/d*v}
+   if(d>.8){
+    const cfg=difficultySettings(),receiving=ball.passTarget===p&&!ball.owner&&ball.passTime>0;
+    // Receiving a pass takes precedence over normal formation jog speed.
+    const scale=receiving?1:(p.team===1?cfg.opponentSpeed:cfg.teammateSpeed);
+    const run=Math.min(target.speed,d*(receiving?3.8:2.9))*scale*(receiving?1:p.team===0?tactic().speed:1);
+    vx=dx/d*run;vz=dz/d*run;
+   }
    if(p===ranked[0]&&ball.owner&&ball.owner.team!==p.team&&distance(p,ball.owner)<(p.team===1?difficultySettings().opponentTackleRange+1:5)){
     attemptTackle(p);
    }
@@ -2116,7 +2169,8 @@ function advance(dt){
   // tackler's stride instantly. Movement returns normally after recovery.
   if(p.dispossessedUntil>matchTime){vx*=.27;vz*=.27}
   // Acceleration / braking prevent instant direction reversals but still respond fast.
-  const response=1-Math.exp(-dt*(p===cp?13:9.5));
+  const receiving=ball.passTarget===p&&!ball.owner&&ball.passTime>0;
+  const response=1-Math.exp(-dt*(receiving?15:p===cp?13:9.5));
   if(p.index===10&&['parry','miss','catch'].includes(p.keeperAction)){vx*=.12;vz*=.12}
   p.vx+=(vx-p.vx)*response;p.vz+=(vz-p.vz)*response;
   p.x=clamp(p.x+p.vx*dt,-HW+1.5,HW-1.5);
@@ -2193,7 +2247,8 @@ function advance(dt){
     const t=clamp(((p.x-before.x)*dx+(p.z-before.z)*dz)/l2,0,1);
     const px=before.x+dx*t,pz=before.z+dz*t;
     const d=Math.hypot(p.x-px,p.z-pz);
-    const reach=p.index===10?4.0:(ball.passTarget===p?3.5:2.65);
+    const receiving=ball.passTarget===p&&ball.passTime>0;
+    const reach=p.index===10?4.0:(receiving?3.75:2.65);
     // Do not bypass real keeper save checks with the generic loose-ball pickup.
     if(p.sentOff||(practiceMode&&p.team===1))continue;
     if(p.index===10&&ball.isShot)continue;
