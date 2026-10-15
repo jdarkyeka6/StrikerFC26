@@ -1,6 +1,72 @@
-# ⚽ STRIKER FC 26 | VERSION 1.6.3
+# ⚽ STRIKER FC 26 | VERSION 1.7.0
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.3 rebalances previously overpowered goalkeepers across every difficulty, building on V1.6.2 automatic pass reception, V1.6.1 slide tackles and the six-club Clubhouse.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.0 introduces Total Football: seven connected upgrades covering advanced shooting, aerial battles, skill moves, defensive controls, first touches, goalkeeper rushing and set pieces. The existing six-club Clubhouse and all earlier systems remain.
+
+## ⚽ Version 1.7.0: TOTAL FOOTBALL
+
+Seven upgrades have been integrated into the original browser game. The existing 96 permanent players, six clubs, four difficulties, fatigue, referee, goals, substitutions, assisted passing, replays, controller and mouse support remain. **Packs remain a placeholder and are not implemented.**
+
+### 1. Advanced shot types
+
+Besides charging a standard shot with **Space / left-click**, players can use:
+- **Z: Finesse shot**, less power and controlled lateral curve
+- **X: Chip shot**, reduced pace and a high trajectory to lift over a keeper
+- **B: Low-driven shot**, more speed and a much flatter trajectory
+
+Shot type affects real ball velocity, loft and (for finesse) spin through flight, with matching player movement. Holding the gamepad's L2 / LT, R2 / RT, or R1 / RB modifier when releasing a charged shot can also select finesse, chip or driven, respectively, depending on standard controller button mapping.
+
+**Changed control:** Camera zoom has moved from **Z/X** to **[ / ]** to avoid overlapping with new shot types.
+
+### 2. Headers and aerial battles
+
+- Players jump to meet airborne crosses and clear high balls defensively, rather than catching them at chest height as a ground reception.
+- The aerial-contact system judges real ball height and proximity, with a brief re-contact cooldown to prevent unrealistic repeated hits.
+- **H** manually attempts a header; **/** attempts a volley; **N** attempts a bicycle kick while near a reachable airborne ball.
+- In attacking positions, well-timed aerial contacts become shots; near their own goal, automatic headers clear danger.
+- Player poses include leaping, extended legs, upper-body rotation and first-touch follow-through.
+
+### 3. Five skill moves
+
+These moves require possession and consume stamina. They apply a real player momentum change and have a per-player cooldown. They are not guaranteed to evade defenders.
+
+| Key | Skill | Effect |
+|---|---|---|
+| **4** | Stepover | Forward movement with a sideways feint |
+| **5** | Ball roll | Quick lateral movement |
+| **6** | Fake shot | Shoulder and foot feint with a change of lane, **without actually kicking** |
+| **7** | Roulette | Spinning escape move with lateral momentum |
+| **8** | Drag-back | Pull away from the forward direction |
+
+A nearby defender's tackle may be slightly harder for a short moment after a well-executed skill, but opponents can still win the ball.
+
+### 4. Smarter defensive controls
+
+- **Hold F** (or controller left trigger) to jockey with improved goal-side positioning when not manually moving.
+- **Hold Y** (or controller right trigger, when out of possession) for teammate contain. The nearest other teammate covers the carrier's inside lane rather than blindly doubling the ball.
+- **Q + a held movement direction** attempts to switch to a defender in that direction, while plain Q retains the closest-player cycle.
+- Defenders keep their existing pressure, clean-tackle and slide-tackle logic.
+
+### 5. First touches
+
+Incoming ground and lofted passes trigger different procedural receiving poses: ordinary control, high-ball trap or stretched reception for fast passes. Players can turn their upper body and cushion the ball toward their own running path. The V1.6.2 predictive receiving-run assistance still operates; deliberate player steering can override it.
+
+### 6. Manual goalkeeper rushing
+
+Hold **U** while defending to command your own goalkeeper out toward the attacking ball carrier, bounded to a sensible range from the goal. Release U to return to normal positional decisions. On a standard controller, **hold View / Back (button 8)**. This does **not** guarantee a save: dive reach, smother probabilities, reaction and recovery still obey the difficulty system.
+
+### 7. Advanced set pieces
+
+- When taking a free kick, penalty or corner, **J / L** adjust horizontal aim and **I / K** raise or lower kick height.
+- **O** cycles a target runner. Normal **E** passes, **Space** shots and **T** crosses still take the restart.
+- Free kicks form a three-player wall for the defending side, with other players backing away from the dead-ball spot.
+- Corners let you select a runner before crossing, and the chosen elevation modifies actual ball flight.
+- Player movement pauses for the dead-ball restart where appropriate, and the AI can take away-team free kicks and corners.
+
+### Verification and caveats
+
+A mocked Three.js/game-engine regression suite passed **35 checks**, including separate shot trajectories, all five skill-move impulses, headers/volleys/bicycle kicks, actual keyboard shot control, free-kick aiming, corner delivery, goalkeeper rush and a complete simulated four-minute match with halftime, goals, celebrations and replays. Syntax and UI ID references were also validated.
+
+These are browser-first procedural arcade systems, not motion-captured FIFA gameplay. **Real hardware/browser WebGL testing and balance tuning remain outstanding.** In particular, touch timing on aerial balls and player control feel are best evaluated through actual play.
 
 ## 🥅 Version 1.6.3: Goalkeeper balancing and difficulty scaling
 
