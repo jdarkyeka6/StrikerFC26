@@ -1,6 +1,26 @@
-# ⚽ STRIKER FC 26 | VERSION 1.6.1
+# ⚽ STRIKER FC 26 | VERSION 1.6.2
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.1 adds manual slide tackles, building on V1.6 improved tackling, ball physics, passing, opponent AI and goalkeeping, plus the six-club Clubhouse with 96 permanent footballers.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.2 adds assisted first touches and automatic receiving runs to passes, through balls and crosses, building on V1.6.1 slide tackles and the full six-club Clubhouse.
+
+## ⚽ Version 1.6.2: Assisted passing and first touches
+
+This update improves the pass receiver's movement, inspired by the smooth automatic receptions of modern football games. **When you make a pass, the recipient runs to meet the ball without needing to be steered into its path manually.** Player switching and manual control still work.
+
+- **Predictive interception:** Each frame, the receiving player calculates candidate interception points along the *actual moving ball trajectory*, taking ball friction, ball velocity, remaining pass time and player pace into account. It chooses an early reachable position and moves to meet the ball.
+- **Faster reactions:** Intended receivers temporarily prioritise the pass over their usual formation positions, press runs and tactic-speed limits. Animation and acceleration remain physical rather than teleporting the character.
+- **Automatic player switching:** When a home-team player passes to a teammate, the selected footballer changes to the intended receiver. The receiving player runs automatically with no input.
+- **Manual movement stays available:** Holding a direction steers the receiver normally; deliberately moving away from the interception path overrides the assistance immediately. Assistance smoothly blends when steering toward the pass.
+- **First-touch collection:** The intended recipient has a modestly more forgiving, realistic reception zone (3.75 instead of 3.5 game-world units), but defenders can still intercept and offsides still count.
+- **Pass timing and touchline safety:** Receiving runs remain active longer for long passes, and normal/through pass aiming keeps intended touch points a bit farther inside the field.
+- **Crosses, kickoffs and restarts:** Crosses also start assisted receiving movement. Kickoffs, set pieces, loose heavy touches, and possession changes clear old pass targets and timers.
+
+### Verification
+
+- A live simulated home pass found its automatically controlled receiver and registered completion **0.45 seconds after the kick**, with no user movement input.
+- Four isolated game-flow checks completed **home normal passes, AI-to-AI passes, through balls and passes near the sideline** with the intended receiver collecting the ball; the offside system was left active.
+- An opposite-direction movement test confirmed **manual steering overrides the receiving run**.
+- A complete four-minute simulated match finished with halftime and valid player/ball coordinates after starting with an open-play pass.
+- As with previous versions, this was tested in a mocked Three.js runtime, not visually playtested in a real WebGL browser. Timing and competitive balance may need further on-device tuning.
 
 ## 🛝 Version 1.6.1: Slide tackles
 
