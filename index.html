@@ -580,12 +580,11 @@ function makeSubstitution(prefix='pause'){
  if(!Number.isInteger(slot)||slot<0||slot>=10||replacedSlots.has(slot)||!Number.isInteger(benchId)||benchId<0||benchId>=BENCH.length||usedBench.has(benchId))return false;
  const p=players[slot],b=BENCH[benchId];
  if(!p||p.sentOff)return false;
- if(ball.owner===p){p.hasBall=false;ball.owner=null}
- if(setPiece?.taker===p)setPiece=null;
+ // Substitute assumes the on-pitch spot, without changing possession.
+ if(setPiece?.taker===p)setPiece.taker=p;
  names[0][slot]=b.name;p.stamina=100;p.paceBonus=b.pace;
  p.tackleWindow=0;p.tackleCooldown=0;p.tackleRecover=0;
- p.vx=0;p.vz=0;
- p.x=base(p).x;p.z=base(p).z;p.mesh.position.set(p.x,0,p.z);
+ p.vx*=.35;p.vz*=.35;
  const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
  if(numberMesh){numberMesh.material.map=jerseyTexture(0,b.number);numberMesh.material.needsUpdate=true}
  subsUsed++;usedBench.add(benchId);replacedSlots.add(slot);
@@ -900,7 +899,13 @@ function newMatch(){
  cameraFocus.set(0,0,0);
  subsUsed=0;usedBench.clear();replacedSlots.clear();
  for(let i=0;i<11;i++)names[0][i]=INITIAL_HOME_NAMES[i];
- for(const p of players){p.stamina=100;p.paceBonus=1}
+ for(const p of players){
+  p.stamina=100;p.paceBonus=1;
+  if(p.team===0&&p.index<10){
+   const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
+   if(numberMesh){numberMesh.material.map=jerseyTexture(0,formation[p.index].no);numberMesh.material.needsUpdate=true}
+  }
+ }
  setFormation($('formation-select').value||'433');
  refreshBench();
  MATCH_SECONDS=Number($('duration-select').value)||240;
@@ -917,7 +922,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 v1.4. Football IQ, formations, substitutes, stamina and improved animations, mouse controls, clubs, kits, stadiums, tactics and match length. Goals, replays, celebrations and match reports included.';
+ document.querySelector('.panel p').textContent='Striker FC 26 v1.4 Football IQ. Choose formations, make up to five substitutions and fight fatigue across the match. Replays, mouse controls and referee rules are included.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -1485,7 +1490,8 @@ function advance(dt){
    const speed=p.tackleRecover>0?11:jockey?10.5:sprint?(ball.owner===p?22:25):(ball.owner===p?15.2:18.2);
    const staminaCost=sprint&&input.moving?-20:10;
    p.stamina=clamp(p.stamina+staminaCost*dt,0,100);
-   vx=input.x*speed;vz=input.z*speed;
+   const energyScale=.79+.21*(p.stamina/100);
+   vx=input.x*speed*energyScale*(p.paceBonus||1);vz=input.z*speed*energyScale*(p.paceBonus||1);
    // A set-piece taker stays at the spot until passing or shooting.
    if(setPiece?.taker===p){vx=0;vz=0;p.vx=0;p.vz=0}
    // When receiving a pass, let the runner meet the ball without making E feel unresponsive.
@@ -1549,6 +1555,13 @@ function advance(dt){
     const dx=p.x-q.x,dz=p.z-q.z,d=Math.hypot(dx,dz);
     if(d>.01&&d<4.2){vx+=dx/d*(4.2-d)*1.8;vz+=dz/d*(4.2-d)*1.8}
    }
+  }
+  // Match-long fatigue matters for everyone; fresh substitutes recover top speed.
+  if(p!==cp){
+   const running=Math.hypot(vx,vz)>14;
+   p.stamina=clamp(p.stamina+(running?-2.4:1.5)*dt,0,100);
+   const energyScale=.80+.20*(p.stamina/100);
+   vx*=energyScale*(p.paceBonus||1);vz*=energyScale*(p.paceBonus||1);
   }
   // Acceleration / braking prevent instant direction reversals but still respond fast.
   const response=1-Math.exp(-dt*(p===cp?13:9.5));
