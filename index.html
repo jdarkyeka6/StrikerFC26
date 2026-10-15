@@ -779,6 +779,57 @@ $('pause-sub-apply').addEventListener('click',()=>makeSubstitution('pause'));
 $('half-sub-apply').addEventListener('click',()=>makeSubstitution('half'));
 
 const RECORD_KEY='strikerfc26-season-one-results';
+// Full Clubhouse menu; all cards read from the same permanent match profiles.
+let activeMenu='home',selectedProfile=null;
+const MENU_LABELS={home:'HOME / CLUBHOUSE',play:'PLAY / MATCH SETUP',squad:'SQUAD / PLAYERS',club:'CLUB HUB / LEAGUE',packs:'PACKS / COMING LATER',settings:'SETTINGS / CONTROLS'};
+function clubRecord(id){const rows=readResults().filter(r=>r.home===id);return [rows.filter(r=>r.score[0]>r.score[1]).length,rows.filter(r=>r.score[0]===r.score[1]).length,rows.filter(r=>r.score[0]<r.score[1]).length]}
+function renderDashboard(){
+ const id=$('home-select').value,c=CLUBS[id]||CLUBS.striker,roster=clubRoster(id),rec=clubRecord(id);
+ $('home-club-name').textContent=c.name;$('sidebar-club-name').textContent=c.name;
+ $('home-avg').textContent=Math.round(roster.slice(0,11).reduce((a,p)=>a+p.overall,0)/11);
+ $('home-record').textContent=rec.join('–');$('sidebar-record').textContent=rec[0]+' W · '+rec[1]+' D · '+rec[2]+' L';
+ $('home-club-slogan').textContent='16 original players · '+c.short;
+ $('hero-crest').textContent=c.short.split(' ').map(w=>w[0]).join('').slice(0,3);$('hero-crest').style.color=c.primary;
+}
+function portrait(p){return '<span class="player-portrait" style="--skin:'+p.appearance.skin+';--hair:'+p.appearance.hair+';--kit:'+CLUBS[p.club].primary+'"><span class="torso"></span><span class="neck"></span><span class="face"></span><span class="hair"></span><span class="eyes"></span><span class="smile"></span></span>'}
+function renderPlayerDetail(p){
+ $('player-detail').innerHTML=p?portrait(p)+'<div><strong>#'+p.number+' '+p.name+'</strong><span>'+p.position+' · '+p.nation+' · AGE '+p.age+' · '+p.height+' CM · '+p.overall+' OVR</span><div class="detail-stats">'+Object.entries(p.stats).map(([k,v])=>'<span>'+k.toUpperCase()+' '+v+'</span>').join('')+'</div><small>PLAYER ID: '+p.id+'</small></div>':'<strong>SELECT A PLAYER</strong><span>Choose a player to view their ratings.</span>';
+}
+function renderSquad(){
+ const id=$('squad-club-select').value,roster=clubRoster(id),filter=$('squad-filter').value;
+ const selected=roster.filter(p=>filter==='all'||(filter==='FWD'?['ST','LW','RW'].includes(p.position):filter==='MID'?['CM','CAM','CDM'].includes(p.position):filter==='DEF'?['LB','CB','RB'].includes(p.position):p.position==='GK'));
+ $('squad-count').textContent=selected.length+' / 16 PLAYERS';
+ $('roster-grid').innerHTML=selected.map(p=>'<button class="roster-card'+(selectedProfile===p.id?' active':'')+'" data-profile-id="'+p.id+'"><span class="overall">'+p.overall+'</span><span class="position">'+p.position+'</span><span class="nation">'+p.nation+'</span>'+portrait(p)+'<strong>'+p.name+'</strong><small>#'+p.number+' · '+p.age+' YEARS · '+p.height+' CM</small><span class="card-foot"><span>PAC '+p.stats.pace+'</span><span>SHO '+p.stats.shooting+'</span><span>PAS '+p.stats.passing+'</span></span></button>').join('');
+ renderPlayerDetail(roster.find(p=>p.id===selectedProfile)||selected[0]||null);
+}
+function renderClubs(){
+ $('club-list').innerHTML=Object.entries(CLUBS).map(([id,c])=>{
+ const roster=clubRoster(id),avg=Math.round(roster.slice(0,11).reduce((a,p)=>a+p.overall,0)/11);
+ return '<button data-club-id="'+id+'" style="--club:'+c.primary+'"><span class="club-badge">'+c.short.slice(0,2)+'</span><span><strong>'+c.name+'</strong><p>16 original players · '+avg+' OVR · '+roster[0].name+'</p><small>EXPLORE SQUAD ↗</small></span></button>'
+ }).join('');
+}
+function renderSettings(){
+ $('settings-mouse').textContent='MOUSE INPUT: '+($('mouse-enabled').checked?'ON':'OFF');
+ $('settings-difficulty').textContent=DIFFICULTIES[difficulty].name+' · '+DIFFICULTIES[difficulty].description;
+}
+function openMenuTab(tab){
+ if(!MENU_LABELS[tab])return;
+ activeMenu=tab;
+ document.querySelectorAll('.menu-screen').forEach(x=>x.classList.toggle('selected',x.id==='menu-'+tab));
+ document.querySelectorAll('.menu-nav-btn').forEach(x=>x.classList.toggle('selected',x.dataset.menu===tab));
+ $('menu-heading').textContent=MENU_LABELS[tab];
+ if(tab==='home')renderDashboard();else if(tab==='squad')renderSquad();else if(tab==='club')renderClubs();else if(tab==='settings')renderSettings();
+}
+document.querySelectorAll('.menu-nav-btn').forEach(b=>b.addEventListener('click',()=>openMenuTab(b.dataset.menu)));
+for(const id of ['home-play','home-quick','settings-open-match','settings-open-camera'])$(id).addEventListener('click',()=>openMenuTab('play'));
+$('home-squad').addEventListener('click',()=>openMenuTab('squad'));
+$('home-club').addEventListener('click',()=>openMenuTab('club'));
+$('home-training').addEventListener('click',startTraining);
+$('squad-club-select').addEventListener('change',()=>{selectedProfile=null;renderSquad()});
+$('squad-filter').addEventListener('change',renderSquad);
+$('roster-grid').addEventListener('click',e=>{const id=e.target.closest?.('[data-profile-id]')?.dataset.profileId;if(id){selectedProfile=id;renderSquad()}});
+$('club-list').addEventListener('click',e=>{const id=e.target.closest?.('[data-club-id]')?.dataset.clubId;if(CLUBS[id]){$('home-select').value=id;$('squad-club-select').value=id;selectedProfile=null;applyClubs();openMenuTab('squad')}});
+$('settings-mouse').addEventListener('click',()=>{$('mouse-enabled').checked=!$('mouse-enabled').checked;renderSettings()});
 function readResults(){
  try{const rows=JSON.parse(window.localStorage?.getItem(RECORD_KEY)||'[]');return Array.isArray(rows)?rows.filter(r=>r&&typeof r.home==='string').slice(-100):[]}catch(_){return []}
 }
@@ -787,7 +838,7 @@ function refreshRecord(){
  const w=rows.filter(r=>r.score[0]>r.score[1]).length,
  d=rows.filter(r=>r.score[0]===r.score[1]).length,
  l=rows.filter(r=>r.score[0]<r.score[1]).length;
- $('club-record').textContent='LOCAL CLUB RECORD · '+w+' W · '+d+' D · '+l+' L';
+ $('club-record').textContent='LOCAL CLUB RECORD · '+w+' W · '+d+' D · '+l+' L';renderDashboard();
 }
 function writeResult(){
  if(resultSaved||practiceMode)return;resultSaved=true;
@@ -891,7 +942,7 @@ function toggleStats(){
   statsOpen=true;renderStats();$('stats-panel').classList.remove('hidden');
  }
 }
-$('home-select').addEventListener('change',applyClubs);
+$('home-select').addEventListener('change',()=>{applyClubs();$('squad-club-select').value=$('home-select').value;selectedProfile=null;renderSquad()});
 $('away-select').addEventListener('change',applyClubs);
 $('stadium-select').addEventListener('change',()=>selectStadium($('stadium-select').value));
 $('tactic-select').addEventListener('change',()=>setTactic($('tactic-select').value,true));
@@ -1096,7 +1147,7 @@ function quitToMenu(){
  $('status').textContent='KICK OFF';
  $('start').textContent='START MATCH ↗';
  $('training').hidden=false;$('quit-match').hidden=true;$('pause-sub-panel').hidden=true;
- $('highlights').hidden=true;$('match-report').hidden=true;
+ $('highlights').hidden=true;$('match-report').hidden=true;openMenuTab('home');
 }
 $('training').addEventListener('click',startTraining);
 $('quit-match').addEventListener('click',quitToMenu);
@@ -1579,7 +1630,7 @@ function changeCamera(){
 }
 function togglePause(){
  cancelShot();
- if(state==='playing'){state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden');$('pause-sub-panel').hidden=false;refreshBench()}
+ if(state==='playing'){openMenuTab('play');state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden');$('pause-sub-panel').hidden=false;refreshBench()}
  else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden');$('pause-sub-panel').hidden=true}
 }
 $('start').addEventListener('click',()=>state==='paused'?togglePause():newMatch());
@@ -1626,7 +1677,7 @@ $('resume-half').addEventListener('click',()=>{
  $('half-panel').classList.add('hidden');
  $('status').textContent='SECOND HALF';say('SECOND HALF',1.2);
 });
-applyClubs();setTactic('balanced');selectStadium('day');
+applyClubs();setTactic('balanced');selectStadium('day');$('squad-club-select').value=$('home-select').value;openMenuTab('home');
 function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
@@ -1669,7 +1720,7 @@ function advance(dt){
   state='finished';cancelShot();$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
   $('half-panel').classList.add('hidden');$('celebration-layer').classList.add('hidden');
   $('highlights').hidden=highlightClips.length===0;
-  $('match-report').hidden=false;writeResult();
+  $('match-report').hidden=false;writeResult();openMenuTab('play');
   $('start').textContent='PLAY AGAIN ↗';
   document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
   const total=possessionTime[0]+possessionTime[1]||1;
