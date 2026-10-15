@@ -1,5 +1,21 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.2.0 · MOUSE CONTROLS (15 October 2026)
+
+Optional mouse support alongside existing keyboard and gamepad controls.
+
+- Left-click hold/release: charged shooting; left-click while defending: tackle.
+- Right-click: pass. Middle mouse: through ball.
+- Mouse back (M4): switch player. Mouse forward (M5): cross.
+- Scroll wheel: zoom the camera in/out.
+- Mouse controls on/off checkbox in match setup and pause menu.
+- Mouse actions activate only on the playable pitch, and the right-click menu is suppressed only during live play.
+- All earlier V1.1 features, including the referee, goal replays and Matchday setup, are preserved.
+
+Verification: 15 targeted input tests passed. Real browser/hardware testing remains advisable for M4/M5, which some browsers or mouse drivers may intercept.
+
+---
+
 ## Version 1.1.0 · THE REFEREE UPDATE (15 October 2026)
 
 Reviewed and merged Claude's V1.1 referee system. The existing V1.0 Matchday game remains intact.
