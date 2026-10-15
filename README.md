@@ -1,6 +1,27 @@
-# ⚽ STRIKER FC 26 | VERSION 1.3
+# ⚽ STRIKER FC 26 | VERSION 1.4
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.3 upgrades player and goalkeeper animation while keeping mouse/keyboard/controller controls, the referee and the entire Matchday feature set.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.4 introduces dynamic formations, a real substitutions bench, stamina that persists through kickoffs, smarter offside-aware passing, and match-management controls.
+
+## 🧠 Version 1.4: Football IQ
+
+This is a gameplay and coaching update. It preserves all earlier controls, match animations, referee rules, replays, and custom clubs.
+
+### Match formations
+Select from **4-3-3 Wide**, **4-4-2 Two Strikers**, and **4-2-3-1 Control** in the match setup. The formation changes real player positions, offensive roles, team support runs and defensive spacing. The opponent keeps its existing 4-3-3 shape. You can switch at halftime or in the setup menu while paused, and the players adjust their positions during play.
+
+### The substitutions bench
+Five bench players are available per match. Pause the game (P or Esc) to see **Matchday Bench**, or use the halftime substitutions section. Choose the player leaving and the substitute coming on, then confirm. The replacement gets a new name, number and full energy. Once a player has been replaced, you cannot reuse that player's slot, and each bench player can enter only once. Matches allow at most five substitutions. The referee's red-card rules remain in force.
+
+### Fatigue & recovery
+Stamina **does not reset after goals or kickoffs**. Players slow moderately as energy drains. Pressing and sprinting use energy; halftime restores a little, not all. Fresh substitutions have a slight pace bonus. The selected player's energy bar changes colour as stamina drops and displays a numerical percentage. Match Centre now shows substitutions and average home-team energy.
+
+### Simplified offside rule
+The game checks whether an intended pass/cross recipient is ahead of the ball and the second-last opponent in the attacking half at the moment of the kick. AI passing prefers onside receivers, and an offside intended receiver is penalised only upon receiving the ball, producing a free kick for the defending team. Direct throw-ins, corners and goal kicks are exempt. Offsides are tracked in match statistics. This is an **arcade implementation**, not a complete professional laws-of-the-game simulator, and does not detect every type of offside interference.
+
+### Tests and limitations
+- 25 targeted checks passed for changing formations, five-player bench rules, substitutions while paused and at halftime, shirt numbers, fatigue through halftime, onside/offside logic and resulting free kicks.
+- The game's JS syntax and UI ID references were checked.
+- Browser GPU playtesting is still recommended, especially for on-pitch formation balance and offside edge cases.
 
 ## 🏃 Version 1.3: Player animation upgrade
 
