@@ -90,6 +90,8 @@
 <p class="difficulty-note">Change difficulty any time while paused.</p>
 </div>
 <button class="primary" id="start">START MATCH <span>↗</span></button>
+<button class="primary highlights-btn" id="training">🎯 FREE TRAINING <span>↗</span></button>
+<button class="primary highlights-btn" id="quit-match" hidden>✕ RETURN TO MAIN MENU <span>↗</span></button>
 <button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button>
 <button class="primary highlights-btn" id="match-report" hidden>▤ FULL MATCH REPORT <span>↗</span></button>
 <div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
@@ -366,7 +368,7 @@ let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0;
 let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
 let possessionTime=[0,0],shots=[0,0],saves=[0,0],passesAttempted=[0,0],passesCompleted=[0,0],tacklesWon=[0,0];
 let lastPass=null,homeTactic='balanced',weather='day',halftimePlayed=false,statsOpen=false,statsReturn='playing',celebration=null,lastShooter=null;
-let resultSaved=false;
+let resultSaved=false,practiceMode=false;
 const RECORD_KEY='strikerfc26-season-one-results';
 function readResults(){
  try{const rows=JSON.parse(window.localStorage?.getItem(RECORD_KEY)||'[]');return Array.isArray(rows)?rows.filter(r=>r&&typeof r.home==='string').slice(-100):[]}catch(_){return []}
@@ -379,7 +381,7 @@ function refreshRecord(){
  $('club-record').textContent='LOCAL CLUB RECORD · '+w+' W · '+d+' D · '+l+' L';
 }
 function writeResult(){
- if(resultSaved)return;resultSaved=true;
+ if(resultSaved||practiceMode)return;resultSaved=true;
  const rows=readResults();
  rows.push({home:$('home-select').value,away:$('away-select').value,
   score:[score[0],score[1]],difficulty,time:Date.now()});
@@ -545,7 +547,7 @@ function endReplay(){
  replaySession=null;
  $('replay-screen').classList.add('hidden');
  if(session.mode==='goal'){
-  resetPositions(1-session.clip.team);
+  resetPositions(practiceMode?0:1-session.clip.team);
   state='playing';
   $('status').textContent='LIVE MATCH';
   say('KICK OFF',.9);
@@ -627,11 +629,34 @@ function resetPositions(kickoffTeam=0){
  Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false});
  kicker.hasBall=true;selectPlayer(players[0]);
 }
+function startTraining(){
+ newMatch();
+ practiceMode=true;
+ for(const p of players)if(p.team===1)p.mesh.visible=false;
+ $('status').textContent='FREE TRAINING';
+ $('quit-match').hidden=false;$('training').hidden=true;
+ say('TRAINING MODE',1.4);
+}
+function quitToMenu(){
+ cancelShot();celebration=null;practiceMode=false;
+ replaySession=null;state='menu';statsOpen=false;
+ for(const p of players)p.mesh.visible=true;
+ $('overlay').classList.remove('hidden');$('replay-screen').classList.add('hidden');
+ $('celebration-layer').classList.add('hidden');$('half-panel').classList.add('hidden');
+ $('stats-panel').classList.add('hidden');
+ $('status').textContent='KICK OFF';
+ $('start').textContent='START MATCH ↗';
+ $('training').hidden=false;$('quit-match').hidden=true;
+ $('highlights').hidden=true;$('match-report').hidden=true;
+}
+$('training').addEventListener('click',startTraining);
+$('quit-match').addEventListener('click',quitToMenu);
 function newMatch(){
  cameraFocus.set(0,0,0);
  MATCH_SECONDS=Number($('duration-select').value)||240;
- halftimePlayed=false;celebration=null;resultSaved=false;
- $('match-report').hidden=true;
+ halftimePlayed=false;celebration=null;resultSaved=false;practiceMode=false;
+ for(const p of players)p.mesh.visible=true;
+ $('match-report').hidden=true;$('quit-match').hidden=true;$('training').hidden=false;
  passesAttempted=[0,0];passesCompleted=[0,0];tacklesWon=[0,0];lastPass=null;
  applyClubs();setTactic($('tactic-select').value);selectStadium($('stadium-select').value);
  statsOpen=false;$('stats-panel').classList.add('hidden');
@@ -671,6 +696,15 @@ function playMatchSound(type){
 }
 function restartPlay(kind,team,x,z){
  cancelShot();
+ if(practiceMode){
+  const striker=players[0];
+  if(ball.owner)ball.owner.hasBall=false;
+  striker.x=0;striker.z=-13;striker.vx=striker.vz=0;
+  striker.mesh.position.set(0,0,-13);striker.hasBall=true;striker.carryTime=0;
+  ball.owner=striker;ball.x=0;ball.z=-13;ball.y=1.05;ball.vx=ball.vz=ball.vy=0;ball.lock=.25;ball.isShot=false;ball.lastTouchTeam=0;
+  selectPlayer(striker);say('TRY AGAIN',.7);
+  return;
+ }
  const taker=kind==='GOAL KICK'?players[team*11+10]:
    players.filter(p=>p.team===team&&p.index!==10).sort((a,b)=>Math.hypot(a.x-x,a.z-z)-Math.hypot(b.x-x,b.z-z))[0];
  if(!taker)return;
@@ -751,6 +785,7 @@ function switchPlayer(){
  selectPlayer(next,true);
 }
 function passLaneRisk(p,target,receiver){
+ if(practiceMode)return 0;
  const dx=target.x-p.x,dz=target.z-p.z,l2=dx*dx+dz*dz||1;
  let risk=0;
  for(const o of players){
@@ -775,7 +810,7 @@ function passOptions(p,through=false){
   const v=norm(tx-p.x,tz-p.z);
   const dot=aim.x*v.x+aim.z*v.z;
   const forward=(tz-p.z)*side;
-  const open=players.filter(o=>o.team!==p.team).reduce((m,o)=>Math.min(m,distance(o,{x:tx,z:tz})),30);
+  const open=practiceMode?30:players.filter(o=>o.team!==p.team).reduce((m,o)=>Math.min(m,distance(o,{x:tx,z:tz})),30);
   const lane=passLaneRisk(p,{x:tx,z:tz},q);
   // Direction outweighs simple closeness; passing into crowded lanes is penalised.
   let score=dot*40+forward*.14-Math.abs(d-(through?35:25))*.22+Math.min(open,19)*.75-lane*2;
@@ -956,7 +991,7 @@ function endCelebration(){
  if(state!=='celebration'||!celebration)return;
  const c=celebration;celebration=null;$('celebration-layer').classList.add('hidden');
  if(!c.clip||!startReplay(c.clip,'goal')){
-  resetPositions(1-c.team);state='playing';$('status').textContent='LIVE MATCH';
+  resetPositions(practiceMode?0:1-c.team);state='playing';$('status').textContent='LIVE MATCH';
  }
 }
 function updateCelebration(dt){
@@ -1019,10 +1054,10 @@ function advance(dt){
  readController();
  possessionTime[ball.owner?.team??ball.lastTouchTeam??0]+=dt;
  matchTime+=dt;
- if(!halftimePlayed&&matchTime>=MATCH_SECONDS/2){beginHalfTime();return}
+ if(!practiceMode&&!halftimePlayed&&matchTime>=MATCH_SECONDS/2){beginHalfTime();return}
  const seconds=Math.floor(matchTime);
  $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
- if(matchTime>=MATCH_SECONDS){
+ if(!practiceMode&&matchTime>=MATCH_SECONDS){
   state='finished';cancelShot();$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
   $('half-panel').classList.add('hidden');$('celebration-layer').classList.add('hidden');
   $('highlights').hidden=highlightClips.length===0;
@@ -1056,6 +1091,7 @@ function advance(dt){
    return priority(a)-priority(b);
   }).slice(0,team===1?difficultySettings().opponentPressers:tactic().pressers));
  for(const p of players){
+  if(practiceMode&&p.team===1)continue;
   p.tackleCooldown=Math.max(0,p.tackleCooldown-dt);
   p.tackleWindow=Math.max(0,p.tackleWindow-dt);
   p.tackleRecover=Math.max(0,p.tackleRecover-dt);
@@ -1187,6 +1223,7 @@ function advance(dt){
     const d=Math.hypot(p.x-px,p.z-pz);
     const reach=p.index===10?4.0:(ball.passTarget===p?3.5:2.65);
     // Do not bypass real keeper save checks with the generic loose-ball pickup.
+    if(practiceMode&&p.team===1)continue;
     if(p.index===10&&ball.isShot)continue;
     if(d<reach&&ball.y< (p.index===10?6.0:3.1))choices.push({p,d,t,rank:d-(ball.passTarget===p?.5:0)});
    }
@@ -1205,7 +1242,7 @@ function advance(dt){
   ballMesh.position.set(k.x+k.faceX*.45,1.62,k.z+k.faceZ*.55);
  }else ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
  ballMesh.rotation.x+=ball.vz*dt*.32;ballMesh.rotation.z-=ball.vx*dt*.32;
- if(!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-29&&Math.abs(ball.x)<GOAL_W/2+10){
+ if(!practiceMode&&!ball.owner&&ball.isShot&&Math.abs(ball.z)>HL-29&&Math.abs(ball.x)<GOAL_W/2+10){
   const defendingTeam=ball.z<0?1:0,keeper=players[defendingTeam*11+10];
   const incoming=Math.sign(ball.vz)===Math.sign(ball.z),speedZ=Math.abs(ball.vz);
   const arrival=speedZ>.001?(keeper.z-ball.z)/ball.vz:99;
