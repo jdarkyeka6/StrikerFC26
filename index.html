@@ -1,6 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.3</title><style>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.4</title><style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{font-family:'DM Sans',Arial,sans-serif;color:#f2fbff;background:#071522;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}#game,canvas{width:100vw;height:100vh;display:block}#game{position:fixed;inset:0}body:after{pointer-events:none;position:fixed;inset:0;content:'';background:linear-gradient(180deg,rgba(2,13,19,.44),transparent 25%,transparent 68%,rgba(2,13,19,.66));z-index:1}.hud,.bottom{position:absolute;z-index:3;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.hud{top:20px;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:220px}.brand-icon{font:900 24px 'Barlow Condensed';border:2px solid #67f4ba;width:43px;height:43px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b2b2e;color:white}.brand-icon span{color:#67f4ba}.brand strong,.brand small{display:block}.brand strong{font:800 22px 'Barlow Condensed';letter-spacing:2px}.brand strong span{color:#67f4ba}.brand small{font-size:9px;letter-spacing:2.1px;color:#aac2c9}.scoreboard{display:flex;align-items:center;background:rgba(4,23,32,.88);border:1px solid rgba(158,255,224,.22);border-radius:12px;overflow:hidden;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}.club{font:800 16px 'Barlow Condensed';letter-spacing:1.6px;padding:14px 16px}.home{color:#84f8cc}.away{color:#ff9d96}.score{font:900 28px 'Barlow Condensed';display:flex;align-items:center;gap:12px;background:#07141b;padding:6px 20px}.score span{font-size:18px;color:#8c9eaa}.clock{padding:14px;border-left:1px solid #34535d;font:800 15px 'Barlow Condensed';color:#cfe5e5;min-width:62px;text-align:center}.top-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}.pill{border:1px solid #5fe9b7;color:#5fe9b7;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1.7px;background:#021b1bd9}.top-right button{pointer-events:auto;color:#dcfff3;border:1px solid #546c78;background:#041924aa;width:39px;height:39px;border-radius:9px;cursor:pointer}.bottom{bottom:22px;align-items:flex-end;gap:20px}.player-card{background:#041923d9;border:1px solid #6bf3b447;border-radius:12px;display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:238px;backdrop-filter:blur(12px)}.player-no{font:900 46px 'Barlow Condensed';color:#7cffc3;line-height:1}.player-card small{display:block;font-size:8px;letter-spacing:1.7px;color:#9cb7bc}.player-card strong{display:block;font:800 18px 'Barlow Condensed';letter-spacing:.8px}.player-card span{font:700 9px 'DM Sans';letter-spacing:1.3px;color:#78e5ba}.action-hint{position:absolute;bottom:80px;left:0;color:#a4eecd;font:800 10px 'DM Sans';letter-spacing:1.2px;background:#031a24db;padding:7px 11px;border:1px solid #4deab355;border-radius:7px;pointer-events:none}.shot-gauge{position:absolute;bottom:73px;left:0;width:238px;height:5px;background:#274850;border-radius:5px;overflow:hidden;opacity:0;transition:opacity .1s}.shot-gauge.active{opacity:1}.shot-gauge span{display:block;width:0;height:100%;background:linear-gradient(90deg,#67f7b8,#ffde7c,#fb7976)}.stamina{width:4px;height:45px;background:#2f5361;border-radius:4px;margin-left:auto;position:relative;overflow:hidden}.stamina span{position:absolute;bottom:0;width:100%;background:#82fac4;height:100%;transition:height .15s}.controls{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center;font-size:11px;color:#d6e8e8;background:#041923b6;border-radius:9px;padding:12px 16px;max-width:650px}.controls kbd{font:700 10px 'DM Sans';background:#d4fff0;color:#12382d;padding:4px 6px;border-radius:4px;margin-right:4px}.radar{width:150px;height:95px;border:1px solid #8bccb1;background:#09281f99;border-radius:4px;position:relative;flex-shrink:0}.radar:before{content:'';position:absolute;inset:7px;border:1px solid #8bccb180}.radar-mid{position:absolute;top:7px;bottom:7px;left:50%;width:1px;background:#8bccb180}.radar-mid:after{content:'';position:absolute;width:35px;height:35px;border:1px solid #8bccb180;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}.dot{position:absolute;width:5px;height:5px;border-radius:50%;z-index:1;transform:translate(-50%,-50%)}.dot.a{background:#80ffbf}.dot.b{background:#ff9991}.dot.ball{background:white;width:4px;height:4px}.dot.active{box-shadow:0 0 0 3px #fff7}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;background:linear-gradient(90deg,#04151fee 0%,#051923e8 38%,#07152250 100%);transition:opacity .3s}.overlay.hidden{opacity:0;pointer-events:none}.panel{max-width:590px;margin-left:clamp(28px,9vw,150px)}.eyebrow{color:#7dfbc1;font-size:12px;letter-spacing:3px;font-weight:800}.panel h1{font:900 clamp(70px,9vw,130px)/.85 'Barlow Condensed';letter-spacing:-1px;margin:20px 0;text-shadow:0 10px 40px #0004}.panel h1 em{color:#72f4b8;font-style:normal}.panel p{max-width:440px;line-height:1.7;color:#b8cdd2;font-size:14px}.features{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.features span{border:1px solid #41666b;background:#092832b0;padding:9px 12px;font-size:10px;letter-spacing:1px;font-weight:800}
+.half-coach{display:grid;grid-template-columns:1fr 1fr;max-width:550px;gap:14px;margin:18px auto}
+.half-coach .setup-control{margin:0;max-width:none}
+.substitutions-panel{background:#071f2bec;border:1px solid #5ad8ac75;border-radius:10px;padding:13px 15px;margin:12px 0 18px;max-width:575px;text-align:left}
+.substitutions-panel strong{color:#95fbc4;letter-spacing:1px;font:900 12px 'DM Sans',Arial}
+.substitutions-panel>span{float:right;color:#f9edb8;font:800 11px 'DM Sans',Arial}
+.substitutions-panel p{font:500 11px 'DM Sans',Arial;color:#a6caba;margin:9px 0 0}
+.subs-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.subs-grid select{width:100%;min-width:0;background:#153643;color:#f1fff9;padding:9px;border:1px solid #5eae99;border-radius:6px;font:700 11px 'DM Sans',Arial}
+.substitutions-panel button{background:#55e4a6;border:0;border-radius:6px;color:#062225;font-weight:900;font-size:11px;padding:10px 14px;margin-top:9px;cursor:pointer}
+.substitutions-panel button:disabled{background:#4f6966;color:#aebdb8;cursor:not-allowed}
+#half-panel .substitutions-panel{margin:18px auto}
+@media(max-width:620px){.half-coach,.subs-grid{grid-template-columns:1fr}.half-card{padding:12px}.substitutions-panel{padding:9px 10px}}
 .club-record{margin-top:10px;color:#a0dfc8;font:800 11px 'DM Sans';letter-spacing:1.4px}
 .overlay{overflow-y:auto}.panel{padding:20px 0}.panel h1{font-size:clamp(58px,7.5vw,104px);margin:13px 0}
 .mouse-panel{border:1px solid #56bfa066;background:#071e2beb;border-radius:10px;max-width:575px;margin:10px 0;padding:12px 14px}
@@ -62,20 +74,26 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.3 · MATCHDAY</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
-<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.4 · MATCHDAY</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
 <div class="half-panel hidden" id="half-panel"><div class="half-card"><div class="eyebrow" id="half-eyebrow">HALF TIME</div><h2 id="half-heading">THE BREAK</h2><div class="half-score" id="half-score">0 : 0</div><p id="half-subtitle">Time to change the game plan.</p>
-<label class="setup-control">SECOND-HALF TACTIC
-<select id="half-tactic"><option value="balanced">BALANCED 4-3-3</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select>
-</label><div id="half-stats"></div><button class="primary" id="resume-half">START SECOND HALF ↗</button></div></div>
+<div class="half-coach"><label class="setup-control">SECOND-HALF TACTIC
+<select id="half-tactic"><option value="balanced">BALANCED</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select>
+</label><label class="setup-control">FORMATION
+<select id="half-formation"><option value="433">4-3-3</option><option value="442">4-4-2</option><option value="4231">4-2-3-1</option></select>
+</label></div>
+<div class="substitutions-panel"><strong>🔄 SUBSTITUTIONS</strong><span id="half-subs-left">5 LEFT</span>
+<div class="subs-grid"><select id="half-sub-out" aria-label="Select player to replace"></select><select id="half-sub-in" aria-label="Select substitute"></select></div>
+<button id="half-sub-apply" type="button">MAKE SUBSTITUTION</button><p id="half-sub-status">Bring on fresh legs for the second half.</p></div>
+<div id="half-stats"></div><button class="primary" id="resume-half">START SECOND HALF ↗</button></div></div>
 <div class="stats-panel hidden" id="stats-panel"><button id="close-stats">✕ CLOSE</button><div class="eyebrow">LIVE MATCH REPORT</div><h2 id="stats-title">MATCH CENTRE</h2><div id="stats-data"></div><div class="stats-footer">Press TAB to return to the pitch</div></div>
 <div class="celebration-layer hidden" id="celebration-layer"><strong id="celebration-banner">GOOOAAAL!</strong><span id="celebration-sub">STRIKER FC · 1-0</span><span>GOAL CELEBRATION · REPLAY COMING UP</span></div>
 <div class="replay-screen hidden" id="replay-screen" aria-live="polite">
  <div class="replay-top"><span class="replay-marker">● INSTANT REPLAY</span><strong id="replay-title">GOAL REPLAY</strong><span id="replay-counter">0 / 0</span></div>
  <div class="replay-bottom"><span>STRIKER FC 26 · MATCH REPLAY</span><div class="replay-progress"><span id="replay-progress"></span></div><button id="skip-replay" aria-label="Skip replay">SKIP REPLAY · R / ESC <span>↗</span></button></div>
 </div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.3</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.3 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.4 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
 <div class="match-setup">
  <div class="setup-heading">MATCH SETUP <span>SEASON 01 · ORIGINAL CLUBS</span></div>
  <div class="setup-grid">
@@ -87,7 +105,8 @@
   </select></label>
   <label class="setup-control">MATCH LENGTH<select id="duration-select"><option value="240">4 MIN · QUICK MATCH</option><option value="480">8 MIN · STANDARD</option><option value="720">12 MIN · LONG MATCH</option></select></label>
   <label class="setup-control">STADIUM<select id="stadium-select"><option value="day">DAYLIGHT</option><option value="sunset">GOLDEN HOUR</option><option value="night">NIGHT GAME</option><option value="rain">RAINY NIGHT</option></select></label>
-  <label class="setup-control">YOUR TACTIC<select id="tactic-select"><option value="balanced">BALANCED 4-3-3</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select></label>
+  <label class="setup-control">YOUR TACTIC<select id="tactic-select"><option value="balanced">BALANCED</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select></label>
+<label class="setup-control">YOUR FORMATION<select id="formation-select"><option value="433">4-3-3 · WIDE</option><option value="442">4-4-2 · TWO STRIKERS</option><option value="4231">4-2-3-1 · CONTROL</option></select></label>
  </div>
  <div class="kit-preview"><span id="kit-home" class="kit-chip"></span><span id="kit-match-label">STRIKER FC vs EMBER ROVERS</span><span id="kit-away" class="kit-chip"></span></div>
 </div><div class="mouse-panel">
@@ -101,7 +120,11 @@
   <span><kbd>SCROLL WHEEL</kbd> Camera zoom</span>
  </div>
  <div class="mouse-footnote">Mouse controls only work over the pitch during play. Keyboard and controller still work.</div>
-</div><div class="difficulty-panel">
+</div><div class="substitutions-panel" id="pause-sub-panel" hidden><strong>🔄 MATCHDAY BENCH</strong><span id="pause-subs-left">5 LEFT</span>
+<div class="subs-grid"><select id="pause-sub-out" aria-label="Player to take off"></select><select id="pause-sub-in" aria-label="Player to bring on"></select></div>
+<button id="pause-sub-apply" type="button">CONFIRM SUBSTITUTION</button>
+<p id="pause-sub-status">Pause during a match to make up to five substitutions.</p></div>
+<div class="difficulty-panel">
 <label for="difficulty">MATCH DIFFICULTY</label>
 <select id="difficulty" aria-label="Match difficulty">
 <option value="beginner" selected>🟢 Beginner · Learning the controls</option>
@@ -277,6 +300,30 @@ const formation=[
  {x:51,z:83,role:'RIGHT BACK',no:2,group:'defence'},
  {x:0,z:HL-10,role:'GOALKEEPER',no:1,group:'keeper'}
 ];
+// Tactical shapes: index 0–9 are outfield positions, index 10 is goalkeeper.
+const FORMATIONS={
+ '433':formation,
+ '442':[
+ {x:-19,z:19,role:'STRIKER',no:9,group:'attack'},
+ {x:19,z:19,role:'STRIKER',no:11,group:'attack'},
+ {x:-51,z:42,role:'LEFT MID',no:7,group:'mid'},
+ {x:51,z:42,role:'RIGHT MID',no:10,group:'mid'},
+ {x:-18,z:55,role:'CENTRAL MID',no:8,group:'mid'},
+ {x:18,z:55,role:'CENTRAL MID',no:6,group:'mid'},
+ ...formation.slice(6)
+ ],
+ '4231':[
+ {x:0,z:18,role:'STRIKER',no:9,group:'attack'},
+ {x:-48,z:37,role:'LEFT WING',no:11,group:'attack'},
+ {x:48,z:37,role:'RIGHT WING',no:7,group:'attack'},
+ {x:0,z:40,role:'ATTACKING MID',no:10,group:'mid'},
+ {x:-21,z:64,role:'DEFENSIVE MID',no:8,group:'mid'},
+ {x:21,z:64,role:'DEFENSIVE MID',no:6,group:'mid'},
+ ...formation.slice(6)
+ ]
+};
+let activeFormation='433';
+const roleOf=p=>p.team===0?FORMATIONS[activeFormation][p.index]:formation[p.index];
 const players=[];
 
 const shared={black:mat('#0a1821'),sockA:mat('#dbfff0'),sockB:mat('#ffddd5'),boot:mat('#121725'),white:mat('#f7ffff'),hair:[mat('#251c19'),mat('#47301d'),mat('#171920'),mat('#77462a')]};
@@ -493,6 +540,65 @@ let possessionTime=[0,0],shots=[0,0],saves=[0,0],passesAttempted=[0,0],passesCom
 let foulsCommitted=[0,0],yellowCards=[0,0],redCards=[0,0],setPiece=null;
 let lastPass=null,homeTactic='balanced',weather='day',halftimePlayed=false,statsOpen=false,statsReturn='playing',celebration=null,lastShooter=null;
 let resultSaved=false,practiceMode=false;
+const BENCH=[
+ {name:'JOSH HARPER',number:12,pace:1.11},
+ {name:'MASON GREY',number:14,pace:1.05},
+ {name:'TYLER QUINN',number:16,pace:1.14},
+ {name:'DYLAN KENT',number:18,pace:1.08},
+ {name:'CASEY REED',number:20,pace:1.12}
+];
+const INITIAL_HOME_NAMES=['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE','MICAH HAYES','OLLIE WEST','JAY CARTER','ETHAN COLE','RILEY FINCH','SAM BROOKS'];
+let subsUsed=0;
+const usedBench=new Set(),replacedSlots=new Set();
+function setFormation(choice,announce=false){
+ if(!Object.prototype.hasOwnProperty.call(FORMATIONS,choice))return false;
+ activeFormation=choice;
+ $('formation-select').value=choice;
+ $('half-formation').value=choice;
+ $('tactic-indicator').textContent='⚙ '+tactic().name+' · '+choice.replace('433','4-3-3').replace('442','4-4-2').replace('4231','4-2-3-1');
+ if(announce&&state!=='menu')say('FORMATION: '+$('formation-select').options?.[$('formation-select').selectedIndex]?.textContent?.split(' · ')[0]||'FORMATION CHANGED',1);
+ if(typeof updatePlayerUI==='function')updatePlayerUI();
+ return true;
+}
+function refreshBench(){
+ for(const prefix of ['pause','half']){
+  const from=$(prefix+'-sub-out'),to=$(prefix+'-sub-in');
+  const outOld=from.value,inOld=to.value;
+  const choices=players.filter(p=>p.team===0&&p.index<10&&!p.sentOff&&!replacedSlots.has(p.index));
+  const available=BENCH.filter((b,i)=>!usedBench.has(i));
+  from.innerHTML=choices.map(p=>'<option value="'+p.index+'">'+names[0][p.index]+' · '+Math.round(p.stamina)+'% ENERGY</option>').join('');
+  to.innerHTML=available.map(b=>'<option value="'+BENCH.indexOf(b)+'">#'+b.number+' '+b.name+'</option>').join('');
+  if(choices.some(p=>String(p.index)===outOld))from.value=outOld;
+  if(available.some(b=>String(BENCH.indexOf(b))===inOld))to.value=inOld;
+  $(prefix+'-subs-left').textContent=(5-subsUsed)+' LEFT';
+  $(prefix+'-sub-apply').disabled=subsUsed>=5||!choices.length||!available.length;
+ }
+}
+function makeSubstitution(prefix='pause'){
+ if(!['paused','halftime'].includes(state)||subsUsed>=5)return false;
+ const slot=Number($(prefix+'-sub-out').value),benchId=Number($(prefix+'-sub-in').value);
+ if(!Number.isInteger(slot)||slot<0||slot>=10||replacedSlots.has(slot)||!Number.isInteger(benchId)||benchId<0||benchId>=BENCH.length||usedBench.has(benchId))return false;
+ const p=players[slot],b=BENCH[benchId];
+ if(!p||p.sentOff)return false;
+ if(ball.owner===p){p.hasBall=false;ball.owner=null}
+ if(setPiece?.taker===p)setPiece=null;
+ names[0][slot]=b.name;p.stamina=100;p.paceBonus=b.pace;
+ p.tackleWindow=0;p.tackleCooldown=0;p.tackleRecover=0;
+ p.vx=0;p.vz=0;
+ p.x=base(p).x;p.z=base(p).z;p.mesh.position.set(p.x,0,p.z);
+ const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
+ if(numberMesh){numberMesh.material.map=jerseyTexture(0,b.number);numberMesh.material.needsUpdate=true}
+ subsUsed++;usedBench.add(benchId);replacedSlots.add(slot);
+ updatePlayerUI();refreshBench();
+ $(prefix+'-sub-status').textContent='✅ '+b.name+' ON · '+(5-subsUsed)+' substitutions left';
+ say('SUBSTITUTION: '+b.name,1.7);
+ return true;
+}
+$('formation-select').addEventListener('change',()=>setFormation($('formation-select').value,true));
+$('half-formation').addEventListener('change',()=>setFormation($('half-formation').value,true));
+$('pause-sub-apply').addEventListener('click',()=>makeSubstitution('pause'));
+$('half-sub-apply').addEventListener('click',()=>makeSubstitution('half'));
+
 const RECORD_KEY='strikerfc26-season-one-results';
 function readResults(){
  try{const rows=JSON.parse(window.localStorage?.getItem(RECORD_KEY)||'[]');return Array.isArray(rows)?rows.filter(r=>r&&typeof r.home==='string').slice(-100):[]}catch(_){return []}
@@ -521,7 +627,7 @@ const tactic=()=>TACTICS[homeTactic];
 function setTactic(value,notify=false){
  if(!Object.prototype.hasOwnProperty.call(TACTICS,value))return;
  homeTactic=value;$('tactic-select').value=value;
- $('tactic-indicator').textContent='⚙ '+tactic().name+' · 4-3-3';
+ $('tactic-indicator').textContent='⚙ '+tactic().name+' · '+({'433':'4-3-3','442':'4-4-2','4231':'4-2-3-1'}[activeFormation]);
  $('half-tactic').value=value;
  if(notify&&state!=='menu')say('TACTIC: '+tactic().name,1);
 }
@@ -564,6 +670,8 @@ function statsMarkup(){
  statLine('SHOTS',shots[0],shots[1])+statLine('SAVES',saves[0],saves[1])+
  statLine('PASSES',passesCompleted[0]+'/'+passesAttempted[0],passesCompleted[1]+'/'+passesAttempted[1])+
  statLine('PASS ACCURACY',pct(0),pct(1))+statLine('TACKLES WON',tacklesWon[0],tacklesWon[1])+
+ statLine('SUBSTITUTIONS',subsUsed,'—')+
+ statLine('AVG ENERGY',Math.round(players.filter(p=>p.team===0&&p.index<10&&!p.sentOff).reduce((a,p)=>a+p.stamina,0)/Math.max(1,players.filter(p=>p.team===0&&p.index<10&&!p.sentOff).length))+'%','—')+
  statLine('FOULS',foulsCommitted[0],foulsCommitted[1])+statLine('YELLOW CARDS',yellowCards[0],yellowCards[1])+statLine('RED CARDS',redCards[0],redCards[1]);
 }
 function renderStats(){
@@ -735,7 +843,7 @@ setDifficulty('beginner');
 const padHeld=new Set();
 const controlledPlayer=()=>players[controlled];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
-const base=p=>({x:p.team===0?formation[p.index].x:-formation[p.index].x,z:p.team===0?formation[p.index].z:-formation[p.index].z});
+const base=p=>({x:p.team===0?roleOf(p).x:-roleOf(p).x,z:p.team===0?roleOf(p).z:-roleOf(p).z});
 const goalZ=team=>teams[team].dir*HL, norm=(x,z)=>{const d=Math.hypot(x,z)||1;return {x:x/d,z:z/d}};
 const teamMates=p=>players.filter(q=>q.team===p.team&&q!==p&&q.index!==10&&!q.sentOff);
 function selectPlayer(p,manual=false){
@@ -745,7 +853,7 @@ function selectPlayer(p,manual=false){
  updatePlayerUI();
 }
 function updatePlayerUI(){
- const p=controlledPlayer(),f=formation[p.index];
+ const p=controlledPlayer(),f=roleOf(p);
  $('player-number').textContent=String(f.no).padStart(2,'0');
  $('player-name').textContent=names[p.team][p.index];$('player-role').textContent=f.role;
 }
@@ -754,7 +862,7 @@ function resetPositions(kickoffTeam=0){
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
-  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:100,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
+  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:p.stamina,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
   p.rig.character.rotation.set(0,0,0);p.rig.character.position.set(0,0,0);
   p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
   // Sent-off players stay off the pitch.
@@ -783,18 +891,23 @@ function quitToMenu(){
  $('stats-panel').classList.add('hidden');
  $('status').textContent='KICK OFF';
  $('start').textContent='START MATCH ↗';
- $('training').hidden=false;$('quit-match').hidden=true;
+ $('training').hidden=false;$('quit-match').hidden=true;$('pause-sub-panel').hidden=true;
  $('highlights').hidden=true;$('match-report').hidden=true;
 }
 $('training').addEventListener('click',startTraining);
 $('quit-match').addEventListener('click',quitToMenu);
 function newMatch(){
  cameraFocus.set(0,0,0);
+ subsUsed=0;usedBench.clear();replacedSlots.clear();
+ for(let i=0;i<11;i++)names[0][i]=INITIAL_HOME_NAMES[i];
+ for(const p of players){p.stamina=100;p.paceBonus=1}
+ setFormation($('formation-select').value||'433');
+ refreshBench();
  MATCH_SECONDS=Number($('duration-select').value)||240;
  halftimePlayed=false;celebration=null;resultSaved=false;practiceMode=false;
  for(const p of players){p.mesh.visible=true;p.yellow=0;p.sentOff=false}
  foulsCommitted=[0,0];yellowCards=[0,0];redCards=[0,0];setPiece=null;
- $('match-report').hidden=true;$('quit-match').hidden=false;$('training').hidden=true;
+ $('match-report').hidden=true;$('quit-match').hidden=false;$('training').hidden=true;$('pause-sub-panel').hidden=true;
  passesAttempted=[0,0];passesCompleted=[0,0];tacklesWon=[0,0];lastPass=null;
  applyClubs();setTactic($('tactic-select').value);selectStadium($('stadium-select').value);
  statsOpen=false;$('stats-panel').classList.add('hidden');
@@ -804,7 +917,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 v1.3. Improved player animations, mouse controls, clubs, kits, stadiums, tactics and match length. Goals, replays, celebrations and match reports included.';
+ document.querySelector('.panel p').textContent='Striker FC 26 v1.4. Football IQ, formations, substitutes, stamina and improved animations, mouse controls, clubs, kits, stadiums, tactics and match length. Goals, replays, celebrations and match reports included.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -879,12 +992,12 @@ function crossBall(p){
  if(state!=='playing'||ball.owner!==p||p.sentOff||setPiece?.kind==='PENALTY KICK')return false;
  // Select an attacking runner, favouring central targets inside the box.
  const side=teams[p.team].dir;
- const targets=teamMates(p).filter(q=>formation[q.index].group==='attack'||formation[q.index].group==='mid')
+ const targets=teamMates(p).filter(q=>roleOf(q).group==='attack'||roleOf(q).group==='mid')
    .map(q=>{
     const bx=clamp(q.x*.55,-GOAL_W*.85,GOAL_W*.85);
     const bz=clamp(goalZ(p.team)-side*18,-HL+18,HL-18);
     const d=Math.hypot(bx-p.x,bz-p.z);
-    const score=(q.z-p.z)*side*.4-Math.abs(q.x)*.12-Math.abs(q.x-bx)*.08+(formation[q.index].group==='attack'?12:0);
+    const score=(q.z-p.z)*side*.4-Math.abs(q.x)*.12-Math.abs(q.x-bx)*.08+(roleOf(q).group==='attack'?12:0);
     return {q,bx,bz,d,score};
    }).sort((a,b)=>b.score-a.score)[0];
  if(!targets)return false;
@@ -1232,8 +1345,8 @@ function changeCamera(){
 }
 function togglePause(){
  cancelShot();
- if(state==='playing'){state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden')}
- else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden')}
+ if(state==='playing'){state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden');$('pause-sub-panel').hidden=false;refreshBench()}
+ else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden');$('pause-sub-panel').hidden=true}
 }
 $('start').addEventListener('click',()=>state==='paused'?togglePause():newMatch());
 $('pause').addEventListener('click',togglePause);
@@ -1265,6 +1378,8 @@ function updateCelebration(dt){
 }
 function beginHalfTime(){
  halftimePlayed=true;state='halftime';cancelShot();
+ for(const p of players)if(!p.sentOff)p.stamina=Math.min(100,p.stamina+11);
+ refreshBench();
  $('half-panel').classList.remove('hidden');
  $('half-eyebrow').textContent='HALF TIME · '+teams[0].short+' vs '+teams[1].short;
  $('half-score').textContent=score[0]+' : '+score[1];
@@ -1279,7 +1394,7 @@ $('resume-half').addEventListener('click',()=>{
 });
 applyClubs();setTactic('balanced');selectStadium('day');
 function roleTarget(p,press1,press2){
- const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=formation[p.index].group;
+ const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
  if(p.index===10)return {x:clamp(ball.x*.30,-GOAL_W/2+2,GOAL_W/2-2),z:ownGoal+side*8,speed:15};
  if(!owner&&ball.passTarget===p&&ball.passTime>0)
@@ -1352,7 +1467,7 @@ function advance(dt){
  const cp=controlledPlayer(),input=playerMoveInput(),aim=ball.owner||ball;
  const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner)
   .sort((a,b)=>{
-   const priority=p=>distance(p,aim)+(formation[p.index].group==='defence'?7:0)+(p===cp?3:0);
+   const priority=p=>distance(p,aim)+(roleOf(p).group==='defence'?7:0)+(p===cp?3:0);
    return priority(a)-priority(b);
   }).slice(0,team===1?difficultySettings().opponentPressers:tactic().pressers));
  for(const p of players){
@@ -1410,7 +1525,7 @@ function advance(dt){
    const ranked=defending?pressers[p.team]:[];
    const target=roleTarget(p,ranked[0],ranked[1]);
    if(p.team===0&&p.index!==10&&!ranked.includes(p)){
-    const role=formation[p.index].group,move=tactic().advance;
+    const role=roleOf(p).group,move=tactic().advance;
     if(role==='attack'||role==='mid'||(role==='defence'&&move<0)){
      target.z=clamp(target.z-move*(role==='defence'?.8:1),-HL+10,HL-10);
     }
