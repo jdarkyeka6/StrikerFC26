@@ -1306,8 +1306,8 @@ function restartPlay(kind,team,x,z){
  ball.owner=taker;ball.secureOwner=null;ball.secureUntil=0;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;ball.lastTouchTeam=team;ball.isShot=false;
  if(team===0)selectPlayer(taker);
  setPiece=null;
- if(kind==='FREE KICK'||kind==='PENALTY KICK'){
-  setPiece={kind,team,taker,t:matchTime};
+ if(kind==='FREE KICK'||kind==='PENALTY KICK'||kind==='CORNER KICK'){
+  setPiece={kind,team,taker,t:matchTime,aim:0,height:0,targetIndex:0};
   if(kind==='PENALTY KICK'){
    // Everyone except the taker and the keepers waits outside the box; the keeper stands on the line.
    const sign=Math.sign(taker.z)||1;
@@ -1317,10 +1317,20 @@ function restartPlay(kind,team,x,z){
    }
    const gk=players[(1-team)*11+10];gk.x=0;gk.z=sign*(HL-3);gk.vx=gk.vz=0;gk.mesh.position.set(gk.x,0,gk.z);
   }else{
-   // Defending team backs off a wall distance from the ball.
+   // At direct free kicks, three eligible defenders organise in a proper wall.
+   const wall=kind==='FREE KICK'?
+    players.filter(q=>q.team!==team&&q.index!==10&&!q.sentOff)
+     .sort((a,b)=>distance(a,taker)-distance(b,taker)).slice(0,3):[];
+   const toward=norm(0-taker.x,goalZ(team)-taker.z),across={x:-toward.z,z:toward.x};
+   for(let i=0;i<wall.length;i++){
+    const q=wall[i],offset=(i-1)*2.9;
+    q.x=clamp(taker.x+toward.x*16+across.x*offset,-HW+2,HW-2);
+    q.z=clamp(taker.z+toward.z*16+across.z*offset,-HL+2,HL-2);
+    q.vx=q.vz=0;q.mesh.position.set(q.x,0,q.z);
+   }
    for(const q of players){
-    if(q.team===team||q.index===10||q.sentOff)continue;
-    const d=Math.hypot(q.x-taker.x,q.z-taker.z);
+    if(q.team===team||q.index===10||q.sentOff||wall.includes(q))continue;
+    const d=distance(q,taker);
     if(d<18){const dir=norm(q.x-taker.x,q.z-taker.z);q.x=clamp(taker.x+dir.x*18,-HW+2,HW-2);q.z=clamp(taker.z+dir.z*18,-HL+2,HL-2);q.vx=q.vz=0;q.mesh.position.set(q.x,0,q.z)}
    }
   }
@@ -1363,19 +1373,22 @@ function crossBall(p){
  if(state!=='playing'||ball.owner!==p||p.sentOff||setPiece?.kind==='PENALTY KICK')return false;
  // Select an attacking runner, favouring central targets inside the box.
  const side=teams[p.team].dir;
- const targets=teamMates(p).filter(q=>roleOf(q).group==='attack'||roleOf(q).group==='mid')
+ const candidates=teamMates(p).filter(q=>roleOf(q).group==='attack'||roleOf(q).group==='mid')
    .map(q=>{
     const bx=clamp(q.x*.55,-GOAL_W*.85,GOAL_W*.85);
     const bz=clamp(goalZ(p.team)-side*18,-HL+18,HL-18);
     const d=Math.hypot(bx-p.x,bz-p.z);
     const score=(q.z-p.z)*side*.4-Math.abs(q.x)*.12-Math.abs(q.x-bx)*.08+(roleOf(q).group==='attack'?12:0);
     return {q,bx,bz,d,score};
-   }).sort((a,b)=>b.score-a.score)[0];
+   }).sort((a,b)=>b.score-a.score);
+ const targets=setPiece?.taker===p&&setPiece.kind==='CORNER KICK'
+   ?candidates[setPiece.targetIndex%candidates.length]:candidates[0];
  if(!targets)return false;
- let tx=targets.bx,tz=targets.bz;
+ let tx=targets.bx+(setPiece?.aim||0)*6,tz=targets.bz+(setPiece?.height||0)*teams[p.team].dir*3;
  const dir=norm(tx-p.x,tz-p.z);
  pendingOffside=isOffsideAtKick(targets.q,p)?{team:p.team,receiver:targets.q,expires:matchTime+4}:null;
  startPlayerAction(p,'cross',.9);
+ if(setPiece?.taker===p)setPiece=null;
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.28;
  ball.lastTouchTeam=p.team;ball.isShot=false;ball.spin=0;ball.passTarget=targets.q;
  ball.passStarted=matchTime;ball.passTime=clamp(targets.d/42+1.1,1.8,3.25);
@@ -1419,6 +1432,18 @@ function readController(){
 $('audio').addEventListener('click',()=>{
  muted=!muted;$('audio').textContent=muted?'🔇':'🔊';
 });
+function adjustSetPiece(command){
+ if(state!=='playing'||!setPiece||setPiece.team!==0||ball.owner!==setPiece.taker)return false;
+ if(command==='left')setPiece.aim=clamp((setPiece.aim||0)-.14,-1,1);
+ if(command==='right')setPiece.aim=clamp((setPiece.aim||0)+.14,-1,1);
+ if(command==='up')setPiece.height=clamp((setPiece.height||0)+.15,-1,1);
+ if(command==='down')setPiece.height=clamp((setPiece.height||0)-.15,-1,1);
+ if(command==='runner')setPiece.targetIndex=(setPiece.targetIndex+1)%Math.max(1,teamMates(setPiece.taker).length);
+ const label=command==='runner'?'TARGET RUNNER '+(setPiece.targetIndex+1):
+  'AIM '+Math.round((setPiece.aim||0)*100)+'% · HEIGHT '+Math.round((setPiece.height||0)*100)+'%';
+ say(label,.65);
+ return true;
+}
 function switchPlayer(){
  // Always return control to the ball carrier when our team is in possession.
  if(ball.owner?.team===0&&ball.owner.index!==10){selectPlayer(ball.owner,true);return}
@@ -1568,11 +1593,23 @@ function takePossession(p){
  }
  if(shotCharging&&p!==controlledPlayer())cancelShot();
  if(ball.owner)ball.owner.hasBall=false;
- if(p.index!==10&&p.actionKind!=='receive'&&p.actionKind!=='slide')startPlayerAction(p,'receive');
+ if(p.index!==10&&p.actionKind!=='slide'){
+  const approach=Math.hypot(ball.vx,ball.vz),high=ball.y>1.48;
+  const facing=norm(p.faceX,p.faceZ),inbound=norm(ball.vx,ball.vz);
+  p.firstTouchTurn=clamp(Math.atan2(facing.x*inbound.z-facing.z*inbound.x,
+    facing.x*inbound.x+facing.z*inbound.z)*.18,-.36,.36);
+  startPlayerAction(p,high?'trap':approach>55?'stretch':'receive',
+    clamp(approach/100,0,1));
+ }
  // Ordinary interceptions and passes cancel any previous tackle security.
  ball.secureOwner=null;ball.secureUntil=0;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;ball.lastTouchTeam=p.team;ball.isShot=false;
  p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;p.dribbleTouch=matchTime;ball.releasedBy=null;
+ // Cushion the arriving football toward the receiver's forward stride.
+ if(p.index!==10&&Math.hypot(p.vx,p.vz)>2.2){
+  const pace=norm(p.vx,p.vz);
+  ball.x=p.x+pace.x*.95;ball.z=p.z+pace.z*.95;
+ }
  if(p.team===0&&p.index!==10)selectPlayer(p);
 }
 function kick(p,shoot=false,through=false,power=.45,shotType='normal'){
@@ -1580,6 +1617,7 @@ function kick(p,shoot=false,through=false,power=.45,shotType='normal'){
  // Penalties must be shots. Passes and crosses are not valid attempts.
  if(setPiece?.kind==='PENALTY KICK'&&setPiece.taker===p&&!shoot)return false;
  const side=teams[p.team].dir,cfg=difficultySettings();
+ const restartAim=setPiece?.taker===p?setPiece:null;
  let tx,tz,strength,receiver=null;
  if(shoot){
   shots[p.team]++;lastShooter={team:p.team,index:p.index};
@@ -1604,8 +1642,14 @@ function kick(p,shoot=false,through=false,power=.45,shotType='normal'){
   }else{
    strength=79+power*23;ball.vy=2.8+power*1.9;ball.spin=0;
   }
+  if(restartAim&&(restartAim.kind==='FREE KICK'||restartAim.kind==='PENALTY KICK')){
+   tx=clamp(tx+(restartAim.aim||0)*GOAL_W*.52,-GOAL_W/2+.3,GOAL_W/2-.3);
+   ball.vy=clamp(ball.vy+(restartAim.height||0)*5,.20,17);
+  }
  }else{
-  const chosen=bestPass(p,through);
+  const options=passOptions(p,through);
+  const chosen=restartAim&&restartAim.targetIndex>=0?
+    options[restartAim.targetIndex%Math.max(1,options.length)]:options[0];
   if(!chosen)return false;
   receiver=chosen.q;tx=chosen.tx;tz=chosen.tz;
   passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
@@ -2068,6 +2112,14 @@ function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
  if(p.index===10){
+  // Manual goalkeeper rush while U is held: only our keeper can be commanded.
+  if(p.team===0&&keys.has('KeyU')&&state==='playing'&&!setPiece&&
+      ball.owner?.team===1&&!p.sentOff){
+   const chase=ball.owner;
+   return {x:clamp(chase.x,-GOAL_W*1.8,GOAL_W*1.8),
+    z:clamp(chase.z,Math.min(-side*HL,-side*HL+side*28),Math.max(-side*HL,-side*HL+side*28)),
+    speed:24};
+  }
   // Position from the ball's angle, then rush towards close one-on-ones.
   const dist=Math.abs(ownGoal-ball.z),incoming=owner?.team!==p.team;
   const quality=keeperAbility(p.team);
