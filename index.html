@@ -1118,13 +1118,37 @@ function watchHighlights(){
 $('skip-replay').addEventListener('click',endReplay);
 $('highlights').addEventListener('click',watchHighlights);
 const DIFFICULTIES={
- beginner:{name:'BEGINNER',description:'Slow opponents, less pressure and more time on the ball',opponentSpeed:.60,opponentPressers:1,opponentTackle:.08,opponentTackleRange:2.8,opponentPassError:.3,opponentShootChance:.13,opponentShotRange:26,opponentThink:1.8,opponentCarry:5.0,opponentKeeper:-.21,teammateSpeed:1.20,homeTackle:1.25,homeKeeper:.2},
- amateur:{name:'AMATEUR',description:'Gentler defending with opportunities to attack',opponentSpeed:.78,opponentPressers:1,opponentTackle:.34,opponentTackleRange:3.7,opponentPassError:.14,opponentShootChance:.35,opponentShotRange:35,opponentThink:1.3,opponentCarry:4.0,opponentKeeper:-.10,teammateSpeed:1.10,homeTackle:1.12,homeKeeper:.10},
- professional:{name:'PROFESSIONAL',description:'Balanced competition and faster opponent tactics',opponentSpeed:.98,opponentPressers:2,opponentTackle:.8,opponentTackleRange:4.8,opponentPassError:.04,opponentShootChance:.6,opponentShotRange:41,opponentThink:.7,opponentCarry:2.7,opponentKeeper:0,teammateSpeed:1,homeTackle:1,homeKeeper:0},
- legend:{name:'LEGEND',description:'Fast pressing, accurate passes and ruthless finishing',opponentSpeed:1.12,opponentPressers:2,opponentTackle:1,opponentTackleRange:5.1,opponentPassError:0,opponentShootChance:.82,opponentShotRange:46,opponentThink:.45,opponentCarry:2.2,opponentKeeper:.14,teammateSpeed:.98,homeTackle:.98,homeKeeper:-.08}
+ beginner:{name:'BEGINNER',description:'Slow opponents, less pressure and more time on the ball',opponentSpeed:.60,opponentPressers:1,opponentTackle:.08,opponentTackleRange:2.8,opponentPassError:.3,opponentShootChance:.13,opponentShotRange:26,opponentThink:1.8,opponentCarry:5.0,opponentKeeper:-.18,opponentKeeperAI:.48,teammateSpeed:1.20,homeTackle:1.25,homeKeeper:.10,homeKeeperAI:.90},
+ amateur:{name:'AMATEUR',description:'Gentler defending with opportunities to attack',opponentSpeed:.78,opponentPressers:1,opponentTackle:.34,opponentTackleRange:3.7,opponentPassError:.14,opponentShootChance:.35,opponentShotRange:35,opponentThink:1.3,opponentCarry:4.0,opponentKeeper:-.09,opponentKeeperAI:.67,teammateSpeed:1.10,homeTackle:1.12,homeKeeper:.05,homeKeeperAI:.84},
+ professional:{name:'PROFESSIONAL',description:'Balanced competition and faster opponent tactics',opponentSpeed:.98,opponentPressers:2,opponentTackle:.8,opponentTackleRange:4.8,opponentPassError:.04,opponentShootChance:.6,opponentShotRange:41,opponentThink:.7,opponentCarry:2.7,opponentKeeper:0,opponentKeeperAI:.88,teammateSpeed:1,homeTackle:1,homeKeeper:0,homeKeeperAI:.77},
+ legend:{name:'LEGEND',description:'Fast pressing, accurate passes and ruthless finishing',opponentSpeed:1.12,opponentPressers:2,opponentTackle:1,opponentTackleRange:5.1,opponentPassError:0,opponentShootChance:.82,opponentShotRange:46,opponentThink:.45,opponentCarry:2.2,opponentKeeper:.10,opponentKeeperAI:1.07,teammateSpeed:.98,homeTackle:.98,homeKeeper:-.07,homeKeeperAI:.66}
 };
 let difficulty='beginner';
 const difficultySettings=()=>DIFFICULTIES[difficulty];
+// Difficulty impacts keeper reactions, movement, close-range saves and reach.
+// The user's own keeper changes moderately; the opposing keeper changes clearly.
+function keeperAbility(team){
+ const settings=difficultySettings();
+ return clamp(team===1?settings.opponentKeeperAI:settings.homeKeeperAI,.35,1.12);
+}
+function keeperSaveChance(keeper,impactX,height,pace){
+ const team=keeper.team,settings=difficultySettings(),skill=keeperAbility(team);
+ const handling=clamp(keeper.profile?.stats.goalkeeping??70,35,95);
+ const gap=Math.abs(impactX-keeper.x);
+ const base=.25+(handling-65)*.0024
+   -Math.max(0,gap-1.1)*.045
+   -Math.max(0,height-2.15)*.038
+   -Math.max(0,pace-76)*.0022;
+ const bonus=(team===1?settings.opponentKeeper:settings.homeKeeper)*.22;
+ return clamp(base*skill+bonus,.025,.53);
+}
+function keeperSmotherChance(keeper,carrier){
+ const skill=keeperAbility(keeper.team);
+ const handling=keeper.profile?.stats.goalkeeping??70;
+ const speed=Math.hypot(carrier.vx,carrier.vz);
+ const dribbling=carrier.profile?.stats.dribbling??70;
+ return clamp(.10+.34*skill+(handling-dribbling)*.0045-speed*.0075,.06,.63);
+}
 function setDifficulty(value,announce=false){
  if(!Object.prototype.hasOwnProperty.call(DIFFICULTIES,value))return;
  difficulty=value;$('difficulty').value=value;
@@ -1949,15 +1973,19 @@ function roleTarget(p,press1,press2){
  if(p.index===10){
   // Position from the ball's angle, then rush towards close one-on-ones.
   const dist=Math.abs(ownGoal-ball.z),incoming=owner?.team!==p.team;
-  const rush=incoming&&owner&&dist<27?clamp((27-dist)/25,0,1)*10:0;
-  let x=clamp(ball.x*(incoming?.37:.24),-GOAL_W/2+1,GOAL_W/2-1);
+  const quality=keeperAbility(p.team);
+  const rush=incoming&&owner&&dist<25?clamp((25-dist)/24,0,1)*(3+quality*5):0;
+  // Easy keepers cover less of the angle and react more slowly to a change of side.
+  let x=clamp(ball.x*(incoming?.14+quality*.19:.15+quality*.09),-GOAL_W/2+1,GOAL_W/2-1);
   let z=ownGoal+side*(7+rush);
   if(!owner&&ball.isShot&&Math.sign(ball.vz)===Math.sign(ownGoal)&&Math.abs(ball.vz)>1){
    const arrival=clamp((z-ball.z)/ball.vz,0,.70);
-   x=clamp(ball.x+ball.vx*arrival,-GOAL_W/2-1,GOAL_W/2+1);
+   const predicted=clamp(ball.x+ball.vx*arrival,-GOAL_W/2-1,GOAL_W/2+1);
+   const anticipation=clamp((quality-.18)*.74,.15,.70);
+   x=clamp(x+(predicted-x)*anticipation,-GOAL_W/2-1,GOAL_W/2+1);
    z=ownGoal+side*7;
   }
-  return {x,z,speed:incoming?20:15};
+  return {x,z,speed:incoming?11+quality*7:10+quality*5};
  }
  if(!owner&&ball.passTarget===p&&ball.passTime>0){
   const reception=passReceptionTarget(p);
@@ -2191,13 +2219,16 @@ function advance(dt){
   // standing still while a striker simply walks across the goal line.
   if(p.index===10&&ball.owner&&ball.owner.team!==p.team&&!practiceMode&&
    !setPiece&&Math.abs(p.z-(-teams[p.team].dir*HL))<29&&
-   matchTime>=ball.secureUntil&&p.saveCooldown<=0&&distance(p,ball.owner)<2.1){
+   matchTime>=ball.secureUntil&&p.saveCooldown<=0&&
+   distance(p,ball.owner)<1.45+keeperAbility(p.team)*.50){
    const carrier=ball.owner;
-   const dribbling=dribbleRating(carrier),handling=p.profile?.stats.goalkeeping??70;
-   if(handling+13>=dribbling||Math.hypot(carrier.vx,carrier.vz)<6){
-    p.saveCooldown=.95;startKeeperAnimation(p,'catch');
+   // One contest per rush, including failures. No automatic or repeated
+   // frame-by-frame catches from merely standing near a slow striker.
+   p.saveCooldown=1.15;
+   if(Math.random()<keeperSmotherChance(p,carrier)){
+    startKeeperAnimation(p,'catch');
     takePossession(p);say('KEEPER SMOTHERS!',.9);
-   }
+   }else startKeeperAnimation(p,'miss',carrier.x>=p.x?1:-1,1.05);
   }
   p.ring.visible=p===controlledPlayer();
   animatePlayer(p,dt);
@@ -2281,7 +2312,10 @@ function advance(dt){
   const impactX=ball.x+ball.vx*time;
   const height=Math.max(1.05,ball.y+ball.vy*time-12.5*time*time);
   const distanceX=Math.abs(impactX-keeper.x);
-  const possible=distanceX<GOAL_W/2+3&&height<6.2;
+  const quality=keeperAbility(defendingTeam);
+  // Keepers cannot save a far-corner shot from across the goalmouth.
+  const reachableWidth=2.45+quality*3.0;
+  const possible=distanceX<Math.min(GOAL_W/2+2.5,reachableWidth)&&height<6.2;
   // Begin a physical dive before the incoming shot reaches the gloves.
   if(incoming&&possible&&arrival>=0&&time<.35&&keeper.keeperAction==='ready'&&keeper.saveCooldown<=0){
    startKeeperAnimation(keeper,'miss',impactX>=keeper.x?1:-1,height);
@@ -2289,17 +2323,12 @@ function advance(dt){
   }
   // Resolve at the keeper's line, not on the first animation frame.
   if(incoming&&possible&&arrival>=0&&time<.105&&keeper.keeperAction==='miss'){
-   const bonus=defendingTeam===1?difficultySettings().opponentKeeper:difficultySettings().homeKeeper;
    const pace=Math.hypot(ball.vx,ball.vz),handling=keeper.profile?.stats.goalkeeping??70;
-   // Ability, shot pace, height and whether the goalkeeper reached the shot's
-   // predicted lane all affect the outcome. No automatic perfect saves.
-   const reaction=clamp((handling-55)/140,0,.32);
-   const keeperReach=Math.abs(impactX-keeper.x);
-   const saveChance=clamp(.25+reaction-keeperReach*.047-(height>3?.10:0)-
-    Math.max(0,pace-76)*.0025+bonus,.05,.88);
+   // Even a top keeper can be beaten by a well-placed or powerful shot.
+   const saveChance=keeperSaveChance(keeper,impactX,height,pace);
    if(Math.random()<saveChance){
     saves[defendingTeam]++;
-    const catchable=distanceX<2.3&&height<2.9&&pace<84&&handling>63;
+    const catchable=distanceX<1.85+quality*.27&&height<2.65&&pace<78&&handling>66;
     startKeeperAnimation(keeper,catchable?'catch':'parry',impactX>=keeper.x?1:-1,height);
     if(catchable){
      takePossession(keeper);
