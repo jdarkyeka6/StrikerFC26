@@ -1,0 +1,47 @@
+# STRIKER FC 26 · Release notes
+
+## Version 1.0.0 · MATCHDAY (15 October 2026)
+
+**Major gameplay and presentation upgrade** to the standalone browser football game.
+
+### NEW: Custom Match Hub
+- Choose six fictional clubs with colour-matched player kits, scoreboard names and replay labels.
+- Pick the match length: 4, 8 or 12 minutes.
+- Four stadium conditions: Daylight, Golden Hour, Night Game and Rainy Night. Rain has animated effects; G enables lower-graphics mode.
+- Three tactics: Balanced, All-Out Attack and Park The Bus. Switch with 1/2/3 during play or use the tactic selector at halftime.
+- Retain all four AI difficulty levels, Beginner through Legend.
+
+### NEW: Match presentation & modes
+- Half-time break with scores and match statistics, followed by a second-half kickoff.
+- Animated goal celebration sequence before goal replays.
+- Detailed live/post-match match centre including possession, shots, saves, passing accuracy, and successful tackles.
+- Free Training mode without opponent players or a time limit. It uses the game's dribbling, passing, shooting, goal celebrations and replays, and does not affect season records.
+- Locally saved club win/draw/loss records in browser storage.
+- Quit to match setup through the pause menu to choose a different fixture.
+
+### Existing features carried forward
+- FIFA-inspired close broadcast tracking camera, full 105x68m equivalent pitch, 22 animated footballers, goalkeeper kits and diving animations.
+- Shot and pass mechanics, crosses, jockeying and tackles.
+- Replays automatically after goals, with a post-match goal/save highlights reel.
+
+### Verification
+- JavaScript module syntax checked.
+- 21 simulated integration checks passed for match configuration, live match, halftime, celebration/replay flow, statistics and persistent records.
+- 10 simulated Free Training checks passed for no-opponent gameplay, unlimited play, goal-to-replay-to-kickoff, and return to menu.
+- Final HTML audit: 60 unique DOM IDs, no duplicate IDs and no missing IDs referenced by game code.
+- Real browser GPU/WebGL playtesting remains necessary.
+
+**Deployment:** The project is a static `index.html`. It is designed to deploy from GitHub to Vercel with Framework: Other and no build command. A Vercel deployment is not guaranteed to exist solely because this release is committed.
+
+---
+
+## Earlier versions
+- **0.9:** Goal replays and highlight reels
+- **0.8:** Animated goalkeepers
+- **0.7:** Adjustable AI difficulty
+- **0.6:** Broadcast follow-camera
+- **0.5:** Full-size pitch and improved formations
+- **0.4:** Matchday presentation, controller support and restarts
+- **0.3:** Dribbling, passing, tackling and shot controls
+
+Independent, original project. Not affiliated with FIFA or EA SPORTS.
