@@ -1,6 +1,35 @@
-# ⚽ STRIKER FC 26 | VERSION 1.4
+# ⚽ STRIKER FC 26 | VERSION 1.5
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.4 introduces dynamic formations, a real substitutions bench, stamina that persists through kickoffs, smarter offside-aware passing, and match-management controls.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+
+## 🏟️ Version 1.5: Clubhouse and permanent players
+
+The game now opens in a **full-screen club-themed menu**, not the original single kickoff panel. It includes these connected pages:
+
+- **Home:** Featured matchday dashboard, currently selected club, starting XI average rating, and locally saved results.
+- **Play Match:** Club selection, opponent, formation, tactic, difficulty, stadium conditions and match length. Quick Match and Free Training remain.
+- **My Squad:** Player-card grid with filtering for forwards, midfielders, defenders and keepers. Each profile shows a consistent illustration, name, club, number, position, age, nationality, height, overall rating and six football attributes.
+- **Club Hub:** Browse all six original clubs, their squads and average team ratings. Click a club to inspect its footballers or select it for your next match.
+- **Settings:** A proper menu for mouse input and links to match/camera options.
+- **Packs:** A **coming-soon placeholder only**. No packs, odds, card ownership or pack-opening functionality has been implemented yet.
+
+### Permanent original characters
+
+There are **96 distinct fictional player identities**, with 16 on every club (11 starters + five substitutes). Every profile has an immutable identifier such as `striker:0` or `polar:12`. The generation of ratings and physical details is deterministic, not random each match: the same player always has the same name, player-card portrait colours, age, position, number, height, rating and technical stats.
+
+The 3D footballer now reads its **skin colour, hair colour, proportions and jersey number from the same profile used by the squad card**. The full bench comes from the selected club's roster; it is no longer a universal group of strangers. Substitute players carry their permanent identities and appearances onto the pitch. Current passing, pace and shooting gameplay use player attributes as lightweight modifiers.
+
+### Replays and consistency
+
+Highlights record each on-field player's ID and visibility in addition to the existing motion and ball data. This allows older goals to show the **original footballer before a substitution**, rather than visually rewriting history.
+
+### Implementation note for the future packs feature
+
+Packs have intentionally **not** been implemented. When built, use the stable footballer IDs from `PLAYER_DATABASE` rather than generating new identity records on each opening. Ownership, duplicates, rewards, rarities, pack odds, currencies, and any monetisation are undecided.
+
+### Tests
+
+26 Clubhouse/squad integration checks and 12 match/replay regression checks passed. The tests cover roster sizes, uniqueness, permanent attributes, menu navigation, filtering, player appearance, substitutions, historical highlights, halftime and full-time. Real browser/WebGL visual playtesting is still recommended.
 
 ## 🧠 Version 1.4: Football IQ
 
