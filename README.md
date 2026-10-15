@@ -1,6 +1,38 @@
-# ⚽ STRIKER FC 26 | VERSION 1.6.2
+# ⚽ STRIKER FC 26 | VERSION 1.6.3
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.2 adds assisted first touches and automatic receiving runs to passes, through balls and crosses, building on V1.6.1 slide tackles and the full six-club Clubhouse.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.3 rebalances previously overpowered goalkeepers across every difficulty, building on V1.6.2 automatic pass reception, V1.6.1 slide tackles and the six-club Clubhouse.
+
+## 🥅 Version 1.6.3: Goalkeeper balancing and difficulty scaling
+
+The keepers are no longer superhuman, especially on lower difficulties. The **opposing goalkeeper** gets significantly better on each difficulty level; the **home goalkeeper** becomes a little weaker at higher levels, but still has real saving ability.
+
+- **Beginner:** The opposing goalkeeper covers less of the goal, reacts more slowly, makes significantly fewer saves and is less successful at rushing out to smother a striker.
+- **Amateur:** A forgiving keeper with somewhat better positioning, saves and one-on-one timing.
+- **Professional:** Balanced goalkeeper reflexes, movement speed, shot-stopping and catches.
+- **Legend:** Quicker positioning, greater diving reach and better goalkeeping, but never an automatic save. Well-placed corners and hard shots can beat them.
+- **One-on-ones:** Previously, a close goalkeeper automatically smothered many attackers based on a fixed rating check. Now the goalkeeper gets one difficulty- and skill-adjusted contested attempt, and a failed smother triggers a recovery cooldown instead of another immediate grab.
+- **Shot stopping:** Save odds scale with actual goalkeeper rating, relative difficulty, shot speed, shot height, impact location and physical distance from the goalkeeper. The goalkeeper cannot make a long-distance catch from the other side of the goal.
+- **Handling:** Fewer shots are caught cleanly; difficult saves can be parried instead.
+
+### Example probabilities, not match-wide statistics
+
+The following are calculated save chances for a representative 80-GK-rating goalkeeper, low central shot, speed 82 game units and a well-positioned keeper:
+
+| Difficulty | Opposing goalkeeper saves |
+|---|---:|
+| Beginner | 9% |
+| Amateur | 16% |
+| Professional | 24% |
+| Legend | 31% |
+
+These are *per-shot model probabilities*, not claims about actual observed match save percentages. Shot placement, keeper movement, shot pace and height alter the outcome.
+
+### Tests
+
+- Four difficulty-scoped in-game shot simulations confirmed goalkeeper dive animations and shots ending in saves or goals.
+- A complete simulated 240-second match with halftime finished without invalid state.
+- Keeper probability, diving reach, opponent smother ability and user keeper difficulty all followed the intended monotonic difficulty curve.
+- Real browser/WebGL visual testing and live gameplay balancing are still recommended.
 
 ## ⚽ Version 1.6.2: Assisted passing and first touches
 
