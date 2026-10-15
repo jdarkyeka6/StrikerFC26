@@ -115,6 +115,26 @@ let MATCH_SECONDS = 240;
 const HW=FIELD_W/2, HL=FIELD_L/2;
 const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',245,460);
 const camera = new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,800);
+const rainGroup=new THREE.Group();scene.add(rainGroup);
+const rainDrops=[],rainMaterial=new THREE.MeshBasicMaterial({color:0xd0ebff,transparent:true,opacity:.31,depthWrite:false});
+for(let i=0;i<75;i++){
+ const d=new THREE.Mesh(new THREE.BoxGeometry(.055,2.9,.055),rainMaterial);
+ d.position.set((Math.random()-.5)*FIELD_W,9+Math.random()*40,(Math.random()-.5)*FIELD_L);
+ rainGroup.add(d);rainDrops.push(d);
+}
+rainGroup.visible=false;
+function animateRain(dt){
+ if(!rainGroup.visible)return;
+ const centre=ball.owner||ball;
+ for(const d of rainDrops){
+  d.position.y-=dt*48;d.position.z+=dt*6;
+  if(d.position.y<1){
+   d.position.y=38+Math.random()*12;
+   d.position.x=Math.max(-HW,Math.min(HW,centre.x+(Math.random()-.5)*80));
+   d.position.z=Math.max(-HL,Math.min(HL,centre.z+(Math.random()-.5)*110));
+  }
+ }
+}
 const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; document.querySelector('#game').append(renderer.domElement);
 const stadiumAmbient=new THREE.HemisphereLight(0xc6fff0,0x24423a,2.1);scene.add(stadiumAmbient);
 const sun = new THREE.DirectionalLight(0xfff4df,2.8); sun.position.set(-45,90,25);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-110;sun.shadow.camera.right=110;sun.shadow.camera.top=110;sun.shadow.camera.bottom=-110;sun.shadow.normalBias=.025;scene.add(sun);
@@ -583,12 +603,18 @@ function resetPositions(kickoffTeam=0){
 }
 function newMatch(){
  cameraFocus.set(0,0,0);
+ MATCH_SECONDS=Number($('duration-select').value)||240;
+ halftimePlayed=false;celebration=null;
+ passesAttempted=[0,0];passesCompleted=[0,0];tacklesWon=[0,0];lastPass=null;
+ applyClubs();setTactic($('tactic-select').value);selectStadium($('stadium-select').value);
+ statsOpen=false;$('stats-panel').classList.add('hidden');
+ $('half-panel').classList.add('hidden');$('celebration-layer').classList.add('hidden');
  score=[0,0];possessionTime=[0,0];shots=[0,0];saves=[0,0];matchTime=0;lastManualSwitch=-10;
  highlightClips=[];replaySession=null;$('replay-screen').classList.add('hidden');$('highlights').hidden=true;
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 pre-alpha 0.9. Goals trigger replays, and after full-time you can watch the best goals and saves. Choose your match difficulty before kickoff.';
+ document.querySelector('.panel p').textContent='Striker FC 26 v1.0. Clubs, kits, stadiums, tactics and match length. Goals, replays, celebrations and match reports included.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -862,6 +888,7 @@ function toggleGraphics(){
  renderer.shadowMap.enabled=!lowGraphics;
  sun.castShadow=!lowGraphics;
  if(stadiumCrowd)stadiumCrowd.visible=!lowGraphics;
+ rainGroup.visible=weather==='rain'&&!lowGraphics;
  say(lowGraphics?'PERFORMANCE MODE':'HIGH GRAPHICS MODE',1);
 }
 function changeCamera(){
@@ -916,6 +943,7 @@ function advance(dt){
  $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
  if(matchTime>=MATCH_SECONDS){
   state='finished';cancelShot();$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
+  $('half-panel').classList.add('hidden');$('celebration-layer').classList.add('hidden');
   $('highlights').hidden=highlightClips.length===0;
   $('start').textContent='PLAY AGAIN ↗';
   document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
@@ -1132,7 +1160,7 @@ function advance(dt){
    $('home-score').textContent=score[0];$('away-score').textContent=score[1];
    say(who===0?'GOOOAL! ⚽':'RIVALS SCORE',2);playMatchSound('goal');
    const clip=highlightClip('GOAL',who);
-   if(!clip||!startReplay(clip,'goal'))resetPositions(1-who);
+   startCelebration(who,clip);
   }else{
    const defendingTeam=ball.z<0?1:0,attackingTeam=1-defendingTeam;
    const touchedBy=ball.lastTouchTeam??attackingTeam;
