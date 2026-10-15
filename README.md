@@ -1,6 +1,14 @@
-# ⚽ STRIKER FC 26 | VERSION 1.5
+# ⚽ STRIKER FC 26 | VERSION 1.5.1
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+
+## 🟨 Version 1.5.1: Referee fairness hotfix
+
+Fouls and yellow cards are **no longer based on random probability**. The original referee was giving certain challenges from behind up to an 80% random chance of a foul. The fix awards a foul only for a clear, late tackle involving physical contact directly from behind, meaningful closing speed and an attempt that misses the ball. Cards are reserved for especially reckless rear challenges, and a second yellow still means a red card.
+
+CPU players now avoid launching tackles directly from behind the ball carrier, and AI teammates have longer cooldowns. On-screen referee commentary identifies the reason for a foul instead of only saying “FREE KICK.” Clean frontal and side tackles, light contact and ball-first challenges are not penalised by the foul detector.
+
+**Validation:** 15 targeted checks passed, including frontal challenges, legal side tackles, ball-first contact, reckless fouls with cards, less-serious fouls without cards, and a complete simulated match with halftime. The referee remains a simplified arcade model, not a full football-law simulation. Offside-related free kicks remain a separate rule.
 
 ## 🏟️ Version 1.5: Clubhouse and permanent players
 
