@@ -1,6 +1,17 @@
-# ⚽ STRIKER FC 26 | VERSION 1.7.2
+# ⚽ STRIKER FC 26 | VERSION 1.7.3
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.2 fixes passing and the held-ball goalkeeper exploit while preserving complete offline support, the standalone HTML and browser caching from V1.7.1. The existing six-club Clubhouse and all earlier systems remain.
+
+## 🎯 Version 1.7.3: Manual pass targeting
+
+- **F** while in possession: lock onto an alternative, onside teammate. Repeated presses cycle through eligible receivers.
+- **Shift + F**: return to automatic assisted passing. With no lock, passing remains unchanged.
+- **Controller D-pad Up**: cycle pass targets while in possession.
+- A **cyan ring** highlights the selected receiver and the controlled-player card shows their name.
+- Normal **E / right-click** passing and **R / middle-click** through balls honour the locked target. Invalid/offside receivers fall back to assisted selection.
+- Lock resets on each pass, shot, loss of possession and restart. **F** still jockeys when defending.
+- Website version and standalone offline HTML share the feature. Cache version increments to v1.7.3.
+- Regression tests are in `tests/manual-pass-target.test.mjs`; run with `node --test tests/manual-pass-target.test.mjs`. A manual browser/gamepad playtest is still required.
 
 ## ⚽ Version 1.7.2: Passing and goalkeeper possession fixes
 
