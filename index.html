@@ -1459,7 +1459,7 @@ function takePossession(p){
  }
  if(shotCharging&&p!==controlledPlayer())cancelShot();
  if(ball.owner)ball.owner.hasBall=false;
- if(p.index!==10&&p.actionKind!=='receive')startPlayerAction(p,'receive');
+ if(p.index!==10&&p.actionKind!=='receive'&&p.actionKind!=='slide')startPlayerAction(p,'receive');
  // Ordinary interceptions and passes cancel any previous tackle security.
  ball.secureOwner=null;ball.secureUntil=0;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=p.team;ball.isShot=false;
@@ -1554,7 +1554,8 @@ function resolveSlide(p){
  if(ballD>3.0&&bodyD>2.65)return false;
  const decision=victim?assessSlide(p,victim):{foul:false,yellow:false,ballFirst:ballD<2.9&&ball.y<2.6};
  if(decision.foul){
-  p.slideHitUntil=0;
+  p.slideHitUntil=0;p.slideUntil=0;
+  // Whistle immediately halts the slide and awards the restart.
   callFoul(p,victim,decision);
   return false;
  }
