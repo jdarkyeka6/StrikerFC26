@@ -537,7 +537,7 @@ let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0,mouseSh
 let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
 let possessionTime=[0,0],shots=[0,0],saves=[0,0],passesAttempted=[0,0],passesCompleted=[0,0],tacklesWon=[0,0];
 // Referee: fouls, cards and set pieces (V1.1)
-let foulsCommitted=[0,0],yellowCards=[0,0],redCards=[0,0],setPiece=null;
+let foulsCommitted=[0,0],yellowCards=[0,0],redCards=[0,0],offsides=[0,0],setPiece=null,pendingOffside=null;
 let lastPass=null,homeTactic='balanced',weather='day',halftimePlayed=false,statsOpen=false,statsReturn='playing',celebration=null,lastShooter=null;
 let resultSaved=false,practiceMode=false;
 const BENCH=[
@@ -669,6 +669,7 @@ function statsMarkup(){
  statLine('SHOTS',shots[0],shots[1])+statLine('SAVES',saves[0],saves[1])+
  statLine('PASSES',passesCompleted[0]+'/'+passesAttempted[0],passesCompleted[1]+'/'+passesAttempted[1])+
  statLine('PASS ACCURACY',pct(0),pct(1))+statLine('TACKLES WON',tacklesWon[0],tacklesWon[1])+
+ statLine('OFFSIDES',offsides[0],offsides[1])+
  statLine('SUBSTITUTIONS',subsUsed,'—')+
  statLine('AVG ENERGY',Math.round(players.filter(p=>p.team===0&&p.index<10&&!p.sentOff).reduce((a,p)=>a+p.stamina,0)/Math.max(1,players.filter(p=>p.team===0&&p.index<10&&!p.sentOff).length))+'%','—')+
  statLine('FOULS',foulsCommitted[0],foulsCommitted[1])+statLine('YELLOW CARDS',yellowCards[0],yellowCards[1])+statLine('RED CARDS',redCards[0],redCards[1]);
@@ -870,7 +871,8 @@ function resetPositions(kickoffTeam=0){
  setPiece=null;
  const kicker=players.slice(kickoffTeam*11,kickoffTeam*11+10).find(q=>!q.sentOff)||players[kickoffTeam*11];
  kicker.x=0;kicker.z=-teams[kickoffTeam].dir*2;kicker.mesh.position.set(kicker.x,0,kicker.z);
- Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false});
+ pendingOffside=null;
+ Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
  kicker.hasBall=true;selectPlayer(players.slice(0,10).find(q=>!q.sentOff)||players[0]);
 }
 function startTraining(){
@@ -911,7 +913,7 @@ function newMatch(){
  MATCH_SECONDS=Number($('duration-select').value)||240;
  halftimePlayed=false;celebration=null;resultSaved=false;practiceMode=false;
  for(const p of players){p.mesh.visible=true;p.yellow=0;p.sentOff=false}
- foulsCommitted=[0,0];yellowCards=[0,0];redCards=[0,0];setPiece=null;
+ foulsCommitted=[0,0];yellowCards=[0,0];redCards=[0,0];offsides=[0,0];pendingOffside=null;setPiece=null;
  $('match-report').hidden=true;$('quit-match').hidden=false;$('training').hidden=true;$('pause-sub-panel').hidden=true;
  passesAttempted=[0,0];passesCompleted=[0,0];tacklesWon=[0,0];lastPass=null;
  applyClubs();setTactic($('tactic-select').value);selectStadium($('stadium-select').value);
@@ -969,7 +971,8 @@ function restartPlay(kind,team,x,z){
  Object.assign(taker,{x:clamp(x,-HW+3,HW-3),z:clamp(z,-HL+4,HL-4),vx:0,vz:0,carryTime:0,decision:.55,hasBall:true});
  taker.faceX=0;taker.faceZ=teams[team].dir;
  taker.mesh.position.set(taker.x,0,taker.z);
- ball.owner=taker;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=team;ball.isShot=false;
+ pendingOffside=null;
+ ball.owner=taker;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=team;ball.isShot=false;
  if(team===0)selectPlayer(taker);
  setPiece=null;
  if(kind==='FREE KICK'||kind==='PENALTY KICK'){
@@ -1076,6 +1079,18 @@ function passLaneRisk(p,target,receiver){
  }
  return risk;
 }
+// Pass-time offside: defender line is the second-last eligible opponent.
+function isOffsideAtKick(receiver,passer){
+ if(practiceMode||!receiver||!passer||receiver.team!==passer.team||receiver===passer)return false;
+ if(['GOAL KICK','THROW IN','CORNER'].includes(ball.restartKind))return false;
+ const side=teams[passer.team].dir;
+ const advanced=receiver.z*side,ballLine=passer.z*side;
+ if(advanced<=1.2||advanced<=ballLine+1.1)return false;
+ const defenders=players.filter(p=>p.team!==passer.team&&!p.sentOff)
+  .map(p=>p.z*side).sort((a,b)=>b-a);
+ const secondLast=defenders[Math.min(1,defenders.length-1)];
+ return secondLast!==undefined&&advanced>secondLast+1.1;
+}
 function passOptions(p,through=false){
  const face=norm(p.faceX,p.faceZ),side=teams[p.team].dir;
  const moving=(p===controlledPlayer()&&playerMoveInput().moving);
@@ -1094,12 +1109,23 @@ function passOptions(p,through=false){
   let score=dot*40+forward*.14-Math.abs(d-(through?35:25))*.22+Math.min(open,19)*.75-lane*2;
   if(d>76||d<7)score-=45;
   if(q.index===0&&forward>4)score+=3;
+  if(isOffsideAtKick(q,p))score-=120;
   return {q,tx,tz,d,score,lane,forward};
  }).sort((a,b)=>b.score-a.score);
 }
 function bestPass(p,through=false){return passOptions(p,through)[0]}
 function takePossession(p){
  if(ball.owner===p)return;
+ if(pendingOffside){
+  const violation=p===pendingOffside.receiver&&p.team===pendingOffside.team&&matchTime<=pendingOffside.expires;
+  pendingOffside=null;
+  if(violation){
+   offsides[p.team]++;
+   restartPlay('FREE KICK',1-p.team,p.x,p.z);
+   say('OFFSIDE · FREE KICK',1.5);
+   return;
+  }
+ }
  if(lastPass){
   if(p.team===lastPass.team&&matchTime-lastPass.t<=4)passesCompleted[p.team]++;
   lastPass=null;
@@ -1138,12 +1164,15 @@ function kick(p,shoot=false,through=false,power=.45){
   ball.vy=through?1.15:1.5;
  }
  const dir=norm(tx-p.x,tz-p.z);
+ // Only penalise offside if the player actually receives the attempted pass.
+ const illegalReceiver=!shoot&&receiver&&isOffsideAtKick(receiver,p);
+ pendingOffside=illegalReceiver?{team:p.team,receiver,expires:matchTime+4}:null;
  startPlayerAction(p,shoot?'shoot':through?'through':'pass',power);
  if(setPiece?.taker===p)setPiece=null;
  playMatchSound(shoot?'shot':'kick');
  p.hasBall=false;ball.owner=null;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
  ball.releaseTeam=p.team;ball.passTarget=receiver;ball.passTime=through?2.2:1.65;
- ball.vx=dir.x*strength;ball.vz=dir.z*strength;
+ ball.vx=dir.x*strength;ball.vz=dir.z*strength;ball.restartKind=null;
  ball.x=p.x+dir.x*2.35;ball.z=p.z+dir.z*2.35;ball.y=1.3;
  if(receiver?.team===0)selectPlayer(receiver);
  return true;
@@ -1469,6 +1498,7 @@ function advance(dt){
  ball.lock=Math.max(0,ball.lock-dt);
  ball.passTime=Math.max(0,ball.passTime-dt);
  if(ball.passTime<=0)ball.passTarget=null;
+ if(pendingOffside&&matchTime>pendingOffside.expires)pendingOffside=null;
  const cp=controlledPlayer(),input=playerMoveInput(),aim=ball.owner||ball;
  const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner)
   .sort((a,b)=>{
