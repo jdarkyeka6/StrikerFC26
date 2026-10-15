@@ -64,7 +64,7 @@ Hold **U** while defending to command your own goalkeeper out toward the attacki
 
 ### Verification and caveats
 
-A mocked Three.js/game-engine regression suite passed **35 checks**, including separate shot trajectories, all five skill-move impulses, headers/volleys/bicycle kicks, actual keyboard shot control, free-kick aiming, corner delivery, goalkeeper rush and a complete simulated four-minute match with halftime, goals, celebrations and replays. Syntax and UI ID references were also validated.
+A mocked Three.js/game-engine regression suite passed **41 checks in two test rounds**, including separate shot trajectories, all five skill-move impulses, headers/volleys/bicycle kicks, actual keyboard shot control, free-kick aiming, corner delivery, goalkeeper rush and a complete simulated four-minute match with halftime, goals, celebrations and replays. Syntax and UI ID references were also validated.
 
 These are browser-first procedural arcade systems, not motion-captured FIFA gameplay. **Real hardware/browser WebGL testing and balance tuning remain outstanding.** In particular, touch timing on aerial balls and player control feel are best evaluated through actual play.
 
