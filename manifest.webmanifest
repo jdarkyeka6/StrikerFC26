@@ -1,0 +1,18 @@
+{
+  "name": "Striker FC 26 | Offline Football",
+  "short_name": "Striker FC 26",
+  "description": "3D offline football with six clubs, Total Football skills, tactics and replay",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071522",
+  "theme_color": "#071522",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
