@@ -1547,9 +1547,18 @@ function resolveTackle(p){
  if(d>4.0)return false;
  const approach=norm(victim.x-p.x,victim.z-p.z);
  const facing=p.faceX*approach.x+p.faceZ*approach.z;
- const baseReach=facing>-.30?3.9:2.5;
- const reach=p.team===1?Math.min(baseReach,difficultySettings().opponentTackleRange):baseReach*difficultySettings().homeTackle;
+ // Realistic reach depends on defensive quality, accuracy and ball contact.
+ const defending=clamp(p.profile?.stats.defending??64,30,94);
+ const front=Math.max(-1,Math.min(1,facing));
+ const baseReach=clamp(2.25+(defending-60)*.010+(front>0?.38:-.28),1.7,3.15);
+ const reach=p.team===1?
+  Math.min(baseReach,difficultySettings().opponentTackleRange*.78):
+  baseReach*difficultySettings().homeTackle;
  if(d>=reach)return false;
+ // An attacking player's body isn't the ball: an actual ball contact
+ // or an obvious unfair lunge is required for any tackle result.
+ const ballGap=distance(p,ball);
+ if(ballGap>3.7)return false;
  if(!p.foulChecked){
   p.foulChecked=true;
   const decision=assessTackle(p,victim,d);
@@ -1813,7 +1822,19 @@ function aiShouldShoot(p,opponent){
 function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
- if(p.index===10)return {x:clamp(ball.x*.30,-GOAL_W/2+2,GOAL_W/2-2),z:ownGoal+side*8,speed:15};
+ if(p.index===10){
+  // Position from the ball's angle, then rush towards close one-on-ones.
+  const dist=Math.abs(ownGoal-ball.z),incoming=owner?.team!==p.team;
+  const rush=incoming&&owner&&dist<27?clamp((27-dist)/25,0,1)*10:0;
+  let x=clamp(ball.x*(incoming?.37:.24),-GOAL_W/2+1,GOAL_W/2-1);
+  let z=ownGoal+side*(7+rush);
+  if(!owner&&ball.isShot&&Math.sign(ball.vz)===Math.sign(ownGoal)&&Math.abs(ball.vz)>1){
+   const arrival=clamp((z-ball.z)/ball.vz,0,.70);
+   x=clamp(ball.x+ball.vx*arrival,-GOAL_W/2-1,GOAL_W/2+1);
+   z=ownGoal+side*7;
+  }
+  return {x,z,speed:incoming?20:15};
+ }
  if(!owner&&ball.passTarget===p&&ball.passTime>0)
   return {x:clamp(ball.x+ball.vx*.23,-HW+4,HW-4),z:clamp(ball.z+ball.vz*.23,-HL+5,HL-5),speed:23};
  if(owner?.team!==p.team){
@@ -2010,6 +2031,18 @@ function advance(dt){
    p.mesh.rotation.y+=d*Math.min(1,dt*11);
   }
   if(p.tackleWindow>0)resolveTackle(p);
+  // One-on-one goalkeeper smothers a genuinely reachable ball, rather than
+  // standing still while a striker simply walks across the goal line.
+  if(p.index===10&&ball.owner&&ball.owner.team!==p.team&&!practiceMode&&
+   !setPiece&&Math.abs(p.z-(-teams[p.team].dir*HL))<29&&
+   matchTime>=ball.secureUntil&&p.saveCooldown<=0&&distance(p,ball.owner)<2.1){
+   const carrier=ball.owner;
+   const dribbling=dribbleRating(carrier),handling=p.profile?.stats.goalkeeping??70;
+   if(handling+13>=dribbling||Math.hypot(carrier.vx,carrier.vz)<6){
+    p.saveCooldown=.95;startKeeperAnimation(p,'catch');
+    takePossession(p);say('KEEPER SMOTHERS!',.9);
+   }
+  }
   p.ring.visible=p===controlledPlayer();
   animatePlayer(p,dt);
  }
@@ -2098,17 +2131,24 @@ function advance(dt){
   // Resolve at the keeper's line, not on the first animation frame.
   if(incoming&&possible&&arrival>=0&&time<.105&&keeper.keeperAction==='miss'){
    const bonus=defendingTeam===1?difficultySettings().opponentKeeper:difficultySettings().homeKeeper;
-   const pace=Math.hypot(ball.vx,ball.vz);
-   const saveChance=clamp(.41-distanceX*.062-(height>3?.11:0)-(pace>94?.05:0)+bonus,.04,.82);
+   const pace=Math.hypot(ball.vx,ball.vz),handling=keeper.profile?.stats.goalkeeping??70;
+   // Ability, shot pace, height and whether the goalkeeper reached the shot's
+   // predicted lane all affect the outcome. No automatic perfect saves.
+   const reaction=clamp((handling-55)/140,0,.32);
+   const keeperReach=Math.abs(impactX-keeper.x);
+   const saveChance=clamp(.25+reaction-keeperReach*.047-(height>3?.10:0)-
+    Math.max(0,pace-76)*.0025+bonus,.05,.88);
    if(Math.random()<saveChance){
     saves[defendingTeam]++;
-    const catchable=distanceX<2.4&&height<2.8&&pace<90;
+    const catchable=distanceX<2.3&&height<2.9&&pace<84&&handling>63;
     startKeeperAnimation(keeper,catchable?'catch':'parry',impactX>=keeper.x?1:-1,height);
     if(catchable){
      takePossession(keeper);
      say('SAFE HANDS!',1.0);
     }else{
-     ball.vz*=-.60;ball.vx+=(ball.x-keeper.x)*2.0;ball.vy=4.0;
+     // Parry away from the centre of goal to avoid another immediate shot.
+     ball.vz*=-.70;ball.vx+=(ball.x-keeper.x)*3.0+(impactX<0?-7:7);
+     ball.vy=3.8;ball.lock=.32;
      ball.lastTouchTeam=defendingTeam;ball.lock=.25;
      say('WHAT A SAVE!',1.1);
     }
