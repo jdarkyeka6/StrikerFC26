@@ -1,6 +1,19 @@
-# ⚽ STRIKER FC 26 | VERSION 1.0
+# ⚽ STRIKER FC 26 | VERSION 1.1
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.0 is a major upgrade of the old pre-alpha.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.1 adds a referee and preserves all the V1.0 Matchday features.
+
+## 🟨 Version 1.1: Referee Update
+
+Claude's referee implementation has been reviewed, tested and merged with fixes.
+
+- **Fouls:** Tackles from behind have a high risk of being called a foul. Side challenges can also be penalised; clean challenges from the front are safer.
+- **Free kicks:** The fouled team restarts from the spot. Opponents retreat, and the ball and taker remain stationary until the kick.
+- **Penalty kicks:** Fouls inside the penalty area lead to a penalty. The goalkeeper waits on the line. On your penalties, hold and release **Space** to shoot. Dribbling, passing and crossing before taking it are blocked.
+- **Yellow and red cards:** A second yellow becomes a red card. Sent-off players leave the pitch and cannot be selected or tackle; they remain off after kickoffs and halftime.
+- **Match Centre:** Fouls, yellow cards and red cards are tracked alongside shots, possession and passing statistics.
+- **Free Training:** Practice remains referee-free.
+
+**Verification:** 12 targeted tests passed, including three complete simulated matches. Browser WebGL gameplay still needs a real-device playtest.
 
 ## 🏟️ Version 1.0: The Matchday Update
 
