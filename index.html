@@ -2103,7 +2103,9 @@ function advance(dt){
    if(choices.length){
     const p=choices[0].p;
     takePossession(p);
-    ball.x=p.x;ball.z=p.z;ball.y=1.05;
+    // An offside reception can award a free kick instead of possession.
+    // Never overwrite the restart ball position after the whistle.
+    if(ball.owner===p){ball.x=p.x;ball.z=p.z;ball.y=1.05;}
    }
   }
  }
