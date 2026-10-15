@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.4</title><style>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.5</title><style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{font-family:'DM Sans',Arial,sans-serif;color:#f2fbff;background:#071522;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}#game,canvas{width:100vw;height:100vh;display:block}#game{position:fixed;inset:0}body:after{pointer-events:none;position:fixed;inset:0;content:'';background:linear-gradient(180deg,rgba(2,13,19,.44),transparent 25%,transparent 68%,rgba(2,13,19,.66));z-index:1}.hud,.bottom{position:absolute;z-index:3;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.hud{top:20px;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:220px}.brand-icon{font:900 24px 'Barlow Condensed';border:2px solid #67f4ba;width:43px;height:43px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b2b2e;color:white}.brand-icon span{color:#67f4ba}.brand strong,.brand small{display:block}.brand strong{font:800 22px 'Barlow Condensed';letter-spacing:2px}.brand strong span{color:#67f4ba}.brand small{font-size:9px;letter-spacing:2.1px;color:#aac2c9}.scoreboard{display:flex;align-items:center;background:rgba(4,23,32,.88);border:1px solid rgba(158,255,224,.22);border-radius:12px;overflow:hidden;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}.club{font:800 16px 'Barlow Condensed';letter-spacing:1.6px;padding:14px 16px}.home{color:#84f8cc}.away{color:#ff9d96}.score{font:900 28px 'Barlow Condensed';display:flex;align-items:center;gap:12px;background:#07141b;padding:6px 20px}.score span{font-size:18px;color:#8c9eaa}.clock{padding:14px;border-left:1px solid #34535d;font:800 15px 'Barlow Condensed';color:#cfe5e5;min-width:62px;text-align:center}.top-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}.pill{border:1px solid #5fe9b7;color:#5fe9b7;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1.7px;background:#021b1bd9}.top-right button{pointer-events:auto;color:#dcfff3;border:1px solid #546c78;background:#041924aa;width:39px;height:39px;border-radius:9px;cursor:pointer}.bottom{bottom:22px;align-items:flex-end;gap:20px}.player-card{background:#041923d9;border:1px solid #6bf3b447;border-radius:12px;display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:238px;backdrop-filter:blur(12px)}.player-no{font:900 46px 'Barlow Condensed';color:#7cffc3;line-height:1}.player-card small{display:block;font-size:8px;letter-spacing:1.7px;color:#9cb7bc}.player-card strong{display:block;font:800 18px 'Barlow Condensed';letter-spacing:.8px}.player-card span{font:700 9px 'DM Sans';letter-spacing:1.3px;color:#78e5ba}.action-hint{position:absolute;bottom:80px;left:0;color:#a4eecd;font:800 10px 'DM Sans';letter-spacing:1.2px;background:#031a24db;padding:7px 11px;border:1px solid #4deab355;border-radius:7px;pointer-events:none}.shot-gauge{position:absolute;bottom:73px;left:0;width:238px;height:5px;background:#274850;border-radius:5px;overflow:hidden;opacity:0;transition:opacity .1s}.shot-gauge.active{opacity:1}.shot-gauge span{display:block;width:0;height:100%;background:linear-gradient(90deg,#67f7b8,#ffde7c,#fb7976)}.stamina{width:4px;height:45px;background:#2f5361;border-radius:4px;margin-left:auto;position:relative;overflow:hidden}.stamina span{position:absolute;bottom:0;width:100%;background:#82fac4;height:100%;transition:height .15s}.controls{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center;font-size:11px;color:#d6e8e8;background:#041923b6;border-radius:9px;padding:12px 16px;max-width:650px}.controls kbd{font:700 10px 'DM Sans';background:#d4fff0;color:#12382d;padding:4px 6px;border-radius:4px;margin-right:4px}.radar{width:150px;height:95px;border:1px solid #8bccb1;background:#09281f99;border-radius:4px;position:relative;flex-shrink:0}.radar:before{content:'';position:absolute;inset:7px;border:1px solid #8bccb180}.radar-mid{position:absolute;top:7px;bottom:7px;left:50%;width:1px;background:#8bccb180}.radar-mid:after{content:'';position:absolute;width:35px;height:35px;border:1px solid #8bccb180;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}.dot{position:absolute;width:5px;height:5px;border-radius:50%;z-index:1;transform:translate(-50%,-50%)}.dot.a{background:#80ffbf}.dot.b{background:#ff9991}.dot.ball{background:white;width:4px;height:4px}.dot.active{box-shadow:0 0 0 3px #fff7}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;background:linear-gradient(90deg,#04151fee 0%,#051923e8 38%,#07152250 100%);transition:opacity .3s}.overlay.hidden{opacity:0;pointer-events:none}.panel{max-width:590px;margin-left:clamp(28px,9vw,150px)}.eyebrow{color:#7dfbc1;font-size:12px;letter-spacing:3px;font-weight:800}.panel h1{font:900 clamp(70px,9vw,130px)/.85 'Barlow Condensed';letter-spacing:-1px;margin:20px 0;text-shadow:0 10px 40px #0004}.panel h1 em{color:#72f4b8;font-style:normal}.panel p{max-width:440px;line-height:1.7;color:#b8cdd2;font-size:14px}.features{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.features span{border:1px solid #41666b;background:#092832b0;padding:9px 12px;font-size:10px;letter-spacing:1px;font-weight:800}
 .half-coach{display:grid;grid-template-columns:1fr 1fr;max-width:550px;gap:14px;margin:18px auto}
@@ -161,7 +161,7 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.4 · FOOTBALL IQ</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.5 · FOOTBALL IQ</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span><small id="player-energy">ENERGY 100%</small></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
 <div class="half-panel hidden" id="half-panel"><div class="half-card"><div class="eyebrow" id="half-eyebrow">HALF TIME</div><h2 id="half-heading">THE BREAK</h2><div class="half-score" id="half-score">0 : 0</div><p id="half-subtitle">Time to change the game plan.</p>
@@ -196,7 +196,7 @@
  <div class="menu-side-foot"><strong id="sidebar-club-name">STRIKER FC</strong><span id="sidebar-record">0 W · 0 D · 0 L</span><span>YOUR CLUB · SEASON 01</span></div>
  </aside>
  <main class="menu-main">
- <div class="menu-topbar"><span class="menu-section-label" id="menu-heading">HOME / CLUBHOUSE</span><div><span class="menu-season">SEASON 01</span><span class="menu-online">● OFFLINE CAREER</span></div></div>
+ <div class="menu-topbar"><span class="menu-section-label" id="menu-heading">HOME / CLUBHOUSE</span><div><span class="menu-season">SEASON 01</span><span class="menu-online">● LOCAL SAVE</span></div></div>
  <section class="menu-screen selected" id="menu-home" aria-label="Home dashboard">
  <div class="menu-hero">
  <span class="menu-eyebrow">WELCOME TO THE CLUBHOUSE</span>
@@ -217,7 +217,7 @@
  <button id="home-club" class="home-tile"><span class="tile-icon">♜</span><strong>YOUR CLUB</strong><small>Meet the players and their identities</small><span class="tile-arrow">↗</span></button>
  </div>
  </section>
- <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.4 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
+ <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.5</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.5 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
 <div class="match-setup">
  <div class="setup-heading">MATCH SETUP <span>SEASON 01 · ORIGINAL CLUBS</span></div>
  <div class="setup-grid">
@@ -426,6 +426,42 @@ const CLUBS={
 };
 const teams=[{name:'STRIKER',primary:'#57edaa',secondary:'#0e2540',dir:-1},{name:'EMBER',primary:'#fb746c',secondary:'#fee2d4',dir:1}];
 
+// Fixed, original roster data. Profiles never re-roll between matches or reloads.
+const CLUB_ROSTER_NAMES={
+ striker:['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE','MICAH HAYES','OLLIE WEST','JAY CARTER','ETHAN COLE','RILEY FINCH','SAM BROOKS','JOSH HARPER','MASON GREY','TYLER QUINN','DYLAN KENT','CASEY REED'],
+ tide:['LUKE MARLOW','JACK FINLEY','ARLO PRICE','ELIJAH WATERS','HARRY QUINN','BENNETT LANE','CHARLIE MOSS','MILO ROBERTS','ARCHIE TATE','HENRY COOPER','ISAAC WELLS','JASPER DAWSON','DYLAN HART','OSCAR VALE','FINN MERCER','RORY SLOAN'],
+ aurora:['MATEO SOLIS','JULIAN VEGA','NICO REYES','LEON BAKER','ELIAS HOLT','FELIX ROMERO','THEO WILDER','DANTE FLORES','ADRIAN COLE','RAPHAEL ORTIZ','GABRIEL MOON','LUCAS VARGAS','MARCOS SANTOS','NOEL PARK','REMY GARCIA','ENZO DIAZ'],
+ volt:['AXEL FORD','KOBE MARSH','JAYDEN VOSS','ZANE FLETCHER','MAXWELL GRANT','TYSON WEBB','NATE WALKER','BLAKE RYDER','HUNTER REID','BRODIE KNIGHT','LOGAN STEELE','COOPER STARK','CODY HAYES','LUCA POWER','JESSE BLAIR','FINN HAWK'],
+ ember:['MAX RIVERS','RYAN CROSS','JORDAN BLAKE','ELI TURNER','FINN CLARK','LUCA MASON','JESSE SHAW','HUGO KING','OSCAR DALE','THEO WATTS','BEN FORD','RUBEN ASH','ARTHUR BLAZE','EVAN RHODES','JONAH FLINT','ROWAN BURNS'],
+ polar:['ERIK NYSTROM','LARS BERG','OLIVER FROST','NIKLAS SUND','TOBIAS KELLER','MARTIN VALE','MADS ERIKSEN','FREDDIE NORTH','HENRI LIND','JONAS WOLF','ANTON IVERS','NOAH WINTER','ELIAN KOCH','MILO ARDEN','FELIX SNOW','KASPER HALE']
+};
+const POSITION_CODES=['ST','LW','RW','CAM','CM','CDM','LB','CB','CB','RB','GK','ST','CM','LW','CB','RW'];
+const PROFILE_NUMBERS=[9,11,7,10,8,6,3,4,5,2,1,12,14,16,18,20];
+const NATIONALITIES=['AUS','ENG','NZL','FRA','ESP','GER','BRA','NED','ITA','SWE','USA','ARG'];
+const SKIN_PALETTE=['#f2c6a5','#d79e78','#b97b52','#885438','#5a382c','#e6b48b'];
+const HAIR_PALETTE=['#211715','#4b2a1b','#765134','#b58852','#1d262d','#953f2c'];
+function profileHash(s){let h=2166136261;for(const ch of s){h=Math.imul(h^ch.charCodeAt(0),16777619)}return h>>>0}
+function buildProfile(club,i){
+ const seed=profileHash(club+':'+i);
+ const n=(shift,mod)=>((seed>>>shift)%mod);
+ const position=POSITION_CODES[i],goalie=position==='GK';
+ const base=70+n(0,13)+(i<11?3:0)+(i===0?3:0);
+ const overall=Math.min(91,base);
+ const stats=goalie?{
+  pace:35+n(5,17),shooting:21+n(8,18),passing:54+n(11,19),defending:29+n(14,16),physical:69+n(17,17),goalkeeping:overall
+ }:{
+  pace:61+n(3,33),shooting:(position==='ST'||position==='LW'||position==='RW'?69:45)+n(7,24),
+  passing:(position==='CM'||position==='CAM'||position==='CDM'?68:52)+n(11,25),
+  defending:(position==='CB'||position==='LB'||position==='RB'||position==='CDM'?67:30)+n(15,25),
+  physical:56+n(19,33),goalkeeping:8+n(23,18)
+ };
+ return Object.freeze({id:club+':'+i,club,name:CLUB_ROSTER_NAMES[club][i],number:PROFILE_NUMBERS[i],
+  position,overall,age:18+n(5,15),height:169+n(11,26),nation:NATIONALITIES[(n(17,12)+Object.keys(CLUB_ROSTER_NAMES).indexOf(club))%12],
+  stats:Object.freeze(stats),appearance:Object.freeze({skin:SKIN_PALETTE[n(12,6)],hair:HAIR_PALETTE[n(19,6)],heightScale:.94+n(23,13)/100}),
+  paceBonus:.91+stats.pace/100*.15});
+}
+const PLAYER_DATABASE=Object.fromEntries(Object.keys(CLUB_ROSTER_NAMES).map(id=>[id,Object.freeze(CLUB_ROSTER_NAMES[id].map((_,i)=>buildProfile(id,i)))]));
+const clubRoster=id=>PLAYER_DATABASE[id]||PLAYER_DATABASE.striker;
 const names=[
  ['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE','MICAH HAYES','OLLIE WEST','JAY CARTER','ETHAN COLE','RILEY FINCH','SAM BROOKS'],
  ['MAX RIVERS','RYAN CROSS','JORDAN BLAKE','ELI TURNER','FINN CLARK','LUCA MASON','JESSE SHAW','HUGO KING','OSCAR DALE','THEO WATTS','BEN FORD']
@@ -497,7 +533,7 @@ function makePlayer(team,index){
  const headPivot=new THREE.Group();headPivot.position.y=3.8;outfit.add(headPivot);
  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.29,.32,.35,8),skin);headPivot.add(neck);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.66,14,12),skin);head.position.y=.52;headPivot.add(head);
- const hair=new THREE.Mesh(new THREE.SphereGeometry(.68,12,10,0,Math.PI*2,0,Math.PI*.55),shared.hair[(index+team)%4]);hair.position.y=.68;headPivot.add(hair);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.68,12,10,0,Math.PI*2,0,Math.PI*.55),mat('#322019'));hair.position.y=.68;headPivot.add(hair);
  const trunks=new THREE.Mesh(new THREE.CylinderGeometry(.79,.83,.72,10),shorts);trunks.position.y=1.51;outfit.add(trunks);
  const number=new THREE.Mesh(new THREE.PlaneGeometry(1.33,1.25),new THREE.MeshBasicMaterial({map:jerseyTexture(team,formation[index].no),transparent:true,depthWrite:false,side:THREE.DoubleSide}));
  number.position.set(0,2.72,.82);outfit.add(number);
@@ -527,7 +563,7 @@ function makePlayer(team,index){
  ownerMarker.rotation.x=-Math.PI/2;ownerMarker.position.y=.075;root.add(ownerMarker);
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
- const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
+ const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts,skinMaterial:skin,hairMesh:hair,numberMesh:number},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
  animCycle:index*.87+team*1.31,animBlend:0,animTurn:0,prevYaw:0,actionKind:'',actionTime:0,actionDuration:0,actionPower:0};
  players.push(p);return p;
 }
@@ -727,11 +763,10 @@ function makeSubstitution(prefix='pause'){
  if(!p||p.sentOff)return false;
  // Substitute assumes the on-pitch spot, without changing possession.
  if(setPiece?.taker===p)setPiece.taker=p;
- names[0][slot]=b.name;p.squadNumber=b.number;p.stamina=100;p.paceBonus=b.pace;
+ applyPlayerProfile(p,b.profile);p.stamina=100;
  p.tackleWindow=0;p.tackleCooldown=0;p.tackleRecover=0;
  p.vx*=.35;p.vz*=.35;
- const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
- if(numberMesh){numberMesh.material.map=jerseyTexture(0,b.number);numberMesh.material.needsUpdate=true}
+ // Physical appearance, height and jersey number follow the substitute's permanent profile.
  subsUsed++;usedBench.add(benchId);replacedSlots.add(slot);
  updatePlayerUI();refreshBench();
  $(prefix+'-sub-status').textContent='✅ '+b.name+' ON · '+(5-subsUsed)+' substitutions left';
@@ -775,6 +810,28 @@ function setTactic(value,notify=false){
  $('half-tactic').value=value;
  if(notify&&state!=='menu')say('TACTIC: '+tactic().name,1);
 }
+function applyPlayerProfile(p,profile){
+ if(!profile||!p)return;
+ p.profile=profile;p.squadNumber=profile.number;p.paceBonus=profile.paceBonus;
+ p.rig.skinMaterial.color.set(profile.appearance.skin);
+ p.rig.hairMesh.material.color.set(profile.appearance.hair);
+ p.mesh.scale.set(.83,.83*profile.appearance.heightScale,.83);
+ if(p.rig.numberMesh.material.map!==jerseyTexture(p.team,profile.number)){
+  p.rig.numberMesh.material.map=jerseyTexture(p.team,profile.number);
+  p.rig.numberMesh.material.needsUpdate=true;
+ }
+ names[p.team][p.index]=profile.name;
+}
+function applySquadToMatch(team,club){
+ const roster=clubRoster(club);
+ for(const p of players)if(p.team===team)applyPlayerProfile(p,roster[p.index]);
+ if(team===0){
+  for(let i=0;i<BENCH.length;i++){
+   const prof=roster[i+11],slot=BENCH[i];
+   Object.assign(slot,{id:prof.id,name:prof.name,number:prof.number,pace:prof.paceBonus,profile:prof});
+  }
+ }
+}
 function applyClubs(){
  for(let team=0;team<2;team++){
   const id=$(team===0?'home-select':'away-select').value;
@@ -784,9 +841,10 @@ function applyClubs(){
   scoreEl.textContent=c.short;scoreEl.style.color=c.primary;
   $(team===0?'kit-home':'kit-away').style.background=c.primary;
   for(const p of players){
-   if(p.team!==team||p.index===10)continue;
-   p.rig.kitShirt.color.set(c.primary);p.rig.kitShorts.color.set(c.secondary);
+   if(p.team!==team)continue;
+   if(p.index!==10){p.rig.kitShirt.color.set(c.primary);p.rig.kitShorts.color.set(c.secondary)}
   }
+  applySquadToMatch(team,id);
  }
  $('kit-match-label').textContent=teams[0].name+' vs '+teams[1].name;
  refreshRecord();
@@ -1045,14 +1103,9 @@ $('quit-match').addEventListener('click',quitToMenu);
 function newMatch(){
  cameraFocus.set(0,0,0);
  subsUsed=0;usedBench.clear();replacedSlots.clear();
- for(let i=0;i<11;i++)names[0][i]=INITIAL_HOME_NAMES[i];
- for(const p of players){
-  p.stamina=100;p.paceBonus=1;p.squadNumber=formation[p.index].no;
-  if(p.team===0&&p.index<10){
-   const numberMesh=p.rig.outfit.children.find(m=>m.material?.map);
-   if(numberMesh){numberMesh.material.map=jerseyTexture(0,formation[p.index].no);numberMesh.material.needsUpdate=true}
-  }
- }
+ for(const p of players){p.stamina=100;p.yellow=0;p.sentOff=false}
+ // Names, ratings, shirts and appearances are restored from immutable club rosters.
+ applyClubs();
  setFormation($('formation-select').value||'433');
  refreshBench();
  MATCH_SECONDS=Number($('duration-select').value)||240;
@@ -1069,7 +1122,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 v1.4 Football IQ. Choose formations, make up to five substitutions and fight fatigue across the match. Replays, mouse controls and referee rules are included.';
+ document.querySelector('.panel p').textContent='Striker FC 26 v1.5 Clubhouse. Choose formations, make up to five substitutions and fight fatigue across the match. Replays, mouse controls and referee rules are included.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -1296,7 +1349,7 @@ function kick(p,shoot=false,through=false,power=.45){
   const aimX=steering?.moving?steering.x:0;
   // Aim to the far post by default. Up/down while shooting steers the finish.
   const post=aimX>.2?1:aimX<-.2?-1:(p.x<=0?1:-1);
-  tx=clamp(post*GOAL_W*.35+(Math.random()-.5)*(2.1+power*1.6),-GOAL_W/2+.7,GOAL_W/2-.7);
+  tx=clamp(post*GOAL_W*.35+(Math.random()-.5)*(2.1+power*1.6)*Math.max(.55,1.38-(p.profile?.stats.shooting||65)/100),-GOAL_W/2+.7,GOAL_W/2-.7);
   if(p.team===1)tx+=(Math.random()-.5)*GOAL_W*cfg.opponentPassError*2.6;
   tz=goalZ(p.team)+side*7;
   strength=79+power*23;
@@ -1306,7 +1359,7 @@ function kick(p,shoot=false,through=false,power=.45){
   if(!chosen)return false;
   receiver=chosen.q;tx=chosen.tx;tz=chosen.tz;
   passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
-  if(p.team===1&&cfg.opponentPassError>0){const err=cfg.opponentPassError*distance(p,receiver);tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err}
+  if(p.team===1&&cfg.opponentPassError>0){const err=cfg.opponentPassError*distance(p,receiver)*Math.max(.6,1.25-(p.profile?.stats.passing||65)/100);tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err}
   strength=clamp(chosen.d*(through?2.0:1.8)+28,44,through?103:84);
   ball.vy=through?1.15:1.5;
  }
