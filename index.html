@@ -957,6 +957,8 @@ function captureReplayFrame(){
  return {t:matchTime,
   ball:[ball.x,ball.y,ball.z,ball.vx,ball.vz],
   controlled,
+  profileIds:players.map(p=>p.profile?.id||null),
+  visible:players.map(p=>p.mesh.visible),
   players:players.map(p=>{
    const c=p.rig.character,l=p.rig.limbs;
    return [p.x,p.z,p.mesh.rotation.y,p.vx,p.vz,c.position.x,c.position.y,c.position.z,
@@ -996,6 +998,14 @@ function setReplayPose(frameA,frameB,blend){
  ballMesh.position.set(ball.x,Math.max(.31,ball.y-.74),ball.z);
  for(let j=0;j<players.length;j++){
   const p=players[j],a=frameA.players[j],b=frameB.players[j];
+  // Replays from before a substitution show the actual player at the time.
+  const pastId=frameA.profileIds?.[j];
+  if(pastId&&p.profile?.id!==pastId){
+   const [club,index]=pastId.split(':');
+   const profile=clubRoster(club)[Number(index)];
+   if(profile?.id===pastId)applyPlayerProfile(p,profile);
+  }
+  if(frameA.visible)p.mesh.visible=frameA.visible[j];
   const v=a.map((value,i)=>lerp(value,b[i]));
   p.x=v[0];p.z=v[1];p.vx=v[3];p.vz=v[4];
   p.mesh.position.set(p.x,0,p.z);
