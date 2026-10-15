@@ -1,5 +1,17 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.5.2 · BALL-WINNING TACKLES (15 October 2026)
+
+- Successful tackles now provide a brief 0.64-second secure first touch, preventing immediate counter-tackles by the dispossessed player or another defender.
+- The beaten ball carrier has a 0.68-second stumble/recovery animation and temporary tackling cooldown.
+- The winning tackler can accelerate and pass/shoot right away.
+- Ball releases, ordinary interceptions, new matches and restarts clear stale protection. Normal defending resumes afterward.
+- Kept all V1.5 Clubhouse, previous V1.5.1 refereeing, squads and replay systems.
+
+**Verification:** 16 targeted and integration checks, including one full simulated four-minute match and halftime, all passed. Real browser visual testing remains outstanding.
+
+---
+
 ## Version 1.5.1 · REFEREE FAIRNESS HOTFIX (15 October 2026)
 
 - Replaced random 45–80% foul decisions on some tackles from behind with contact-based checks.
