@@ -1,5 +1,17 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.6.2 · ASSISTED PASS RECEIVING (15 October 2026)
+
+- Players automatically run to intercept passes and through balls using a predicted ball-flight path and their own movement speed, rather than aiming only 0.2 seconds ahead.
+- Immediate home-team control switching to the intended recipient is retained. Auto-reception works with no movement input, while manual steering overrides assistance when deliberately moving away.
+- Both home and away AI receivers prioritize the pass over formation movement until they meet the ball or the assist expires.
+- More forgiving but bounded first-touch radius, dynamic pass lifetime for longer flights, and intended pass targets away from touchlines.
+- Crosses and set pieces correctly start and clear receiver-tracking timers; ordinary tackles, offsides, interceptions, slide tackles, clubs and replays remain active.
+
+**Testing:** Simulated home and away passes, through balls and sideline receptions all succeeded. Manual-input override worked. A complete 240-second match finished with halftime and stable game state. A real-browser WebGL playtest is still recommended.
+
+---
+
 ## Version 1.6.1 · SLIDING TACKLES (15 October 2026)
 
 New defensive skill move with meaningful timing and consequences.
