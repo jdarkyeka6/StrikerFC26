@@ -1,6 +1,23 @@
-# ⚽ STRIKER FC 26 | VERSION 1.7.1
+# ⚽ STRIKER FC 26 | VERSION 1.7.2
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.1 adds complete offline support, a standalone downloadable HTML and browser caching on top of V1.7 Total Football. The existing six-club Clubhouse and all earlier systems remain.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.2 fixes passing and the held-ball goalkeeper exploit while preserving complete offline support, the standalone HTML and browser caching from V1.7.1. The existing six-club Clubhouse and all earlier systems remain.
+
+## ⚽ Version 1.7.2: Passing and goalkeeper possession fixes
+
+### Passing
+- More accurate **intended targets**, with a stronger directional preference and onside recipient selection.
+- A **distance- and friction-based launch speed** so medium-range passes no longer overshoot players as frequently. Through balls keep a useful lead without blasting into the stands.
+- Reduced passing error and clamped aiming locations well inside touchlines.
+- Faster interception forecasts, more time to chase difficult through balls and automatic movement for both AI and player-controlled receivers.
+- Holding the passer's old movement key no longer pulls the newly selected receiver away from the ball. Deliberately change direction, or release and repress a movement key, to take manual control.
+
+### Held-ball goalkeeper exploit
+Previously, pressing Shoot/Tackle near a goalkeeper holding possession could trigger an ordinary tackle that stole the ball even though keeper-contact fouls were disabled. That loophole is closed for standing tackles, sliding tackles and tackles already in progress. Keepers can still distribute the ball and opponents can intercept after the release.
+
+### Testing and offline parity
+**37 checks passed**, covering goalkeeper possession, distribution, home/AI passes, through balls, wing passes, manual reception overrides and a full 240-second match including halftime, goals and replays.
+
+Both the website game (index.html) and the downloadable one-file offline game (offline.html) contain this version. Browser offline caches are refreshed by service-worker version v1.7.2. Download offline.html and open it directly for play without a network connection. A real Chrome/Edge WebGL playtest with Wi-Fi disabled is still recommended.
 
 ## 📡 Version 1.7.1: Completely offline playable
 
