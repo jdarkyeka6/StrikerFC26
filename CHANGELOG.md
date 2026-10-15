@@ -1,5 +1,21 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.6.1 · SLIDING TACKLES (15 October 2026)
+
+New defensive skill move with meaningful timing and consequences.
+
+- **V** on keyboard, **Shift + left-click** over the pitch, or **R3** on a standard gamepad (button 11) starts a manual slide tackle. The regular Space/left-click standing tackle is unchanged.
+- Separate grounded, full-body slide animation with an extended boot, hip drop, bracing arms and recovery, including when winning possession.
+- Slide direction locks at initiation. Momentum lasts about 0.70 seconds, with a 0.45-second active ball-contact window.
+- Clean ball-first contact can win the football and keep the prior short first-touch grace period.
+- Sliding costs 15 stamina, and the 2.15-second cooldown prevents spam. Misses take time to recover from.
+- Player-first rear contact at speed can award an actual foul or yellow card. No random foul dice rolls; a whistle stops the slide.
+- Slide state is cleared on new kickoffs. Preserved all earlier tactical AI, player identities, Clubhouse, animations, goalkeeper logic and replays.
+
+**Testing:** Grounded live-slide animation/possession and passing tests passed; intentionally missed sideways sliding caused no tackle or phantom foul; seven isolated contact-decision and foul checks passed; a complete 240-second match after an active slide reached full-time with halftime, goals and replay transitions. Actual WebGL browser/hardware testing remains pending.
+
+---
+
 ## Version 1.6.0 · GAMEPLAY REVOLUTION (15 October 2026)
 
 Implemented **all five critical systems** identified in the V1.5.2 gameplay review.
