@@ -1,5 +1,20 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.4.0 · FOOTBALL IQ (15 October 2026)
+
+A major tactical and match-management update for Striker FC 26.
+
+- **Three real formations:** 4-3-3 Wide, 4-4-2 Two Strikers and 4-2-3-1 Control. AI and teammate roles adapt to the shape. Switch in match setup or at halftime.
+- **Five substitutes:** A named five-player bench with unique shirt numbers and player attributes. Make substitutions while paused or at halftime. Each player/bench slot can only be used once, and the game allows five total.
+- **Fatigue that matters:** Stamina no longer resets after every goal or kickoff. Running and sprinting affect match energy and speed. Half-time restores some energy, while substitutes arrive fresh and slightly faster.
+- **Visible stamina:** Live energy percentage and a color-changing stamina bar in the controlled-player HUD. Match Centre includes substitutions and average energy.
+- **Simplified offsides:** Pass-time second-last-defender checks on directed passes and crosses, with offside awarded on receipt, an ensuing free kick, basic restart exemptions, and AI receiver selection that avoids offside runs.
+- **Continuity:** Existing goalkeepers, fouls and cards, penalties, controls, difficulty, custom clubs, animations and instant replays remain.
+
+**Verification:** 25 targeted logic and match-management checks passed, plus complete 240-second simulated matches with each formation. All three finished and reached halftime normally. No NaN player positions or invalid stamina states. Full browser/WebGL visual tests remain outstanding.
+
+---
+
 ## Version 1.3.0 · ANIMATION UPGRADE (15 October 2026)
 
 Player bodies are now more expressive without losing the game's lightweight single-file structure.
