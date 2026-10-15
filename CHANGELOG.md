@@ -1,5 +1,18 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.5.1 · REFEREE FAIRNESS HOTFIX (15 October 2026)
+
+- Replaced random 45–80% foul decisions on some tackles from behind with contact-based checks.
+- Replaced random yellow-card rolls with deterministic checks for unusually forceful rear tackles that miss the ball.
+- CPU teams now avoid initiating clear tackles from behind, reducing arbitrary stoppages.
+- Clearer explanations appear on-screen for fouls and cautions.
+- Clean front tackles, side challenges, slight contact and ball-first tackles remain legal. A second yellow still triggers dismissal.
+- All previous Clubhouse, player identities, substitutions, AI difficulty, penalties, offsides and replays remain intact.
+
+Verification: 15 targeted checks passed, including a complete four-minute simulated match. Real-browser visual testing is still recommended.
+
+---
+
 ## Version 1.5.0 · CLUBHOUSE & PLAYERS (15 October 2026)
 
 Major UI and character-identity update.
