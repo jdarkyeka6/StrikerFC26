@@ -1427,8 +1427,14 @@ function switchPlayer(){
   .sort((a,b)=>distance(a,aim)-distance(b,aim));
  const nearby=ranked.slice(0,Math.min(5,ranked.length));
  const current=nearby.indexOf(controlledPlayer());
- // Q cycles through the five closest eligible players instead of getting stuck on the nearest.
- const next=nearby[current<0?0:(current+1)%nearby.length];
+ const input=playerMoveInput();
+ // Hold a direction while switching to select a defender ahead of that direction.
+ const rankedDirectional=input.moving?ranked.map(p=>{
+  const dx=p.x-controlledPlayer().x,dz=p.z-controlledPlayer().z,d=Math.hypot(dx,dz)||1;
+  return {p,score:(dx*input.x+dz*input.z)/d*22-distance(p,aim)*.24};
+ }).filter(o=>o.p!==controlledPlayer()).sort((a,b)=>b.score-a.score):[];
+ const next=input.moving&&rankedDirectional[0]?.score>0?rankedDirectional[0].p:
+   nearby[current<0?0:(current+1)%nearby.length];
  selectPlayer(next,true);
 }
 function passLaneRisk(p,target,receiver){
@@ -1634,6 +1640,33 @@ function kick(p,shoot=false,through=false,power=.45,shotType='normal'){
  return true;
 }
 // Committed slide tackle: a separate, controlled ball-first challenge.
+// Individual skills have an actual ball and locomotion effect. They cannot
+// chain endlessly and are much harder to execute while exhausted.
+function performSkill(p,kind){
+ if(state!=='playing'||!p||p!==controlledPlayer()||ball.owner!==p||p.index===10||
+    p.sentOff||setPiece||matchTime<(p.skillCooldown||0)||p.stamina<9)return false;
+ const input=playerMoveInput();
+ const forward=input.moving?norm(input.x,input.z):norm(p.faceX,p.faceZ);
+ const side={x:-forward.z,z:forward.x};
+ const nearest=players.filter(q=>q.team!==p.team&&!q.sentOff).reduce((d,q)=>Math.min(d,distance(q,p)),30);
+ const skill=dribbleRating(p);
+ const turn=p.index%2?1:-1;
+ let vx=0,vz=0;
+ if(kind==='stepover'){vx=forward.x*10+side.x*turn*8;vz=forward.z*10+side.z*turn*8}
+ else if(kind==='ballroll'){vx=side.x*turn*14;vz=side.z*turn*14}
+ else if(kind==='fake'){vx=side.x*turn*8;vz=side.z*turn*8}
+ else if(kind==='roulette'){vx=-forward.x*7+side.x*turn*12;vz=-forward.z*7+side.z*turn*12}
+ else if(kind==='dragback'){vx=-forward.x*14;vz=-forward.z*14}
+ else return false;
+ p.skillUntil=matchTime+.38;p.skillVX=vx;p.skillVZ=vz;
+ p.skillCooldown=matchTime+(.75+(100-skill)*.006);
+ p.stamina=Math.max(0,p.stamina-9);
+ p.skillShield=nearest<4.5?matchTime+.20:0;
+ ball.lock=Math.max(ball.lock,.12);
+ startPlayerAction(p,kind,.8);
+ say(kind.toUpperCase().replace('BALLROLL','BALL ROLL').replace('DRAGBACK','DRAG BACK')+'!',.6);
+ return true;
+}
 function attemptSlide(p){
  if(state!=='playing'||!p||p.sentOff||p.index===10||p.team!==0||p!==controlledPlayer()||
   p.tackleCooldown>0||p.tackleRecover>0||p.slideUntil>matchTime||
@@ -1762,6 +1795,8 @@ function resolveTackle(p){
   Math.min(baseReach,difficultySettings().opponentTackleRange*.78):
   baseReach*difficultySettings().homeTackle;
  if(d>=reach)return false;
+ // Brief, skill-based shielding reduces tackle radius but never guarantees escape.
+ if(victim.skillShield>matchTime&&distance(p,victim)>.95)return false;
  // An attacking player's body isn't the ball: an actual ball contact
  // or an obvious unfair lunge is required for any tackle result.
  const ballGap=distance(p,ball);
@@ -2132,11 +2167,12 @@ function advance(dt){
  if(ball.passTime<=0){ball.passTarget=null;ball.passStarted=0}
  if(pendingOffside&&matchTime>pendingOffside.expires)pendingOffside=null;
  const cp=controlledPlayer(),input=playerMoveInput(),aim=ball.owner||ball;
+ const containHeld=ball.owner?.team===1&&(keys.has('KeyY')||!!getPad()?.buttons[7]?.pressed);
  const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner)
   .sort((a,b)=>{
    const priority=p=>distance(p,aim)+(roleOf(p).group==='defence'?7:0)+(p===cp?3:0);
    return priority(a)-priority(b);
-  }).slice(0,team===1?Math.min(3,difficultySettings().opponentPressers+aiPlan(1).pressBonus):tactic().pressers));
+  }).slice(0,team===1?Math.min(3,difficultySettings().opponentPressers+aiPlan(1).pressBonus):Math.max(tactic().pressers,containHeld?2:1)));
  for(const p of players){
   if(p.sentOff||(practiceMode&&p.team===1))continue;
   p.tackleCooldown=Math.max(0,p.tackleCooldown-dt);
@@ -2150,11 +2186,22 @@ function advance(dt){
    const pad=getPad();
    const sprint=(keys.has('ShiftLeft')||keys.has('ShiftRight')||!!pad?.buttons[5]?.pressed)&&p.stamina>2;
    const jockey=(keys.has('KeyF')||!!pad?.buttons[6]?.pressed)&&ball.owner!==p;
-   const speed=p.tackleRecover>0?11:jockey?10.5:sprint?(ball.owner===p?22:25):(ball.owner===p?15.2:18.2);
+   const speed=p.tackleRecover>0?11:jockey?11.3:sprint?(ball.owner===p?22:25):(ball.owner===p?15.2:18.2);
    const staminaCost=sprint&&input.moving?-20:10;
    p.stamina=clamp(p.stamina+staminaCost*dt,0,100);
    const energyScale=.79+.21*(p.stamina/100);
    vx=input.x*speed*energyScale*(p.paceBonus||1);vz=input.z*speed*energyScale*(p.paceBonus||1);
+   if(jockey&&ball.owner?.team===1){
+    const carrier=ball.owner;
+    // Jockey aims to remain goal-side and inside the passing lane.
+    if(!input.moving){
+     const goalSide=teams[0].dir;
+     const x=carrier.x*.76,z=carrier.z-goalSide*3.5;
+     const d=norm(x-p.x,z-p.z);vx=d.x*8;vz=d.z*8;
+    }
+    p.faceX=norm(carrier.x-p.x,carrier.z-p.z).x;
+    p.faceZ=norm(carrier.x-p.x,carrier.z-p.z).z;
+   }
    // A set-piece taker stays at the spot until passing or shooting.
    if(setPiece?.taker===p){vx=0;vz=0;p.vx=0;p.vz=0}
    // Assisted first touch, including immediately after the control switch.
@@ -2212,6 +2259,13 @@ function advance(dt){
    const defending=ball.owner?.team!==p.team;
    const ranked=defending?pressers[p.team]:[];
    const target=roleTarget(p,ranked[0],ranked[1]);
+   if(containHeld&&p.team===0&&p===ranked[1]&&ball.owner?.team===1){
+    // Second defender presses into the passing lane, but does not auto-tackle.
+    const carrier=ball.owner,inside=norm(-carrier.x*.25,-teams[0].dir*15);
+    target.x=clamp(carrier.x+inside.x*5,-HW+4,HW-4);
+    target.z=clamp(carrier.z+inside.z*5,-HL+5,HL-5);
+    target.speed=21;
+   }
    if(p.team===0&&p.index!==10&&!ranked.includes(p)){
     const role=roleOf(p).group,move=tactic().advance;
     if(role==='attack'||role==='mid'||(role==='defence'&&move<0)){
@@ -2241,6 +2295,10 @@ function advance(dt){
    const u=clamp((matchTime-p.slideStarted)/.70,0,1);
    const speed=(1-u)*.88+.10;
    vx=p.slideVX*speed;vz=p.slideVZ*speed;
+  }
+  if(p.skillUntil>matchTime&&ball.owner===p){
+   const phase=(p.skillUntil-matchTime)/.38;
+   vx=p.skillVX*(.35+phase*.65);vz=p.skillVZ*(.35+phase*.65);
   }
   // Players hold position during free kicks and penalties.
   if(setPiece&&p!==setPiece.taker&&p.index!==10&&(setPiece.kind==='PENALTY KICK'||p.team!==setPiece.team)){vx=0;vz=0;p.vx=0;p.vz=0}
