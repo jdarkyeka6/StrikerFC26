@@ -1,6 +1,22 @@
-# ⚽ STRIKER FC 26 | VERSION 1.2
+# ⚽ STRIKER FC 26 | VERSION 1.3
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.2 adds optional mouse-button controls while retaining the referee and the entire V1.0 Matchday feature set.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.3 upgrades player and goalkeeper animation while keeping mouse/keyboard/controller controls, the referee and the entire Matchday feature set.
+
+## 🏃 Version 1.3: Player animation upgrade
+
+**New articulated 3D rigs and procedural animations** are built directly into the existing Three.js scene, with no animation library or external motion files.
+
+- **More realistic running and sprinting:** Speed-dependent gait, knees and elbows that bend through each stride, ankle movement, arm counter-swing, gentle body bob and torso lean. Stride cycles vary across players, so teammates do not run in lockstep.
+- **Ball control / first touch:** Foot cushioning and a glance toward the ball when taking possession.
+- **Passing and through balls:** Deliberate leg windup, swing and planted support foot.
+- **Charged shooting:** A stronger follow-through with shoulder rotation, raised kicking leg and a recovery.
+- **Lofted crossing:** Distinct wider kicking motion.
+- **Tackling:** A low-reaching tackle stance with controlled recovery.
+- **Goalkeeping:** Sharper ready stance and articulated elbow/knee movement when catching, diving, parrying and distributing.
+- **Replays:** Every captured player pose now includes the head, torso, knee, elbow and ankle joints, so goals and highlights replay the improved animations.
+- Existing controls, match setup, referee, penalties, difficulty, camera, weather and Free Training remain.
+
+**Testing:** 34 targeted simulation checks passed, including live kicking, keeper dives, full-body motion, action recovery and joint-preserving replay frames. These are lightweight procedural animations, not motion-captured football or full inverse-kinematics foot-to-ball contact. A real browser visual/performance playtest is still recommended.
 
 ## 🖱️ Version 1.2: Mouse controls
 
