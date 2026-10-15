@@ -1,5 +1,21 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.3.0 · ANIMATION UPGRADE (15 October 2026)
+
+Player bodies are now more expressive without losing the game's lightweight single-file structure.
+
+- New elbow, knee, ankle and head pivots on all 22 players; jersey numbers follow torso rotation.
+- Speed-dependent running, sprinting, idle blending, stride offsets, acceleration/turning poses, and reactive upper-body motion.
+- Separate animated kicks for passing, through balls, shooting and crossing; anticipation and follow-through.
+- Low-reaching tackle animation and first-touch ball-control stance.
+- Goalkeeper diving/catching/parrying/kicking now use jointed arms and legs.
+- Replays record and interpolate all new joint rotations in addition to the existing player and ball positions.
+- Reset new animation states at kickoff to prevent stuck limbs and stop all players running in sync.
+
+**Verification:** 34 targeted animation and gameplay checks passed, including replay frame reconstruction, active shots, stamina-independent motion, and stable articulated poses. WebGL browser visual testing remains recommended.
+
+---
+
 ## Version 1.2.0 · MOUSE CONTROLS (15 October 2026)
 
 Optional mouse support alongside existing keyboard and gamepad controls.
