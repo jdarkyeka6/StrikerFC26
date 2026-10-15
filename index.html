@@ -161,7 +161,7 @@
 
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.5 · FOOTBALL IQ</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.5 · CLUBHOUSE</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
 <div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span><small id="player-energy">ENERGY 100%</small></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Jockey</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>Z / X</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
 <div class="half-panel hidden" id="half-panel"><div class="half-card"><div class="eyebrow" id="half-eyebrow">HALF TIME</div><h2 id="half-heading">THE BREAK</h2><div class="half-score" id="half-score">0 : 0</div><p id="half-subtitle">Time to change the game plan.</p>
@@ -214,7 +214,7 @@
  <div class="home-tiles">
  <button id="home-quick" class="home-tile"><span class="tile-icon">⚡</span><strong>QUICK MATCH</strong><small>Take your XI onto the pitch</small><span class="tile-arrow">↗</span></button>
  <button id="home-training" class="home-tile"><span class="tile-icon">◎</span><strong>FREE TRAINING</strong><small>Practice movement, passing & shooting</small><span class="tile-arrow">↗</span></button>
- <button id="home-club" class="home-tile"><span class="tile-icon">♜</span><strong>YOUR CLUB</strong><small>Meet the players and their identities</small><span class="tile-arrow">↗</span></button>
+ <button id="home-club-button" class="home-tile"><span class="tile-icon">♜</span><strong>YOUR CLUB</strong><small>Meet the players and their identities</small><span class="tile-arrow">↗</span></button>
  </div>
  </section>
  <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.5</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.5 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
@@ -823,7 +823,7 @@ function openMenuTab(tab){
 document.querySelectorAll('.menu-nav-btn').forEach(b=>b.addEventListener('click',()=>openMenuTab(b.dataset.menu)));
 for(const id of ['home-play','home-quick','settings-open-match','settings-open-camera'])$(id).addEventListener('click',()=>openMenuTab('play'));
 $('home-squad').addEventListener('click',()=>openMenuTab('squad'));
-$('home-club').addEventListener('click',()=>openMenuTab('club'));
+$('home-club-button').addEventListener('click',()=>openMenuTab('club'));
 $('home-training').addEventListener('click',startTraining);
 $('squad-club-select').addEventListener('change',()=>{selectedProfile=null;renderSquad()});
 $('squad-filter').addEventListener('change',renderSquad);
