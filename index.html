@@ -854,9 +854,15 @@ window.addEventListener('keydown',e=>{
  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
  if(keys.has(e.code))return;
  keys.add(e.code);
- if(state==='replay'){
-  if(['KeyR','Escape','Space','Enter'].includes(e.code))endReplay();
-  return;
+ if(state==='replay'){if(['KeyR','Escape','Space','Enter'].includes(e.code))endReplay();return}
+ if(state==='celebration'){if(['KeyR','Escape','Space','Enter'].includes(e.code))endCelebration();return}
+ if(e.code==='Tab'){e.preventDefault();toggleStats();return}
+ if(state==='stats'){if(e.code==='Escape')toggleStats();return}
+ if(state==='halftime')return;
+ if(state==='playing'){
+  if(e.code==='Digit1'){setTactic('balanced',true);return}
+  if(e.code==='Digit2'){setTactic('attacking',true);return}
+  if(e.code==='Digit3'){setTactic('defensive',true);return}
  }
  if(e.code==='KeyP'||e.code==='Escape'){togglePause();return}
  if(e.code==='KeyC'){changeCamera();return}
@@ -904,6 +910,46 @@ function togglePause(){
 $('start').addEventListener('click',()=>state==='paused'?togglePause():newMatch());
 $('pause').addEventListener('click',togglePause);
 $('cam').addEventListener('click',changeCamera);
+function startCelebration(team,clip){
+ const scorer=lastShooter&&lastShooter.team===team?players[team*11+lastShooter.index]:players[team*11];
+ celebration={team,clip,t:0,scorer};
+ state='celebration';$('status').textContent='GOAL!';
+ $('celebration-layer').classList.remove('hidden');
+ $('celebration-banner').textContent=team===0?'GOOOOOAL!':'THEY SCORE!';
+ $('celebration-sub').textContent=teams[team].name+' · '+score[0]+' - '+score[1];
+}
+function endCelebration(){
+ if(state!=='celebration'||!celebration)return;
+ const c=celebration;celebration=null;$('celebration-layer').classList.add('hidden');
+ if(!c.clip||!startReplay(c.clip,'goal')){
+  resetPositions(1-c.team);state='playing';$('status').textContent='LIVE MATCH';
+ }
+}
+function updateCelebration(dt){
+ if(!celebration)return;
+ celebration.t+=dt;
+ const p=celebration.scorer;
+ if(p){
+  p.rig.character.position.y=.9*Math.abs(Math.sin(celebration.t*9));
+  for(const l of p.rig.limbs){l.arm.rotation.z=-l.side*1.9;l.arm.rotation.x=-.45}
+ }
+ if(celebration.t>=2.1)endCelebration();
+}
+function beginHalfTime(){
+ halftimePlayed=true;state='halftime';cancelShot();
+ $('half-panel').classList.remove('hidden');
+ $('half-eyebrow').textContent='HALF TIME · '+teams[0].short+' vs '+teams[1].short;
+ $('half-score').textContent=score[0]+' : '+score[1];
+ $('half-stats').innerHTML=statsMarkup();
+ $('status').textContent='HALF TIME';playMatchSound('whistle');
+}
+$('resume-half').addEventListener('click',()=>{
+ if(state!=='halftime')return;
+ resetPositions(1);state='playing';
+ $('half-panel').classList.add('hidden');
+ $('status').textContent='SECOND HALF';say('SECOND HALF',1.2);
+});
+applyClubs();setTactic('balanced');selectStadium('day');
 function roleTarget(p,press1,press2){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=formation[p.index].group;
  const ownGoal=-side*HL,progress=ball.z*side;
