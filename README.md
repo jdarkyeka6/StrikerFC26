@@ -1,6 +1,55 @@
-# ⚽ STRIKER FC 26 | VERSION 1.5.2
+# ⚽ STRIKER FC 26 | VERSION 1.6.0
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+
+## 🚀 Version 1.6.0: Gameplay Revolution
+
+All five critical gameplay systems were upgraded while retaining Clubhouse, all 96 permanent players, mouse/keyboard/controller support, substitutions, referee decisions, weather, replays and saved records.
+
+### 1. Ball-winning tackles and possession
+
+- Tackles use defender ratings, orientation and **actual proximity to the ball**, not just a large radius around a carrier.
+- Clean ball-winning challenges preserve the prior short first-touch recovery protection, with a brief stumble for the player who lost possession.
+- Tackles from behind remain eligible for the deterministic foul referee. Players can pass or shoot straight after winning the ball.
+- Tackling reach varies by difficulty and defensive attributes.
+
+### 2. Dribbling and ball physics
+
+- Every permanent player profile now has a **dribbling attribute** in addition to the previous six ratings.
+- Ball position follows each dribbler with momentum-dependent lag, rather than staying perfectly attached to a fixed spot.
+- Faster sprinting pushes the ball farther ahead; high-rated dribblers maintain closer control.
+- Poor dribblers sprinting under close defensive pressure can take a **heavy touch** that releases a moving loose ball. Normal walking does not randomly lose possession.
+- Loose balls retain velocity and ground friction, while faster shots have separate flight drag. Old restart and offside state is cleared on possession changes.
+
+### 3. Passing and through balls
+
+- Directional input weighs the receiving options much more heavily when moving the stick or using WASD; passes are less auto-targeted against the player's intended direction.
+- Passing looks ahead to a teammate's likely position, especially when launching through balls.
+- Passing ratings and defensive pressure influence accuracy, and marked passing lanes reduce selection priority.
+- **Hold Shift while pressing E or right-clicking** for a driven ground pass. Standard E/right-click passes and R/middle-click through balls remain available.
+
+### 4. Improved teammate and opponent AI
+
+- Off-ball forwards anticipate the offside line and try not to run beyond the second-last defender.
+- Defenders pursue predicted ball locations while covering dangerous central passing lanes.
+- The opponent changes intensity based on the score and remaining time, pressing harder late when chasing a goal.
+- Ball carriers evaluate shooting distance, defensive pressure, forward passing options, and how long they've carried the ball.
+- AI passing and running are tuned to advance play rather than repeatedly switching the ball sideways.
+
+### 5. Goalkeeper intelligence
+
+- Goalkeepers use the ball's location and incoming shot trajectory to position themselves.
+- They come farther off their goal line to narrow the angle in close one-on-ones and can smother a ball that comes within realistic reach.
+- Save probability depends on the keeper's **goalkeeping attribute**, ball speed, height, shot placement, positioning and chosen difficulty.
+- Keepers decide whether to catch or parry, with parries pushed away from central danger.
+
+### Tests and limitations
+
+- JavaScript syntax and all referenced UI element IDs passed checks.
+- Targeted gameplay tests covered dribbling heavy touches, passing choices, clean tackles, protected possession, AI shots from viable positions, keeper rushes, keeper save animations and goal/replay recovery.
+- A complete four-minute simulated match passed with halftime, stable player/ball coordinates and no runtime failures. Additional goal-and-save sequences were simulated.
+- Testing uses a lightweight mocked Three.js runtime, **not a real hardware/browser WebGL playtest**. On-device balancing and visual checks remain necessary.
+- This remains an arcade football simulation, not a motion-captured professional football game or full refereeing-rule simulator.
 
 ## ⚽ Version 1.5.2: Tackle possession hotfix
 
