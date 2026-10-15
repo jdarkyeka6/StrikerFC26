@@ -110,12 +110,13 @@ try {
 
 // Striker FC pre-alpha: self-contained deterministic arcade match simulation.
 // Full-size 105m x 68m pitch, at two world units per metre.
-const FIELD_W = 136, FIELD_L = 210, GOAL_W = 15, MATCH_SECONDS = 240;
+const FIELD_W = 136, FIELD_L = 210, GOAL_W = 15;
+let MATCH_SECONDS = 240;
 const HW=FIELD_W/2, HL=FIELD_L/2;
 const scene = new THREE.Scene(); scene.background = new THREE.Color('#091c24'); scene.fog = new THREE.Fog('#091c24',245,460);
 const camera = new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,800);
 const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; document.querySelector('#game').append(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xc6fff0,0x24423a,2.1));
+const stadiumAmbient=new THREE.HemisphereLight(0xc6fff0,0x24423a,2.1);scene.add(stadiumAmbient);
 const sun = new THREE.DirectionalLight(0xfff4df,2.8); sun.position.set(-45,90,25);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-110;sun.shadow.camera.right=110;sun.shadow.camera.top=110;sun.shadow.camera.bottom=-110;sun.shadow.normalBias=.025;scene.add(sun);
 const mat=(color,roughness=1)=>new THREE.MeshStandardMaterial({color,roughness});
 const turf=[mat('#187648'),mat('#1b814d')], white=new THREE.MeshBasicMaterial({color:0xdffbe8});
@@ -198,7 +199,15 @@ for(let row=0;row<3;row++)for(let col=0;col<8;col++){
 }
 const ballTex=new THREE.CanvasTexture(ballCanvas);ballTex.colorSpace=THREE.SRGBColorSpace;
 const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(1.04,24,18),new THREE.MeshStandardMaterial({map:ballTex,roughness:.66}));ballMesh.scale.set(.30,.30,.30);ballMesh.castShadow=true;scene.add(ballMesh);let ball={x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:null,lock:0};
-const teams=[{name:'STRIKER',primary:'#57edaa',secondary:'#0e2540',dir:-1},{name:'RIVALS',primary:'#fb746c',secondary:'#fbe3d6',dir:1}];
+const CLUBS={
+ striker:{name:'STRIKER FC',short:'STRIKER',primary:'#57edaa',secondary:'#0e2540'},
+ tide:{name:'TIDE CITY',short:'TIDE',primary:'#35b9e8',secondary:'#eefaff'},
+ aurora:{name:'AURORA ATHLETIC',short:'AURORA',primary:'#a688ff',secondary:'#23144a'},
+ volt:{name:'VOLT UNITED',short:'VOLT',primary:'#f9e54f',secondary:'#262331'},
+ ember:{name:'EMBER ROVERS',short:'EMBER',primary:'#fb746c',secondary:'#fee2d4'},
+ polar:{name:'POLAR FC',short:'POLAR',primary:'#f1f7f9',secondary:'#176078'}
+};
+const teams=[{name:'STRIKER',primary:'#57edaa',secondary:'#0e2540',dir:-1},{name:'EMBER',primary:'#fb746c',secondary:'#fee2d4',dir:1}];
 
 const names=[
  ['ALEX MORGAN','NOAH REED','JAMIE VALE','KAI PARKER','LEO STONE','MICAH HAYES','OLLIE WEST','JAY CARTER','ETHAN COLE','RILEY FINCH','SAM BROOKS'],
@@ -272,7 +281,7 @@ function makePlayer(team,index){
  ownerMarker.rotation.x=-Math.PI/2;ownerMarker.position.y=.075;root.add(ownerMarker);
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
- const p={team,index,mesh:root,rig:{outfit,character,limbs,pointer,ownerMarker},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0};
+ const p={team,index,mesh:root,rig:{outfit,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0};
  players.push(p);return p;
 }
 function startKeeperAnimation(p,action,dir=1,height=0){
@@ -331,7 +340,79 @@ const $=id=>document.getElementById(id), keys=new Set();
 let state='menu',matchTime=0,score=[0,0],controlled=0,announcement=0,last=performance.now(),cameraMode='broadcast';
 let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0;
 let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
-let possessionTime=[0,0],shots=[0,0],saves=[0,0];
+let possessionTime=[0,0],shots=[0,0],saves=[0,0],passesAttempted=[0,0],passesCompleted=[0,0],tacklesWon=[0,0];
+let lastPass=null,homeTactic='balanced',weather='day',halftimePlayed=false,statsOpen=false,statsReturn='playing',celebration=null,lastShooter=null;
+const TACTICS={
+ balanced:{name:'BALANCED',pressers:2,speed:1,advance:0},
+ attacking:{name:'ALL-OUT ATTACK',pressers:3,speed:1.12,advance:21},
+ defensive:{name:'PARK THE BUS',pressers:1,speed:.95,advance:-18}
+};
+const tactic=()=>TACTICS[homeTactic];
+function setTactic(value,notify=false){
+ if(!Object.prototype.hasOwnProperty.call(TACTICS,value))return;
+ homeTactic=value;$('tactic-select').value=value;
+ $('tactic-indicator').textContent='⚙ '+tactic().name+' · 4-3-3';
+ if(notify&&state!=='menu')say('TACTIC: '+tactic().name,1);
+}
+function applyClubs(){
+ for(let team=0;team<2;team++){
+  const id=$(team===0?'home-select':'away-select').value;
+  const c=CLUBS[id]||CLUBS[team===0?'striker':'ember'];
+  Object.assign(teams[team],c);
+  const scoreEl=$(team===0?'home-club':'away-club');
+  scoreEl.textContent=c.short;scoreEl.style.color=c.primary;
+  $(team===0?'kit-home':'kit-away').style.background=c.primary;
+  for(const p of players){
+   if(p.team!==team||p.index===10)continue;
+   p.rig.kitShirt.color.set(c.primary);p.rig.kitShorts.color.set(c.secondary);
+  }
+ }
+ $('kit-match-label').textContent=teams[0].name+' vs '+teams[1].name;
+}
+function selectStadium(value){
+ weather=['day','sunset','night','rain'].includes(value)?value:'day';
+ $('stadium-select').value=weather;
+ const themes={
+  day:{sky:'#091c24',sun:'#fff4df',power:2.8,ambient:2.1},
+  sunset:{sky:'#36293b',sun:'#ff9c6e',power:2.1,ambient:1.55},
+  night:{sky:'#091322',sun:'#c9e4ff',power:2.0,ambient:1.4},
+  rain:{sky:'#101c2a',sun:'#c4d9ef',power:1.3,ambient:1.25}
+ };
+ const t=themes[weather];
+ scene.background.set(t.sky);scene.fog.color.set(t.sky);
+ sun.color.set(t.sun);sun.intensity=t.power;stadiumAmbient.intensity=t.ambient;
+ if(rainGroup)rainGroup.visible=weather==='rain'&&!lowGraphics;
+}
+function statLine(name,a,b){return '<div class="stat-line"><strong>'+a+'</strong><span class="stat-name">'+name+'</span><strong>'+b+'</strong></div>'}
+function statsMarkup(){
+ const total=possessionTime[0]+possessionTime[1]||1;
+ const possession=i=>Math.round(possessionTime[i]*100/total)+'%';
+ const pct=i=>passesAttempted[i]?Math.round(passesCompleted[i]*100/passesAttempted[i])+'%':'0%';
+ return statLine('POSSESSION',possession(0),possession(1))+
+ statLine('SHOTS',shots[0],shots[1])+statLine('SAVES',saves[0],saves[1])+
+ statLine('PASSES',passesCompleted[0]+'/'+passesAttempted[0],passesCompleted[1]+'/'+passesAttempted[1])+
+ statLine('PASS ACCURACY',pct(0),pct(1))+statLine('TACKLES WON',tacklesWon[0],tacklesWon[1]);
+}
+function renderStats(){
+ $('stats-title').textContent=teams[0].short+' '+score[0]+' : '+score[1]+' '+teams[1].short;
+ $('stats-data').innerHTML=statsMarkup();
+}
+function toggleStats(){
+ if(statsOpen){
+  statsOpen=false;$('stats-panel').classList.add('hidden');
+  if(state==='stats')state=statsReturn;
+ }else{
+  if(!['playing','paused','halftime','finished'].includes(state))return;
+  statsReturn=state;if(state==='playing')state='stats';
+  statsOpen=true;renderStats();$('stats-panel').classList.remove('hidden');
+ }
+}
+$('home-select').addEventListener('change',applyClubs);
+$('away-select').addEventListener('change',applyClubs);
+$('stadium-select').addEventListener('change',()=>selectStadium($('stadium-select').value));
+$('tactic-select').addEventListener('change',()=>setTactic($('tactic-select').value,true));
+$('close-stats').addEventListener('click',toggleStats);
+
 // 12fps rolling match recording: stores actual positions and articulated poses.
 const REPLAY_STEP=1/12,REPLAY_WINDOW=8,MAX_HIGHLIGHTS=10;
 let replayHistory=[],highlightClips=[],replaySample=0,replaySession=null;
