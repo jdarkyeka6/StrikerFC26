@@ -1379,7 +1379,7 @@ function passOptions(p,through=false){
   const open=practiceMode?30:players.filter(o=>o.team!==p.team&&!o.sentOff).reduce((m,o)=>Math.min(m,distance(o,{x:tx,z:tz})),30);
   const lane=passLaneRisk(p,{x:tx,z:tz},q);
   // Direction outweighs simple closeness; passing into crowded lanes is penalised.
-  let score=dot*(manual&&moving?72:34)+forward*(through?.22:.12)
+  let score=dot*(manual&&moving?72:manual?34:22)+forward*(through?.40:manual?.12:.59)
    -Math.abs(d-(through?37:25))*.20+Math.min(open,19)*1.1-lane*2.65;
   if(d>83||d<6)score-=54;
   if(manual&&moving&&dot<.05)score-=100; // Avoid passes against the player's stick direction.
@@ -1815,7 +1815,8 @@ function keepRunOnside(p,z){
 function aiShouldShoot(p,opponent){
  const side=teams[p.team].dir,toGoal=(goalZ(p.team)-p.z)*side;
  const pressure=opponent?distance(opponent,p):30;
- const inRange=toGoal<difficultySettings().opponentShotRange+3&&Math.abs(p.x)<GOAL_W*1.7;
+ const range=p.team===1?Math.max(36,difficultySettings().opponentShotRange):43;
+ const inRange=toGoal<range&&Math.abs(p.x)<GOAL_W*2.1;
  const hasAngle=pressure>4||toGoal<14;
  return inRange&&hasAngle;
 }
@@ -1871,7 +1872,7 @@ function roleTarget(p,press1,press2){
   z=h.z+side*clamp(13+progress*.12,5,30);
   x=h.x*.93+ball.x*.07;
  }
- return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+12,HL-12),speed:18};
+ return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+12,HL-12),speed:19};
 }
 function advance(dt){
  readController();
@@ -1968,11 +1969,14 @@ function advance(dt){
       kick(p,false,!!(clearOption&&clearOption.forward>25&&Math.random()<.30));
     }
     if(ball.owner===p){
-     const drift=opposition&&distance(opposition,p)<15?(p.x>=opposition.x?8:-8):0;
+     const drift=opposition&&distance(opposition,p)<10?(p.x>=opposition.x?7:-7):0;
      const destX=clamp(p.x+drift,-HW+9,HW-9);
-     const destZ=clamp(p.z+side*28,-HL+8,HL-8);
+     const destZ=clamp(p.z+side*32,-HL+8,HL-8);
      const d=norm(destX-p.x,destZ-p.z);
-     vx=d.x*17*(p.team===1?cfg.opponentSpeed:1);vz=d.z*17*(p.team===1?cfg.opponentSpeed:1);
+     // Prefer purposeful forward runs over endless sideways carrying.
+     const baseSpeed=roleOf(p).group==='attack'?21:19;
+     vx=d.x*baseSpeed*(p.team===1?cfg.opponentSpeed:1);
+     vz=d.z*baseSpeed*(p.team===1?cfg.opponentSpeed:1);
     }
    }
   }else{
