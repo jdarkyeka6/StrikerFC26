@@ -1,6 +1,50 @@
-# ⚽ STRIKER FC 26 | VERSION 1.7.0
+# ⚽ STRIKER FC 26 | VERSION 1.7.1
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.0 introduces Total Football: seven connected upgrades covering advanced shooting, aerial battles, skill moves, defensive controls, first touches, goalkeeper rushing and set pieces. The existing six-club Clubhouse and all earlier systems remain.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.1 adds complete offline support, a standalone downloadable HTML and browser caching on top of V1.7 Total Football. The existing six-club Clubhouse and all earlier systems remain.
+
+## 📡 Version 1.7.1: Completely offline playable
+
+**Internet is not required to play after you have downloaded the game.** There are two ways to do it.
+
+### Easiest: Download just one offline HTML file
+
+1. In this repo, open [offline.html](./offline.html) and select **Download raw file** (or download it from GitHub with internet once).
+2. Save the complete `offline.html` file to your PC.
+3. **Double-click `offline.html`** in Chrome, Edge or another desktop browser.
+4. Play without Wi-Fi, a local server, npm or any internet connection. The file contains the entire game and the full official Three.js r180 engine. Its size is approximately 2.2 MB.
+
+**Do not double-click `index.html` alone.** That file uses a local JavaScript module in the `vendor/` directory. Browser security restrictions often prevent loading such modules from a `file://` URL. Use `offline.html` for the simple double-click option.
+
+### Website / installable offline version
+
+1. Open the **deployed** Striker FC website once while online, using a secure HTTPS address (or localhost).
+2. Keep the page open until the game displays **OFFLINE READY · GAME CACHED ON THIS DEVICE** in the Play Match menu. The service worker downloads and stores the entire engine, page, icon and app manifest.
+3. You can now disconnect the internet and reload the **same website address** in that browser on that device to play. If supported, use your browser's **Install App** command to give it its own app window.
+
+A new device, different browser, cleared website storage or private browsing mode may require the initial online visit again. Offline cache installation requires the site to be deployed with `sw.js`, `vendor/`, `icon.svg` and `manifest.webmanifest` from this repository.
+
+### Develop locally without internet
+
+You can also download the complete repository as a ZIP, extract it and serve the folder from a local machine:
+
+```bash
+python -m http.server 8765
+```
+
+Then open `http://localhost:8765/index.html`. This uses only files in the repository; no remote dependencies or package installs are required (other than having a local Python installation). Alternatively, open `offline.html` directly with no server.
+
+### What's packaged
+
+- Original full **V1.7 Total Football** game, six teams, 96 consistent characters, match modes, goals, replays, skills and goalkeeper balancing
+- Official **Three.js r180** engine in `vendor/three.module.js` and `vendor/three.core.js`, with its MIT license
+- The standalone `offline.html` file with the engine bundled into the page
+- Same-origin service worker `sw.js` for HTTPS/localhost browser caching
+- Local/system fonts in place of remote Google Fonts
+- Web app manifest and offline SVG icon
+
+**Packs are still reserved for a future update**, with no pack-opening functionality. The site version and the standalone HTML do not need Google Fonts, jsDelivr, esm.sh or any network requests to run a match.
+
+**Testing:** Code syntax, local asset resolution and service worker cache configuration were checked. A real visual offline browser test across every browser has not been completed. `offline.html` is built as an inline script with no remote dependencies.
 
 ## ⚽ Version 1.7.0: TOTAL FOOTBALL
 
