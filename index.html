@@ -1443,12 +1443,43 @@ function attemptTackle(p){
  // Nobody may challenge during a free kick or penalty until the ball is played.
  if(setPiece&&p!==setPiece.taker&&(setPiece.kind==='PENALTY KICK'||p.team!==setPiece.team))return false;
  if(p.team===1&&Math.random()>difficultySettings().opponentTackle){p.tackleCooldown=.8;return false}
+ // CPU teammates and opponents should avoid charging into a ball carrier's back.
+ // They can still challenge properly from the side or in front.
+ if(p!==controlledPlayer()&&ball.owner&&ball.owner.team!==p.team){
+  const carrier=ball.owner,d=distance(p,carrier);
+  const motion=Math.hypot(carrier.vx,carrier.vz);
+  const heading=motion>4?norm(carrier.vx,carrier.vz):norm(carrier.faceX,carrier.faceZ);
+  if(d>0.01&&((p.x-carrier.x)*heading.x+(p.z-carrier.z)*heading.z)/d<-.60){
+   p.tackleCooldown=1.1;
+   return false;
+  }
+ }
  const target=ball.owner||ball;
  if(distance(p,target)>(p.team===1?difficultySettings().opponentTackleRange+2:8))return false;
- p.tackleWindow=.24;p.tackleCooldown=p.team===1?1.5:1.0;p.stamina=Math.max(0,p.stamina-8);
+ p.tackleWindow=.24;p.tackleCooldown=p.team===1?1.5:p===controlledPlayer()?1.0:1.5;p.stamina=Math.max(0,p.stamina-8);
  startPlayerAction(p,'tackle');
  p.tackleRecover=.30;p.foulChecked=false;
  return true;
+}
+// A referee decision must be caused by an actual tackle, never by a random roll.
+// Contact from directly behind, closing speed and missing the ball are all required.
+// Position and motion checks are in game-world units (roughly 2 units per metre).
+function assessTackle(offender,victim,d=distance(offender,victim)){
+ if(practiceMode||!victim||victim.index===10||d<.01||d>=2.35)
+  return {foul:false,yellow:false,reason:'CLEAN TACKLE'};
+ const motion=Math.hypot(victim.vx,victim.vz);
+ const heading=motion>4?norm(victim.vx,victim.vz):norm(victim.faceX,victim.faceZ);
+ const dx=(offender.x-victim.x)/d,dz=(offender.z-victim.z)/d;
+ const rear=dx*heading.x+dz*heading.z;
+ const towardX=-dx,towardZ=-dz;
+ const closing=(offender.vx-victim.vx)*towardX+(offender.vz-victim.vz)*towardZ;
+ const ballGap=distance(offender,ball)-d;
+ // Brushing shoulders, standing tackles and actual ball-first contact are legal.
+ const foul=rear<-.72&&closing>11&&ballGap>1.15;
+ // Only an unusually forceful, close-range rear challenge earns a caution.
+ const yellow=foul&&rear<-.85&&closing>20&&d<1.85&&ballGap>1.5;
+ return {foul,yellow,reason:yellow?'RECKLESS TACKLE':'TACKLE FROM BEHIND',
+  rear,closing,ballGap};
 }
 function resolveTackle(p){
  if(p.tackleWindow<=0||!ball.owner||ball.owner.team===p.team)return false;
@@ -1456,28 +1487,23 @@ function resolveTackle(p){
  if(d>4.0)return false;
  const approach=norm(victim.x-p.x,victim.z-p.z);
  const facing=p.faceX*approach.x+p.faceZ*approach.z;
- // From behind requires considerably more precision. Jockeying improves reach.
  const baseReach=facing>-.30?3.9:2.5;
  const reach=p.team===1?Math.min(baseReach,difficultySettings().opponentTackleRange):baseReach*difficultySettings().homeTackle;
- const success=d<reach;
- // The referee: tackling from behind or clipping a player from the side is a foul.
- if(success&&!practiceMode&&!p.foulChecked){
+ if(d>=reach)return false;
+ if(!p.foulChecked){
   p.foulChecked=true;
-  if(victim.index!==10){
-   const away=norm(p.x-victim.x,p.z-victim.z);
-   const back=victim.faceX*away.x+victim.faceZ*away.z;
-   const human=p.team===0;
-   const chance=back<-.35?(human?.8:.45):back<.15?(human?.12:.06):0;
-   if(Math.random()<chance){callFoul(p,victim,back<-.35?.3:.12);p.tackleWindow=0;return false}
+  const decision=assessTackle(p,victim,d);
+  if(decision.foul){
+   p.tackleWindow=0;
+   callFoul(p,victim,decision);
+   return false;
   }
  }
- if(success){
-  tacklesWon[p.team]++;
-  takePossession(p);
-  p.tackleWindow=0;ball.lock=.12;
-  if(p.team===0)say('BALL WON',.75);
- }
- return success;
+ tacklesWon[p.team]++;
+ takePossession(p);
+ p.tackleWindow=0;ball.lock=.12;
+ if(p.team===0)say('BALL WON',.75);
+ return true;
 }
 function sendOff(p){
  p.sentOff=true;p.hasBall=false;p.vx=p.vz=0;
@@ -1489,21 +1515,26 @@ function sendOff(p){
   if(next)selectPlayer(next);
  }
 }
-function callFoul(offender,victim,yellowChance){
+function callFoul(offender,victim,decision){
+ if(!decision?.foul||!offender||!victim||victim.team===offender.team)return false;
  foulsCommitted[offender.team]++;
  cancelShot();
  const winner=victim.team,sign=-teams[offender.team].dir;
  const inBox=Math.abs(victim.x)<boxW&&Math.abs(victim.z)>HL-boxD&&Math.sign(victim.z)===sign;
  let cardText=null;
- if(Math.random()<yellowChance){
+ if(decision.yellow){
   offender.yellow=(offender.yellow||0)+1;yellowCards[offender.team]++;
   cardText=offender.yellow>=2?'SECOND YELLOW · RED CARD':'YELLOW CARD';
   if(offender.yellow>=2)sendOff(offender);
  }
  if(inBox)restartPlay('PENALTY KICK',winner,0,sign*(HL-22));
  else restartPlay('FREE KICK',winner,victim.x,victim.z);
- if(cardText){say(cardText.startsWith('SECOND')?'RED CARD':'YELLOW CARD',1.7);$('commentary-line').textContent=cardText+' · '+names[offender.team][offender.index].toUpperCase()}
- else $('commentary-line').textContent=inBox?'FOUL IN THE BOX':'FOUL BY '+names[offender.team][offender.index].toUpperCase();
+ const reason=decision.reason||'LATE TACKLE';
+ say(cardText?(cardText.startsWith('SECOND')?'RED CARD!':'YELLOW CARD!'):
+     (inBox?'PENALTY · '+reason:'FOUL · '+reason),1.8);
+ $('commentary-line').textContent=(cardText?cardText+' · ':'')+reason+' BY '+
+  names[offender.team][offender.index].toUpperCase()+' · '+(inBox?'PENALTY':'FREE KICK');
+ return true;
 }
 function cancelShot(){
  mouseShotHeld=false;shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
