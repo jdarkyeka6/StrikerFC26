@@ -1,5 +1,18 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.6.3 · GOALKEEPER DIFFICULTY BALANCE (15 October 2026)
+
+- Significantly reduced the opposing goalkeeper's save rate on Beginner, with clear progression through Amateur, Professional and Legend.
+- Keeper anticipation, positioning speed, dive width and one-on-one rushing are now explicitly linked to difficulty.
+- One-on-one smothers are genuine skill-based contests instead of guaranteed catches. Failed attempts trigger recovery to prevent repeated instant saves.
+- Shot stopping now accounts for goalkeeper ratings, difficulty, shot height and pace, angle and distance to impact.
+- Reduced guaranteed catches and physical dive reach. Even Legend goalkeepers can be beaten by properly placed shots.
+- Home goalkeeper performance also scales moderately with difficulty. Existing pass assists, sliding tackles, cards, teams and replays retained.
+
+**Verification:** Four real game-engine simulation cases resolved shots across every difficulty, all keeper probability progression checks passed, and a 240-second simulated match with halftime completed. Real WebGL browser testing remains pending.
+
+---
+
 ## Version 1.6.2 · ASSISTED PASS RECEIVING (15 October 2026)
 
 - Players automatically run to intercept passes and through balls using a predicted ball-flight path and their own movement speed, rather than aiming only 0.2 seconds ahead.
