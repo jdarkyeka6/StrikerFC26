@@ -1,6 +1,19 @@
-# ⚽ STRIKER FC 26 | VERSION 1.5.1
+# ⚽ STRIKER FC 26 | VERSION 1.5.2
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+
+## ⚽ Version 1.5.2: Tackle possession hotfix
+
+A clean, won tackle no longer results in the same opponent immediately winning the ball back while the tackle animation is still playing.
+
+- A successful tackle grants the winner about **0.64 seconds** of first-touch breathing room. Opponents can still press and track runs, but can't instantly tackle the ball away in that brief period.
+- The player dispossessed by a successful challenge enters about **0.68 seconds** of recovery, briefly stumbles, and cannot immediately reuse an active tackle.
+- The tackler's movement recovery is shortened, allowing the winner to dribble away quickly.
+- You can **pass, shoot or cross immediately**. Once the ball is released, the short tackle protection is removed, so passing and interceptions remain normal.
+- Normal tackling resumes after the recovery period. Kickoffs, free kicks, match restarts and a new match clear any old protection.
+- Does not affect foul, red-card, offside, pack-placeholder or roster mechanics.
+
+**Verification:** 16 targeted checks passed, including a clean ball-winning challenge, protection against two nearby defenders, animation, expiry, immediate passing and a complete simulated match with halftime. Real browser playtesting is still needed.
 
 ## 🟨 Version 1.5.1: Referee fairness hotfix
 
