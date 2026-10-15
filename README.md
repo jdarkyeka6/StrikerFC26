@@ -1,6 +1,6 @@
 # ⚽ STRIKER FC 26 | VERSION 1.6.1
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.6.1 adds manual slide tackles, building on V1.6 improved tackling, ball physics, passing, opponent AI and goalkeeping, plus the six-club Clubhouse with 96 permanent footballers.
 
 ## 🛝 Version 1.6.1: Slide tackles
 
