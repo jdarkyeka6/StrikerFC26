@@ -672,6 +672,7 @@ function crossBall(p){
  const dir=norm(tx-p.x,tz-p.z);
  p.hasBall=false;ball.owner=null;ball.lock=.28;
  ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;ball.passTime=2.3;
+ passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
  ball.vx=dir.x*clamp(targets.d*1.25+27,45,90);
  ball.vz=dir.z*clamp(targets.d*1.25+27,45,90);
  ball.vy=12;ball.y=1.3;ball.x=p.x+dir.x*2.2;ball.z=p.z+dir.z*2.2;
@@ -759,6 +760,10 @@ function passOptions(p,through=false){
 function bestPass(p,through=false){return passOptions(p,through)[0]}
 function takePossession(p){
  if(ball.owner===p)return;
+ if(lastPass){
+  if(p.team===lastPass.team&&matchTime-lastPass.t<=4)passesCompleted[p.team]++;
+  lastPass=null;
+ }
  if(shotCharging&&p!==controlledPlayer())cancelShot();
  if(ball.owner)ball.owner.hasBall=false;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=p.team;ball.isShot=false;
@@ -770,7 +775,7 @@ function kick(p,shoot=false,through=false,power=.45){
  const side=teams[p.team].dir,cfg=difficultySettings();
  let tx,tz,strength,receiver=null;
  if(shoot){
-  shots[p.team]++;
+  shots[p.team]++;lastShooter={team:p.team,index:p.index};
   const steering=p===controlledPlayer()?playerMoveInput():null;
   const aimX=steering?.moving?steering.x:0;
   // Aim to the far post by default. Up/down while shooting steers the finish.
@@ -784,6 +789,7 @@ function kick(p,shoot=false,through=false,power=.45){
   const chosen=bestPass(p,through);
   if(!chosen)return false;
   receiver=chosen.q;tx=chosen.tx;tz=chosen.tz;
+  passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
   if(p.team===1&&cfg.opponentPassError>0){const err=cfg.opponentPassError*distance(p,receiver);tx+=(Math.random()-.5)*err;tz+=(Math.random()-.5)*err}
   strength=clamp(chosen.d*(through?2.0:1.8)+28,44,through?103:84);
   ball.vy=through?1.15:1.5;
@@ -817,6 +823,7 @@ function resolveTackle(p){
  const reach=p.team===1?Math.min(baseReach,difficultySettings().opponentTackleRange):baseReach*difficultySettings().homeTackle;
  const success=d<reach;
  if(success){
+  tacklesWon[p.team]++;
   takePossession(p);
   p.tackleWindow=0;ball.lock=.12;
   if(p.team===0)say('BALL WON',.75);
@@ -985,6 +992,7 @@ function advance(dt){
  readController();
  possessionTime[ball.owner?.team??ball.lastTouchTeam??0]+=dt;
  matchTime+=dt;
+ if(!halftimePlayed&&matchTime>=MATCH_SECONDS/2){beginHalfTime();return}
  const seconds=Math.floor(matchTime);
  $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
  if(matchTime>=MATCH_SECONDS){
@@ -994,7 +1002,7 @@ function advance(dt){
   $('start').textContent='PLAY AGAIN ↗';
   document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
   const total=possessionTime[0]+possessionTime[1]||1;
-  document.querySelector('.panel p').textContent='Final score: Striker '+score[0]+' – '+score[1]+' Rivals. Possession '+Math.round(possessionTime[0]*100/total)+'% - '+Math.round(possessionTime[1]*100/total)+'%. Shots '+shots[0]+' - '+shots[1]+'. Ready for the rematch?';
+  document.querySelector('.panel p').textContent='FINAL: '+teams[0].name+' '+score[0]+' - '+score[1]+' '+teams[1].name+'. Possession '+Math.round(possessionTime[0]*100/total)+'% - '+Math.round(possessionTime[1]*100/total)+'%. Shots '+shots[0]+' - '+shots[1]+'. Watch highlights or play again.';
   return;
  }
  if(shotCharging){
@@ -1018,7 +1026,7 @@ function advance(dt){
   .sort((a,b)=>{
    const priority=p=>distance(p,aim)+(formation[p.index].group==='defence'?7:0)+(p===cp?3:0);
    return priority(a)-priority(b);
-  }).slice(0,team===1?difficultySettings().opponentPressers:2));
+  }).slice(0,team===1?difficultySettings().opponentPressers:tactic().pressers));
  for(const p of players){
   p.tackleCooldown=Math.max(0,p.tackleCooldown-dt);
   p.tackleWindow=Math.max(0,p.tackleWindow-dt);
@@ -1067,8 +1075,14 @@ function advance(dt){
    const defending=ball.owner?.team!==p.team;
    const ranked=defending?pressers[p.team]:[];
    const target=roleTarget(p,ranked[0],ranked[1]);
+   if(p.team===0&&p.index!==10&&!ranked.includes(p)){
+    const role=formation[p.index].group,move=tactic().advance;
+    if(role==='attack'||role==='mid'||(role==='defence'&&move<0)){
+     target.z=clamp(target.z-move*(role==='defence'?.8:1),-HL+10,HL-10);
+    }
+   }
    const dx=target.x-p.x,dz=target.z-p.z,d=Math.hypot(dx,dz);
-   if(d>.8){const cfg=difficultySettings(),scale=p.team===1?cfg.opponentSpeed:cfg.teammateSpeed;const v=Math.min(target.speed,d*2.9)*scale;vx=dx/d*v;vz=dz/d*v}
+   if(d>.8){const cfg=difficultySettings(),scale=p.team===1?cfg.opponentSpeed:cfg.teammateSpeed;const v=Math.min(target.speed,d*2.9)*scale*(p.team===0?tactic().speed:1);vx=dx/d*v;vz=dz/d*v}
    if(p===ranked[0]&&ball.owner&&ball.owner.team!==p.team&&distance(p,ball.owner)<(p.team===1?difficultySettings().opponentTackleRange+1:5)){
     attemptTackle(p);
    }
@@ -1221,6 +1235,7 @@ function advance(dt){
  const possessionTotal=possessionTime[0]+possessionTime[1]||1;
  $('match-stats').textContent='POSSESSION '+Math.round(possessionTime[0]*100/possessionTotal)+' / '+Math.round(possessionTime[1]*100/possessionTotal)+'  ·  SHOTS '+shots[0]+' - '+shots[1]+'  ·  SAVES '+saves[0]+' - '+saves[1];
  const possession=ball.owner?.team===0&&ball.owner===controlledPlayer();
+ if(statsOpen)renderStats();
  $('action-hint').textContent=shotCharging?'RELEASE TO SHOOT':possession?'E PASS  •  R THROUGH  •  T CROSS  •  SPACE SHOOT':'SPACE TACKLE  •  F JOCKEY  •  Q SWITCH';
  updateRadar();
 }
@@ -1229,6 +1244,16 @@ function updateRadar(){players.forEach((p,i)=>{dots[i].style.left=(50+p.x/FIELD_
 
 // FIFA-inspired "Tele Broadcast": closer to the players and continuously follows the play.
 const cameraFocus=new THREE.Vector3(0,0,0);
+function drawCelebrationCamera(dt){
+ const c=celebration;
+ if(!c||!c.scorer)return drawCamera(dt);
+ const p=c.scorer;
+ const target=new THREE.Vector3(p.x+30,20,p.z+16);
+ const aim=new THREE.Vector3(p.x,1,p.z);
+ camera.position.lerp(target,1-Math.exp(-dt*3.2));
+ cameraFocus.lerp(aim,1-Math.exp(-dt*5));
+ camera.lookAt(cameraFocus);
+}
 function drawReplayCamera(dt){
  const followRate=1-Math.exp(-dt*5.2),aimRate=1-Math.exp(-dt*6.5);
  const sx=clamp(ball.x,-HW+6,HW-6),sz=clamp(ball.z,-HL+6,HL-6);
@@ -1272,8 +1297,12 @@ function frame(t){
  requestAnimationFrame(frame);let dt=Math.min((t-last)/1000,.04);last=t;
  if(state==='playing')advance(dt);
  else if(state==='replay')updateReplay(dt);
+ else if(state==='celebration')updateCelebration(dt);
+ animateRain(dt);
  if(announcement>0){announcement-=dt;if(announcement<=0)$('message').classList.remove('show')}
- if(state==='replay')drawReplayCamera(dt);else drawCamera(dt);
+ if(state==='replay')drawReplayCamera(dt);
+ else if(state==='celebration')drawCelebrationCamera(dt);
+ else drawCamera(dt);
  renderer.render(scene,camera);
 }requestAnimationFrame(frame);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
