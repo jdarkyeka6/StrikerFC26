@@ -1,5 +1,31 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.1.0 · THE REFEREE UPDATE (15 October 2026)
+
+Reviewed and merged Claude's V1.1 referee system. The existing V1.0 Matchday game remains intact.
+
+### New features
+- Contact-based fouls, free kicks and penalty kicks.
+- Yellow cards, second-yellow red cards, and sent-off players removed from active play.
+- Opposing defensive walls/position freezes during set pieces.
+- Match Centre: fouls and card totals.
+- Free Training remains without referee calls.
+
+### Review fixes
+- Prevented a penalty taker from running off with the ball.
+- Blocked passes/crosses while taking a penalty, while preserving charged shots.
+- Kept the ball stationary at the penalty/free-kick location until kicked.
+- Prevented sent-off players from being reselected or tackling.
+- Made players' set-piece controls clearer without changing the game's default Beginner difficulty.
+
+### Verification
+- JavaScript syntax and file/DOM structure checked.
+- 12 targeted checks passed, including three completed full-match simulations.
+- Verified goalkeeper, halftime, replay, match statistics, training, and difficulty features remain in the merged build.
+- Real-browser WebGL visual testing is still pending.
+
+---
+
 ## Version 1.0.0 · MATCHDAY (15 October 2026)
 
 **Major gameplay and presentation upgrade** to the standalone browser football game.
