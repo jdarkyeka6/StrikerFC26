@@ -1,6 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.0</title><style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
 :root{font-family:'DM Sans',Arial,sans-serif;color:#f2fbff;background:#071522;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}#game,canvas{width:100vw;height:100vh;display:block}#game{position:fixed;inset:0}body:after{pointer-events:none;position:fixed;inset:0;content:'';background:linear-gradient(180deg,rgba(2,13,19,.44),transparent 25%,transparent 68%,rgba(2,13,19,.66));z-index:1}.hud,.bottom{position:absolute;z-index:3;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.hud{top:20px;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:220px}.brand-icon{font:900 24px 'Barlow Condensed';border:2px solid #67f4ba;width:43px;height:43px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b2b2e;color:white}.brand-icon span{color:#67f4ba}.brand strong,.brand small{display:block}.brand strong{font:800 22px 'Barlow Condensed';letter-spacing:2px}.brand strong span{color:#67f4ba}.brand small{font-size:9px;letter-spacing:2.1px;color:#aac2c9}.scoreboard{display:flex;align-items:center;background:rgba(4,23,32,.88);border:1px solid rgba(158,255,224,.22);border-radius:12px;overflow:hidden;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}.club{font:800 16px 'Barlow Condensed';letter-spacing:1.6px;padding:14px 16px}.home{color:#84f8cc}.away{color:#ff9d96}.score{font:900 28px 'Barlow Condensed';display:flex;align-items:center;gap:12px;background:#07141b;padding:6px 20px}.score span{font-size:18px;color:#8c9eaa}.clock{padding:14px;border-left:1px solid #34535d;font:800 15px 'Barlow Condensed';color:#cfe5e5;min-width:62px;text-align:center}.top-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}.pill{border:1px solid #5fe9b7;color:#5fe9b7;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1.7px;background:#021b1bd9}.top-right button{pointer-events:auto;color:#dcfff3;border:1px solid #546c78;background:#041924aa;width:39px;height:39px;border-radius:9px;cursor:pointer}.bottom{bottom:22px;align-items:flex-end;gap:20px}.player-card{background:#041923d9;border:1px solid #6bf3b447;border-radius:12px;display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:238px;backdrop-filter:blur(12px)}.player-no{font:900 46px 'Barlow Condensed';color:#7cffc3;line-height:1}.player-card small{display:block;font-size:8px;letter-spacing:1.7px;color:#9cb7bc}.player-card strong{display:block;font:800 18px 'Barlow Condensed';letter-spacing:.8px}.player-card span{font:700 9px 'DM Sans';letter-spacing:1.3px;color:#78e5ba}.action-hint{position:absolute;bottom:80px;left:0;color:#a4eecd;font:800 10px 'DM Sans';letter-spacing:1.2px;background:#031a24db;padding:7px 11px;border:1px solid #4deab355;border-radius:7px;pointer-events:none}.shot-gauge{position:absolute;bottom:73px;left:0;width:238px;height:5px;background:#274850;border-radius:5px;overflow:hidden;opacity:0;transition:opacity .1s}.shot-gauge.active{opacity:1}.shot-gauge span{display:block;width:0;height:100%;background:linear-gradient(90deg,#67f7b8,#ffde7c,#fb7976)}.stamina{width:4px;height:45px;background:#2f5361;border-radius:4px;margin-left:auto;position:relative;overflow:hidden}.stamina span{position:absolute;bottom:0;width:100%;background:#82fac4;height:100%;transition:height .15s}.controls{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center;font-size:11px;color:#d6e8e8;background:#041923b6;border-radius:9px;padding:12px 16px;max-width:650px}.controls kbd{font:700 10px 'DM Sans';background:#d4fff0;color:#12382d;padding:4px 6px;border-radius:4px;margin-right:4px}.radar{width:150px;height:95px;border:1px solid #8bccb1;background:#09281f99;border-radius:4px;position:relative;flex-shrink:0}.radar:before{content:'';position:absolute;inset:7px;border:1px solid #8bccb180}.radar-mid{position:absolute;top:7px;bottom:7px;left:50%;width:1px;background:#8bccb180}.radar-mid:after{content:'';position:absolute;width:35px;height:35px;border:1px solid #8bccb180;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}.dot{position:absolute;width:5px;height:5px;border-radius:50%;z-index:1;transform:translate(-50%,-50%)}.dot.a{background:#80ffbf}.dot.b{background:#ff9991}.dot.ball{background:white;width:4px;height:4px}.dot.active{box-shadow:0 0 0 3px #fff7}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;background:linear-gradient(90deg,#04151fee 0%,#051923e8 38%,#07152250 100%);transition:opacity .3s}.overlay.hidden{opacity:0;pointer-events:none}.panel{max-width:590px;margin-left:clamp(28px,9vw,150px)}.eyebrow{color:#7dfbc1;font-size:12px;letter-spacing:3px;font-weight:800}.panel h1{font:900 clamp(70px,9vw,130px)/.85 'Barlow Condensed';letter-spacing:-1px;margin:20px 0;text-shadow:0 10px 40px #0004}.panel h1 em{color:#72f4b8;font-style:normal}.panel p{max-width:440px;line-height:1.7;color:#b8cdd2;font-size:14px}.features{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.features span{border:1px solid #41666b;background:#092832b0;padding:9px 12px;font-size:10px;letter-spacing:1px;font-weight:800}
+.club-record{margin-top:10px;color:#a0dfc8;font:800 11px 'DM Sans';letter-spacing:1.4px}
+.overlay{overflow-y:auto}.panel{padding:20px 0}.panel h1{font-size:clamp(58px,7.5vw,104px);margin:13px 0}
 .difficulty-panel{max-width:440px;margin:12px 0 17px;padding:12px 14px;background:#051b27e8;border:1px solid #64eda65a;border-radius:9px}
 .difficulty-panel label{font-size:12px;color:#94ffd1;letter-spacing:1.7px;font-weight:900}
 .difficulty-panel select{display:block;margin-top:9px;width:100%;min-height:44px;background:#143444;color:#f1fff8;border:1px solid #60b995;border-radius:7px;padding:10px;font:700 13px 'DM Sans',Arial;cursor:pointer}
@@ -88,7 +90,9 @@
 <p class="difficulty-note">Change difficulty any time while paused.</p>
 </div>
 <button class="primary" id="start">START MATCH <span>↗</span></button>
-<button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
+<button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button>
+<button class="primary highlights-btn" id="match-report" hidden>▤ FULL MATCH REPORT <span>↗</span></button>
+<div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">NO INSTALL · INTERNET REQUIRED · 4-MINUTE MATCH · CONTROLLER READY</div></div></div>
 <script type="module">
 let THREE;
 try {
@@ -362,6 +366,26 @@ let shotCharging=false,shotCharge=0,lastManualSwitch=-10,selectedIndex=0;
 let cameraZoom=1,muted=false,matchAudio=null,lowGraphics=false;
 let possessionTime=[0,0],shots=[0,0],saves=[0,0],passesAttempted=[0,0],passesCompleted=[0,0],tacklesWon=[0,0];
 let lastPass=null,homeTactic='balanced',weather='day',halftimePlayed=false,statsOpen=false,statsReturn='playing',celebration=null,lastShooter=null;
+let resultSaved=false;
+const RECORD_KEY='strikerfc26-season-one-results';
+function readResults(){
+ try{const rows=JSON.parse(window.localStorage?.getItem(RECORD_KEY)||'[]');return Array.isArray(rows)?rows.filter(r=>r&&typeof r.home==='string').slice(-100):[]}catch(_){return []}
+}
+function refreshRecord(){
+ const id=$('home-select').value,rows=readResults().filter(r=>r.home===id);
+ const w=rows.filter(r=>r.score[0]>r.score[1]).length,
+ d=rows.filter(r=>r.score[0]===r.score[1]).length,
+ l=rows.filter(r=>r.score[0]<r.score[1]).length;
+ $('club-record').textContent='LOCAL CLUB RECORD · '+w+' W · '+d+' D · '+l+' L';
+}
+function writeResult(){
+ if(resultSaved)return;resultSaved=true;
+ const rows=readResults();
+ rows.push({home:$('home-select').value,away:$('away-select').value,
+  score:[score[0],score[1]],difficulty,time:Date.now()});
+ try{window.localStorage?.setItem(RECORD_KEY,JSON.stringify(rows.slice(-100)))}catch(_){}
+ refreshRecord();
+}
 const TACTICS={
  balanced:{name:'BALANCED',pressers:2,speed:1,advance:0},
  attacking:{name:'ALL-OUT ATTACK',pressers:3,speed:1.12,advance:21},
@@ -388,6 +412,7 @@ function applyClubs(){
   }
  }
  $('kit-match-label').textContent=teams[0].name+' vs '+teams[1].name;
+ refreshRecord();
 }
 function selectStadium(value){
  weather=['day','sunset','night','rain'].includes(value)?value:'day';
@@ -432,6 +457,7 @@ $('away-select').addEventListener('change',applyClubs);
 $('stadium-select').addEventListener('change',()=>selectStadium($('stadium-select').value));
 $('tactic-select').addEventListener('change',()=>setTactic($('tactic-select').value,true));
 $('close-stats').addEventListener('click',toggleStats);
+$('match-report').addEventListener('click',toggleStats);
 
 // 12fps rolling match recording: stores actual positions and articulated poses.
 const REPLAY_STEP=1/12,REPLAY_WINDOW=8,MAX_HIGHLIGHTS=10;
@@ -503,7 +529,7 @@ function startReplay(clip,mode='goal',queue=[]){
  state='replay';
  $('overlay').classList.add('hidden');
  $('replay-screen').classList.remove('hidden');
- $('replay-title').textContent=(clip.type==='GOAL'?'⚽ GOAL':'🧤 BIG SAVE')+' · '+(clip.team===0?'STRIKER':'RIVALS');
+ $('replay-title').textContent=(clip.type==='GOAL'?'⚽ GOAL':'🧤 BIG SAVE')+' · '+teams[clip.team].short;
  const reelTotal=Math.min(6,highlightClips.length);
  $('replay-counter').textContent=mode==='highlights'?('HIGHLIGHT '+(reelTotal-queue.length)+' / '+reelTotal):'AUTOMATIC REPLAY';
  $('replay-progress').style.width='0%';
@@ -604,7 +630,8 @@ function resetPositions(kickoffTeam=0){
 function newMatch(){
  cameraFocus.set(0,0,0);
  MATCH_SECONDS=Number($('duration-select').value)||240;
- halftimePlayed=false;celebration=null;
+ halftimePlayed=false;celebration=null;resultSaved=false;
+ $('match-report').hidden=true;
  passesAttempted=[0,0];passesCompleted=[0,0];tacklesWon=[0,0];lastPass=null;
  applyClubs();setTactic($('tactic-select').value);selectStadium($('stadium-select').value);
  statsOpen=false;$('stats-panel').classList.add('hidden');
@@ -999,6 +1026,7 @@ function advance(dt){
   state='finished';cancelShot();$('status').textContent='FULL TIME';$('overlay').classList.remove('hidden');
   $('half-panel').classList.add('hidden');$('celebration-layer').classList.add('hidden');
   $('highlights').hidden=highlightClips.length===0;
+  $('match-report').hidden=false;writeResult();
   $('start').textContent='PLAY AGAIN ↗';
   document.querySelector('.panel h1').innerHTML='FULL<br/><em>TIME.</em>';
   const total=possessionTime[0]+possessionTime[1]||1;
