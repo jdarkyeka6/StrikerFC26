@@ -1,5 +1,24 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.7.1 · FULL OFFLINE PLAY (15 October 2026)
+
+Striker FC 26 can now play **completely without internet after the game has been downloaded**.
+
+- Changed the 3D engine import to the **local Three.js r180** modules (`vendor/three.module.js` and `vendor/three.core.js`), removing the jsDelivr and esm.sh CDN requirement.
+- Removed the Google Fonts network import and replaced it with locally available system fonts.
+- Added `offline.html`, a standalone approximately 2.2 MB single-file version with the entire 3D renderer and game embedded. This works by opening the downloaded HTML file directly, with no server or connectivity.
+- Added a versioned `sw.js` service worker that pre-caches the game's HTML, engine modules, manifest and icon on HTTPS/localhost and handles offline navigation.
+- Added `manifest.webmanifest` and `icon.svg` for installable browser-app presentation.
+- Added an in-game offline readiness indicator, accurate loading failure messages and an MIT-license copy at `vendor/THREE_LICENSE.txt`.
+- Preserved all V1.7.0 Total Football features, original players, gameplay controls, free training, substitutions, stadiums, goals and replays.
+- Packs remain deferred.
+
+**How to play:** Download and open `offline.html` for immediate offline play; or visit the deployed site online once, confirm **OFFLINE READY**, then reload it later without internet. Browser offline caching depends on service worker support and storage not being cleared. To run `index.html` from a downloaded repository, use a local HTTP server instead of a `file://` URL.
+
+**Validation:** JavaScript syntax, bundled engine presence, the absence of external runtime dependencies, local references and service worker install/fetch logic were checked. A real-browser air-gapped playtest is still advisable.
+
+---
+
 ## Version 1.7.0 · TOTAL FOOTBALL (15 October 2026)
 
 Major gameplay expansion delivering all seven requested improvements:
