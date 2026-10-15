@@ -1,5 +1,18 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.7.2 · PASSING & KEEPER POSSESSION FIX (15 October 2026)
+
+- Blocked free possession steals caused by pressing Shoot/Tackle beside a goalkeeper holding the ball. Standing, sliding and in-progress tackles cannot dispossess a holding goalkeeper; normal goalkeeper passing remains enabled.
+- Rebalanced passes with realistic distance-dependent ground-ball speed, reduced aim errors, fewer overshot through balls and more accurate safe landing points.
+- Fixed auto-receiving while the user continues holding a movement direction from the passer. Manual steering can still intentionally override the run.
+- Verified targeted home/AI ground passes, through balls and touchline receptions.
+- Updated the standalone offline.html to contain the same corrected gameplay engine as index.html, and advanced the offline browser cache to v1.7.2.
+- Preserved all V1.7 Total Football features and deferred player packs.
+
+**Verification:** 37 automated checks passed including a complete 240-second simulated match with halftime, goals and replays. Real browser/WebGL playtesting remains outstanding.
+
+---
+
 ## Version 1.7.1 · FULL OFFLINE PLAY (15 October 2026)
 
 Striker FC 26 can now play **completely without internet after the game has been downloaded**.
