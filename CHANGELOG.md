@@ -1,5 +1,27 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.7.0 · TOTAL FOOTBALL (15 October 2026)
+
+Major gameplay expansion delivering all seven requested improvements:
+
+1. **Advanced shots:** Finesse shots have a curving flight, chips are lofted, and low-driven finishes fly flatter and faster. Separate player follow-through actions and keyboard/gamepad modifiers are available.
+2. **Headers and aerial battles:** Jumping contact on crosses, defensive header clearances, manual volleys and bicycle kicks. Airborne balls cannot be collected automatically by the normal ground-touch logic.
+3. **Five skill moves:** Stepovers, lateral ball rolls, fake shots, roulette turns and drag-backs with a real burst of directional movement, animation, stamina cost, short shielding and anti-spam cooldowns.
+4. **Smarter defensive control:** Jockeying toward goal-side space, extra teammate contain to close inside passing lanes, and directional Q switching.
+5. **First-touch animations:** Ordinary, trapped and stretched receptions plus body rotation and ball cushioning in the receiver's running direction.
+6. **Manual goalkeeper rushing:** Hold U (or controller View/Back) to advance your goalkeeper when threatened by a carrier. Existing difficulty-dependent save chances remain.
+7. **Set pieces:** Horizontal aiming, vertical elevation, runner cycling, selectable corner deliveries, organised three-player free-kick walls and away-team AI corner delivery.
+
+**Controls:** Z finesse, X chip, B driven; H header, Slash volley, N bicycle; keys 4–8 for skills; F jockey, Y teammate contain, U goalkeeper rush; J/L and I/K aim/elevation and O cycle runner on dead balls. Camera zoom moved from Z/X to bracket keys **[ / ]**. Existing Space shoot, E pass, R through ball, T cross, V slide, Q switch, formations, pause and mouse controls remain.
+
+**State fixes:** Starting a new match or kicking off resets skill cooldowns, aerial cooldowns and ball spin; corner elevation affects real ball flight. Older saved game data is unaffected.
+
+**Testing:** 35 mocked Three.js/gameplay regression checks passed, including distinct shot paths, five skill moves, three aerial contacts, keyboard shots, free kicks, corner crosses, goalkeeper rush and a complete 240-second simulated match with halftime, goals and instant replays. Real browser/WebGL feel and performance testing are still recommended.
+
+**Packs:** Remain postponed; no pack probabilities, opening, ownership or monetisation added.
+
+---
+
 ## Version 1.6.3 · GOALKEEPER DIFFICULTY BALANCE (15 October 2026)
 
 - Significantly reduced the opposing goalkeeper's save rate on Beginner, with clear progression through Amateur, Professional and Legend.
