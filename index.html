@@ -336,7 +336,7 @@ function makePlayer(team,index){
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
  const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
- animCycle:0,animBlend:0,animTurn:0,prevYaw:0,actionKind:'',actionTime:0,actionDuration:0,actionPower:0};
+ animCycle:index*.87+team*1.31,animBlend:0,animTurn:0,prevYaw:0,actionKind:'',actionTime:0,actionDuration:0,actionPower:0};
  players.push(p);return p;
 }
 function startKeeperAnimation(p,action,dir=1,height=0){
@@ -754,7 +754,7 @@ function resetPositions(kickoffTeam=0){
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
-  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:100,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:0,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
+  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:100,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
   p.rig.character.rotation.set(0,0,0);p.rig.character.position.set(0,0,0);
   p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
   // Sent-off players stay off the pitch.
