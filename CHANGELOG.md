@@ -16,7 +16,7 @@ Major gameplay expansion delivering all seven requested improvements:
 
 **State fixes:** Starting a new match or kicking off resets skill cooldowns, aerial cooldowns and ball spin; corner elevation affects real ball flight. Older saved game data is unaffected.
 
-**Testing:** 35 mocked Three.js/gameplay regression checks passed, including distinct shot paths, five skill moves, three aerial contacts, keyboard shots, free kicks, corner crosses, goalkeeper rush and a complete 240-second simulated match with halftime, goals and instant replays. Real browser/WebGL feel and performance testing are still recommended.
+**Testing:** 41 mocked Three.js/gameplay checks passed across two rounds, including distinct shot paths, five skill moves, three aerial contacts, keyboard shots, free kicks, corner crosses, goalkeeper rush and a complete 240-second simulated match with halftime, goals and instant replays. Real browser/WebGL feel and performance testing are still recommended.
 
 **Packs:** Remain postponed; no pack probabilities, opening, ownership or monetisation added.
 
