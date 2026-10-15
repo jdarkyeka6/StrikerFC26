@@ -72,6 +72,93 @@
 @media(max-width:620px){.setup-grid{grid-template-columns:1fr 1fr}.tactic-indicator{bottom:146px}.stats-panel{top:140px}}
 @media(max-width:1000px){.controls{display:none}.action-hint{bottom:80px;font-size:9px}.brand,.top-right{min-width:unset}.brand small{display:none}.radar{width:120px}.club{padding:10px;font-size:13px}.clock{padding:10px}.hud,.bottom{left:12px;right:12px}}@media(max-width:620px){.brand{display:none}.scoreboard{margin:auto}.top-right{position:absolute;right:0;top:60px}.radar{display:none}.panel{margin:20px}.panel h1{font-size:70px}}
 
+/* V1.5 Clubhouse UI */
+.overlay{background:#04121bef;align-items:stretch;overflow:hidden}
+.menu-shell{display:grid;grid-template-columns:245px minmax(0,1fr);width:100%;height:100vh;min-height:0;background:radial-gradient(ellipse at 90% 7%,#174d4d91,transparent 50%),#061620;color:#f3fff8}
+.menu-sidebar{display:flex;flex-direction:column;padding:29px 19px 20px;background:#06121cf5;border-right:1px solid #7afbc224;gap:8px}
+.menu-logo{display:flex;align-items:center;gap:10px;margin-bottom:34px}
+.menu-logo-mark{width:47px;height:47px;display:grid;place-items:center;border:2px solid #71f3b7;color:#78f5be;border-radius:13px;font:900 25px 'Barlow Condensed';transform:skew(-4deg)}
+.menu-logo strong{display:block;font:900 19px 'Barlow Condensed';letter-spacing:1px}
+.menu-logo small{display:block;color:#8baca5;font-size:9px;letter-spacing:1px}
+.menu-nav-label{font-size:9px;font-weight:900;letter-spacing:2px;color:#6b948e;padding:11px 12px}
+.menu-nav{display:flex;flex-direction:column;gap:4px}
+.menu-nav-btn{border:1px solid transparent;border-radius:9px;background:transparent;color:#c3dad6;display:flex;align-items:center;gap:13px;padding:12px 13px;font:800 12px 'DM Sans';text-align:left;cursor:pointer}
+.menu-nav-btn>span{font-size:20px;width:23px;text-align:center;color:#6fb79f}
+.menu-nav-btn small{margin-left:auto;background:#19363a;color:#b7decd;border-radius:4px;padding:3px 5px;font-size:8px}
+.menu-nav-btn:hover{background:#14343c}
+.menu-nav-btn.selected{background:linear-gradient(100deg,#204c4d,#123740);border-color:#70e4aa71;color:#bdffe0}
+.menu-nav-btn.selected>span{color:#8afbc1}
+.menu-side-foot{margin-top:auto;border-top:1px solid #42676752;padding:18px 10px;display:flex;flex-direction:column;gap:5px}
+.menu-side-foot strong{font:900 19px 'Barlow Condensed';color:#91f5bc}
+.menu-side-foot span{font-size:10px;color:#a3bfb8}
+.menu-main{min-width:0;overflow:auto;scrollbar-color:#326f6b #0d2429;padding:0 36px 38px}
+.menu-topbar{position:sticky;z-index:2;top:0;min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#061a22ef;border-bottom:1px solid #7bf5be2d;margin:0 -36px 24px;padding:0 36px;backdrop-filter:blur(18px)}
+.menu-section-label{font:900 11px 'DM Sans';letter-spacing:1.8px;color:#9ae9bd}
+.menu-topbar>div{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:800;letter-spacing:1px}
+.menu-season{color:#d8e8dc;background:#18303b;padding:8px;border-radius:5px}
+.menu-online{color:#84f8b6}
+.menu-screen{display:none;padding:10px 0 22px;max-width:1160px;margin:auto}
+.menu-screen.selected{display:block}
+.menu-hero{min-height:315px;display:flex;flex-direction:column;justify-content:center;position:relative;border:1px solid #7cffba3a;border-radius:16px;padding:36px 42px;background:radial-gradient(circle at 83% 55%,#267c627d,transparent 28%),linear-gradient(125deg,#10323d,#102a35 65%,#122e30);overflow:hidden}
+.menu-hero:after{content:'⚽';position:absolute;right:55px;top:25px;font-size:185px;opacity:.10;filter:grayscale(1);pointer-events:none}
+.menu-eyebrow{font:900 11px 'DM Sans';letter-spacing:3px;color:#7af1b9}
+.menu-hero h2,.menu-page-intro h2,.menu-coming h2{margin:12px 0;font:900 clamp(52px,7vw,100px)/.90 'Barlow Condensed';letter-spacing:-1.7px}
+.menu-hero h2 em,.menu-page-intro h2 em,.menu-coming h2 em{font-style:normal;color:#7ef6b6}
+.menu-hero p{max-width:480px;font-size:14px;line-height:1.6;color:#b4d7ce}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.menu-action-primary,.menu-action-secondary{border-radius:7px;padding:14px 19px;font:900 12px 'DM Sans';letter-spacing:.6px;cursor:pointer}
+.menu-action-primary{background:#76f8b5;color:#072827;border:1px solid #a0ffcd}
+.menu-action-secondary{background:#0e2634;border:1px solid #71d4b278;color:#d6ffee}
+.hero-crest{position:absolute;right:62px;top:80px;color:#a6ffcc;opacity:.6;font:900 102px 'Barlow Condensed';transform:rotate(-12deg);border:7px solid #c2ffdd77;border-radius:22px;padding:0 12px}
+.home-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 27px}
+.home-metrics>div{display:flex;flex-direction:column;gap:5px;border:1px solid #598d8170;background:#0b252e;padding:18px 20px;border-radius:10px}
+.home-metrics small{font:900 9px 'DM Sans';letter-spacing:1.5px;color:#93b8b1}
+.home-metrics strong{font:900 28px 'Barlow Condensed';letter-spacing:.5px}
+.home-metrics span{font-size:10px;color:#87afa5}
+.menu-section-title{font:900 21px 'Barlow Condensed';letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.menu-section-title span{font:800 9px 'DM Sans';color:#88b5ac;letter-spacing:1px}
+.home-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.home-tile{min-height:167px;position:relative;display:flex;align-items:flex-start;flex-direction:column;text-align:left;border:1px solid #5f9d866b;background:linear-gradient(140deg,#143439,#10242d);border-radius:12px;padding:23px;color:#e5fff1;cursor:pointer;gap:11px}
+.home-tile:hover{border-color:#83f4b9;background:#1c4a49}
+.tile-icon{font-size:30px;color:#87f9b9}.home-tile strong{font:900 21px 'Barlow Condensed';letter-spacing:1px}.home-tile small{color:#99bfb3;font-size:11px;line-height:1.5}.tile-arrow{position:absolute;top:22px;right:22px;color:#70edb0}
+.menu-page-intro{margin-bottom:21px}.menu-page-intro h2{font-size:clamp(52px,6vw,76px)}.menu-page-intro p{max-width:670px;line-height:1.65;color:#9ebdb6;font-size:13px}
+.squad-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px}.squad-controls label{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:900;letter-spacing:1.3px;color:#8aecc0}
+.squad-controls select{color:#f5fff8;padding:11px;background:#13313d;border:1px solid #5e9d8d;border-radius:7px;font-weight:800}.squad-controls>span{margin-left:auto;color:#95b8af;font-size:11px;font-weight:900}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:13px}
+.roster-card{position:relative;overflow:hidden;border:1px solid #709f8b88;border-radius:12px;min-height:246px;background:linear-gradient(160deg,#235449,#132c38 65%,#0a2330);padding:13px;text-align:left;color:#e9fff6;cursor:pointer;display:flex;flex-direction:column}
+.roster-card:hover,.roster-card.active{border-color:#a4ffd0;box-shadow:0 0 0 2px #8df9ba30}
+.roster-card .overall{position:absolute;left:15px;top:16px;font:900 38px 'Barlow Condensed';color:#ebfff6}
+.roster-card .position{position:absolute;top:52px;left:16px;font:900 13px 'DM Sans';color:#9ff5bb}
+.roster-card .nation{position:absolute;right:15px;top:17px;color:#d2f4e4;font-size:10px;font-weight:900}
+.roster-card .player-portrait{align-self:center;margin:33px 0 10px}
+.roster-card>strong{font:900 19px 'Barlow Condensed';letter-spacing:.2px;z-index:1;margin-top:auto}
+.roster-card>small{font-size:10px;color:#acd4c7;margin:4px 0}
+.roster-card .card-foot{display:flex;justify-content:space-between;color:#90e9b9;font-size:10px;font-weight:900;border-top:1px solid #9bdbc13e;padding-top:9px}
+.player-portrait{--skin:#b67b51;--hair:#25190f;--kit:#55f3ae;position:relative;width:92px;height:110px;display:block}
+.player-portrait .torso{position:absolute;bottom:0;left:4px;width:84px;height:52px;border-radius:36px 36px 7px 7px;background:var(--kit);border:2px solid #041e2966;transform:perspective(100px) rotateX(4deg)}
+.player-portrait .neck{position:absolute;bottom:43px;left:36px;width:21px;height:23px;background:var(--skin)}
+.player-portrait .face{position:absolute;top:9px;left:24px;width:47px;height:62px;border-radius:47% 47% 43% 43%;background:var(--skin);box-shadow:inset -5px -5px 8px #0002}
+.player-portrait .hair{position:absolute;top:5px;left:21px;width:51px;height:25px;border-radius:45% 50% 35% 15%;background:var(--hair)}
+.player-portrait .eyes{position:absolute;top:46px;left:34px;width:5px;height:3px;background:#252d2d;border-radius:50%;box-shadow:20px 0 #252d2d}
+.player-portrait .smile{position:absolute;top:60px;left:44px;width:10px;height:3px;border-bottom:2px solid #6d3f30;border-radius:50%}
+.player-detail{margin:20px 0;min-height:80px;background:#0d2a34;border:1px solid #699e8c77;border-radius:12px;padding:17px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.player-detail>strong{font:900 22px 'Barlow Condensed'}.player-detail>span{color:#a9c9bf;font-size:12px}
+.detail-stats{display:flex;gap:10px;flex-wrap:wrap}.detail-stats span{padding:10px;background:#123b44;border-radius:6px;font:800 12px 'DM Sans';color:#abf6d0}
+.club-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.club-list button{background:#102e39;border:1px solid #74c1a06c;color:#e1fdec;display:flex;gap:15px;text-align:left;padding:20px;border-radius:12px;cursor:pointer}
+.club-list button:hover{border-color:#86fac4}.club-badge{width:53px;height:62px;border:3px solid var(--club);border-radius:12px;display:grid;place-items:center;font:900 24px 'Barlow Condensed';color:var(--club)}
+.club-list strong{font:900 21px 'Barlow Condensed'}.club-list p{color:#9cbbb3;font-size:11px;line-height:1.5}.club-list small{color:#7df1b9;font-size:11px}
+.menu-coming{margin:5vh auto;max-width:740px;padding:45px;background:radial-gradient(circle at 80% 10%,#39604444,transparent 60%),#0e2935;border:1px solid #63bb9a66;border-radius:20px;text-align:center}
+.menu-coming>span{display:block;font-size:90px;color:#89e7b5}.menu-coming>small{display:block;color:#95d3ae;letter-spacing:2px}.menu-coming p{line-height:1.7;color:#bfd9d0}.menu-coming strong{display:inline-block;color:#b9efca;border:1px solid #84bd9f;padding:12px 16px;border-radius:7px;font-size:11px;margin-top:10px}
+.settings-cards{display:grid;gap:14px;max-width:790px}.settings-cards>div{background:#10303a;border:1px solid #77b79a66;padding:22px;border-radius:10px}.settings-cards strong{font:900 22px 'Barlow Condensed'}.settings-cards p{font-size:12px;color:#c2d8cf;line-height:1.7}.settings-cards button{background:#266350;border:1px solid #76d3a6;color:white;padding:10px 13px;border-radius:6px;cursor:pointer}
+#menu-play .panel{margin:0;max-width:620px;padding:0 0 24px}
+#menu-play .panel h1{font-size:clamp(55px,6vw,76px);margin:9px 0}
+#menu-play .panel p{max-width:580px}
+#menu-play .features{margin:14px 0}
+#menu-play .match-setup{max-width:620px}
+@media(max-width:850px){.menu-shell{grid-template-columns:78px minmax(0,1fr)}.menu-sidebar{padding:20px 8px}.menu-logo>div,.menu-nav-label,.menu-nav-btn small,.menu-side-foot{display:none}.menu-logo{justify-content:center}.menu-logo-mark{font-size:18px;width:41px;height:41px}.menu-nav-btn{justify-content:center;font-size:0;padding:11px 0}.menu-nav-btn>span{font-size:20px}.menu-main{padding:0 18px 20px}.menu-topbar{margin:0 -18px 20px;padding:0 18px}.hero-crest{display:none}.menu-hero{padding:26px}}
+@media(max-width:560px){.menu-shell{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.menu-sidebar{padding:9px;display:flex;flex-direction:row;align-items:center;overflow-x:auto}.menu-logo{margin:0;flex-shrink:0}.menu-logo-mark{width:36px;height:36px}.menu-nav{flex-direction:row;flex-wrap:nowrap;gap:3px}.menu-nav-btn{padding:9px;min-width:38px}.menu-main{padding:0 12px 28px}.menu-topbar{padding:0 12px;margin:0 -12px 12px}.menu-hero{min-height:265px;padding:18px}.menu-hero h2{font-size:58px}.home-metrics{grid-template-columns:1fr}.home-tiles{grid-template-columns:1fr}.home-tile{min-height:125px}.menu-coming{padding:20px}.roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roster-card{min-height:238px}}
+
 </style></head><body>
 <div id="game"></div>
 <header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.4 · FOOTBALL IQ</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
@@ -93,7 +180,44 @@
  <div class="replay-top"><span class="replay-marker">● INSTANT REPLAY</span><strong id="replay-title">GOAL REPLAY</strong><span id="replay-counter">0 / 0</span></div>
  <div class="replay-bottom"><span>STRIKER FC 26 · MATCH REPLAY</span><div class="replay-progress"><span id="replay-progress"></span></div><button id="skip-replay" aria-label="Skip replay">SKIP REPLAY · R / ESC <span>↗</span></button></div>
 </div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.4 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
+<div class="overlay" id="overlay"><div class="menu-shell">
+ <aside class="menu-sidebar">
+ <div class="menu-logo"><span class="menu-logo-mark">SF</span><div><strong>STRIKER FC 26</strong><small>THE CLUBHOUSE · V1.5</small></div></div>
+ <div class="menu-nav-label">FOOTBALL</div>
+ <nav class="menu-nav" aria-label="Main game menu">
+ <button class="menu-nav-btn selected" data-menu="home"><span>⌂</span> HOME</button>
+ <button class="menu-nav-btn" data-menu="play"><span>⚽</span> PLAY MATCH</button>
+ <button class="menu-nav-btn" data-menu="squad"><span>▦</span> MY SQUAD</button>
+ <button class="menu-nav-btn" data-menu="club"><span>♜</span> CLUB HUB</button>
+ <div class="menu-nav-label">CLUBHOUSE</div>
+ <button class="menu-nav-btn" data-menu="packs"><span>✦</span> PACKS <small>SOON</small></button>
+ <button class="menu-nav-btn" data-menu="settings"><span>⚙</span> SETTINGS</button>
+ </nav>
+ <div class="menu-side-foot"><strong id="sidebar-club-name">STRIKER FC</strong><span id="sidebar-record">0 W · 0 D · 0 L</span><span>YOUR CLUB · SEASON 01</span></div>
+ </aside>
+ <main class="menu-main">
+ <div class="menu-topbar"><span class="menu-section-label" id="menu-heading">HOME / CLUBHOUSE</span><div><span class="menu-season">SEASON 01</span><span class="menu-online">● OFFLINE CAREER</span></div></div>
+ <section class="menu-screen selected" id="menu-home" aria-label="Home dashboard">
+ <div class="menu-hero">
+ <span class="menu-eyebrow">WELCOME TO THE CLUBHOUSE</span>
+ <h2>YOUR CLUB.<br><em>YOUR LEGACY.</em></h2>
+ <p>Meet your actual squad, create the fixture, manage your line-up and take your team onto the pitch.</p>
+ <div class="hero-actions"><button class="menu-action-primary" id="home-play">⚽ PLAY A MATCH ↗</button><button class="menu-action-secondary" id="home-squad">VIEW SQUAD →</button></div>
+ <div class="hero-crest" id="hero-crest">SF</div>
+ </div>
+ <div class="home-metrics">
+ <div><small>YOUR CLUB</small><strong id="home-club-name">STRIKER FC</strong><span id="home-club-slogan">Built for greatness</span></div>
+ <div><small>FIRST XI AVERAGE</small><strong id="home-avg">--</strong><span>Team overall</span></div>
+ <div><small>CLUB RECORD</small><strong id="home-record">0–0–0</strong><span>Wins · Draws · Losses</span></div>
+ </div>
+ <h3 class="menu-section-title">YOUR MATCHDAY HUB <span>CHOOSE YOUR NEXT MOVE</span></h3>
+ <div class="home-tiles">
+ <button id="home-quick" class="home-tile"><span class="tile-icon">⚡</span><strong>QUICK MATCH</strong><small>Take your XI onto the pitch</small><span class="tile-arrow">↗</span></button>
+ <button id="home-training" class="home-tile"><span class="tile-icon">◎</span><strong>FREE TRAINING</strong><small>Practice movement, passing & shooting</small><span class="tile-arrow">↗</span></button>
+ <button id="home-club" class="home-tile"><span class="tile-icon">♜</span><strong>YOUR CLUB</strong><small>Meet the players and their identities</small><span class="tile-arrow">↗</span></button>
+ </div>
+ </section>
+ <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.4</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.4 IS HERE. Smoother running, kicking, tackling and goalkeeping. Choose your club, stadium, tactics and match length. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
 <div class="match-setup">
  <div class="setup-heading">MATCH SETUP <span>SEASON 01 · ORIGINAL CLUBS</span></div>
  <div class="setup-grid">
@@ -140,7 +264,28 @@
 <button class="primary highlights-btn" id="quit-match" hidden>✕ RETURN TO MAIN MENU <span>↗</span></button>
 <button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button>
 <button class="primary highlights-btn" id="match-report" hidden>▤ FULL MATCH REPORT <span>↗</span></button>
-<div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">NO INSTALL · INTERNET REQUIRED · KEYBOARD + MOUSE + CONTROLLER</div></div></div>
+<div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">NO INSTALL · INTERNET REQUIRED · KEYBOARD + MOUSE + CONTROLLER</div></div></section>
+ <section class="menu-screen" id="menu-squad" aria-label="Squad">
+ <div class="menu-page-intro"><span class="menu-eyebrow">YOUR STARTING XI & BENCH</span><h2>THE <em>SQUAD.</em></h2><p>Real names, permanent profiles, individual ratings and consistent appearances. Every club has its own 16 players.</p></div>
+ <div class="squad-controls"><label>VIEW CLUB <select id="squad-club-select"><option value="striker">STRIKER FC</option><option value="tide">TIDE CITY</option><option value="aurora">AURORA ATHLETIC</option><option value="volt">VOLT UNITED</option><option value="ember">EMBER ROVERS</option><option value="polar">POLAR FC</option></select></label>
+ <label>POSITION <select id="squad-filter"><option value="all">ALL PLAYERS</option><option value="FWD">FORWARDS</option><option value="MID">MIDFIELDERS</option><option value="DEF">DEFENDERS</option><option value="GK">GOALKEEPERS</option></select></label><span id="squad-count">16 PLAYERS</span></div>
+ <div class="roster-grid" id="roster-grid"></div>
+ <div class="player-detail" id="player-detail"><strong>SELECT A PLAYER</strong><span>Click a card to view their permanent profile.</span></div>
+ </section>
+ <section class="menu-screen" id="menu-club" aria-label="Club info">
+ <div class="menu-page-intro"><span class="menu-eyebrow">CLUB DATABASE · SEASON 01</span><h2>THE <em>LEAGUE.</em></h2><p>Six original clubs. Every squad has its own identity, footballers, and team ratings.</p></div>
+ <div id="club-list" class="club-list"></div></section>
+ <section class="menu-screen" id="menu-packs" aria-label="Packs planned">
+ <div class="menu-coming"><span>✦</span><small>FUTURE CLUBHOUSE FEATURE</small><h2>PLAYER <em>PACKS.</em></h2><p>Reserved for the next upgrade. No pack openings, currencies, odds, purchases or collections are active yet.</p><strong>COMING LATER · NOT AVAILABLE</strong></div>
+ </section>
+ <section class="menu-screen" id="menu-settings" aria-label="Settings">
+ <div class="menu-page-intro"><span class="menu-eyebrow">MAKE IT YOUR GAME</span><h2>GAME <em>SETTINGS.</em></h2><p>Customize your controls and match presentation without leaving the clubhouse.</p></div>
+ <div class="settings-cards">
+ <div><strong>CONTROLS</strong><p>WASD move · Space / left click shoot · E / right click pass · R / middle click through pass · Q switch players</p><button id="settings-mouse">MOUSE INPUT: ON</button></div>
+ <div><strong>MATCH DIFFICULTY</strong><p id="settings-difficulty">Beginner · Relaxed play</p><button id="settings-open-match">EDIT MATCH SETTINGS →</button></div>
+ <div><strong>CAMERA & GRAPHICS</strong><p>Broadcast follow camera, zoom, low graphics and stadium settings are available during a match.</p><button id="settings-open-camera">EDIT MATCH SETUP →</button></div>
+ </div></section>
+ </main></div></div>
 <script type="module">
 let THREE;
 try {
