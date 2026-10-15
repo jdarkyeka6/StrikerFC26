@@ -1,5 +1,23 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.5.0 · CLUBHOUSE & PLAYERS (15 October 2026)
+
+Major UI and character-identity update.
+
+- **Full main menu:** Home dashboard, Play Match, My Squad, Club Hub, Settings, and reserved Packs screen.
+- **96 permanent original footballers:** Six original clubs, with 16 named players each, stable IDs, shirt numbers, ages, positions, nationalities, heights and football ratings.
+- **Squad cards:** Identifiable illustrated portraits, 11-starter/5-bench roster browsing, position filters, expanded player details and six attribute ratings.
+- **True roster selection:** Club selection updates the actual 3D players, not only their shirt colours. Hair, skin, height and shirt numbers reflect the corresponding card.
+- **Persistent substitutions:** Each club has its own five substitutes with stable identities. Joining the pitch updates a footballer's appearance, name and attributes together.
+- **Player ability differentiation:** Player pace, passing and finishing influence the game slightly while retaining all existing difficulty settings.
+- **Historical replay identities:** Replay frames store who was playing, so watching an older goal after a substitution does not display the wrong character.
+- **Packs deferred:** A noninteractive, coming-soon destination appears in the menu. No pack inventory, ownership, opening system, rarity mechanics, probability tables or purchasing features have been built.
+- All V1.4 match systems, referee, AI, weather, free training, animation and gamepad/mouse/keyboard controls retained.
+
+**Testing:** 26 targeted Clubhouse/player tests and 12 replay/match regression tests passed. Real browser rendering and performance remain to be assessed.
+
+---
+
 ## Version 1.4.0 · FOOTBALL IQ (15 October 2026)
 
 A major tactical and match-management update for Striker FC 26.
