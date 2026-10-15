@@ -1166,7 +1166,7 @@ function resetPositions(kickoffTeam=0){
  const kicker=players.slice(kickoffTeam*11,kickoffTeam*11+10).find(q=>!q.sentOff)||players[kickoffTeam*11];
  kicker.x=0;kicker.z=-teams[kickoffTeam].dir*2;kicker.mesh.position.set(kicker.x,0,kicker.z);
  pendingOffside=null;
- Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,secureOwner:null,secureUntil:0,releasedBy:null,lastDribbleTouch:0,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
+ Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,secureOwner:null,secureUntil:0,releasedBy:null,lastDribbleTouch:0,passTarget:null,passTime:0,passStarted:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
  kicker.hasBall=true;selectPlayer(players.slice(0,10).find(q=>!q.sentOff)||players[0]);
 }
 function startTraining(){
@@ -1261,7 +1261,7 @@ function restartPlay(kind,team,x,z){
  taker.faceX=0;taker.faceZ=teams[team].dir;
  taker.mesh.position.set(taker.x,0,taker.z);
  pendingOffside=null;
- ball.owner=taker;ball.secureOwner=null;ball.secureUntil=0;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=team;ball.isShot=false;
+ ball.owner=taker;ball.secureOwner=null;ball.secureUntil=0;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;ball.lastTouchTeam=team;ball.isShot=false;
  if(team===0)selectPlayer(taker);
  setPiece=null;
  if(kind==='FREE KICK'||kind==='PENALTY KICK'){
@@ -1303,7 +1303,8 @@ function crossBall(p){
  pendingOffside=isOffsideAtKick(targets.q,p)?{team:p.team,receiver:targets.q,expires:matchTime+4}:null;
  startPlayerAction(p,'cross',.9);
  p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.28;
- ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;ball.passTime=2.3;
+ ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;
+ ball.passStarted=matchTime;ball.passTime=clamp(targets.d/42+1.1,1.8,3.25);
  passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
  ball.vx=dir.x*clamp(targets.d*1.25+27,45,90);
  ball.vz=dir.z*clamp(targets.d*1.25+27,45,90);
@@ -1438,7 +1439,7 @@ function loseHeavyTouch(p){
  ball.x=p.x+facing.x*dribbleGap(p);ball.z=p.z+facing.z*dribbleGap(p);
  ball.vx=p.vx*.8-facing.z*side*2.5;ball.vz=p.vz*.8+facing.x*side*2.5;
  ball.vy=.35;ball.y=1.15;ball.lock=.2;ball.releasedBy=p;
- ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=null;ball.passTime=0;
+ ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=null;ball.passTime=0;ball.passStarted=0;
  return true;
 }
 // FIFA-style assisted reception: forecast the moving ball's path and find
