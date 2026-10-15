@@ -563,7 +563,7 @@ function makePlayer(team,index){
  ownerMarker.rotation.x=-Math.PI/2;ownerMarker.position.y=.075;root.add(ownerMarker);
  scene.add(root);
  root.traverse(obj=>{if(obj.isMesh&&obj!==shadow&&obj!==ring&&obj!==pointer&&obj!==ownerMarker)obj.castShadow=true});
- const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts,skinMaterial:skin,hairMesh:hair,numberMesh:number},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
+ const p={team,index,mesh:root,rig:{outfit,headPivot,character,limbs,pointer,ownerMarker,kitShirt:shirt,kitShorts:shorts,skinMaterial:skin,hairMesh:hair,numberMesh:number},ring,x:0,z:0,vx:0,vz:0,faceX:0,faceZ:teams[team].dir,stamina:100,hasBall:false,decision:0,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,saveCooldown:0,saveAnimation:0,saveDirection:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,keeperDir:1,keeperHeight:0,
  animCycle:index*.87+team*1.31,animBlend:0,animTurn:0,prevYaw:0,actionKind:'',actionTime:0,actionDuration:0,actionPower:0};
  players.push(p);return p;
 }
@@ -575,9 +575,9 @@ function startKeeperAnimation(p,action,dir=1,height=0){
 // Blended, jointed procedural football animations: no external animation downloads.
 function startPlayerAction(p,kind,power=.5){
  if(!p||p.sentOff)return;
- if(!['pass','through','cross','shoot','tackle','receive'].includes(kind))return;
+ if(!['pass','through','cross','shoot','tackle','receive','stumble'].includes(kind))return;
  p.actionKind=kind;p.actionTime=0;p.actionPower=Math.max(0,Math.min(1,power));
- p.actionDuration=kind==='shoot'?.48:kind==='cross'?.58:kind==='tackle'?.48:kind==='receive'?.32:.36;
+ p.actionDuration=kind==='shoot'?.48:kind==='cross'?.58:kind==='tackle'?.48:kind==='stumble'?.58:kind==='receive'?.32:.36;
 }
 function animatePlayer(p,dt){
  const speed=Math.hypot(p.vx,p.vz),c=p.rig.character,rig=p.rig;
@@ -696,6 +696,17 @@ function animatePlayer(p,dt){
     striking.foot.rotation.x=-.28*impact;
     plant.leg.rotation.x=.65*impact;plant.knee.rotation.x=.63*impact;
     for(const limb of rig.limbs){limb.arm.rotation.z=-limb.side*(.30+.67*impact);limb.elbow.rotation.x=-.41*impact}
+   }else if(p.actionKind==='stumble'){
+    // The dispossessed footballer regains balance instead of instantly tackling again.
+    c.position.y-=.18*impact;c.rotation.x+=.32*impact;
+    c.rotation.z+=(p.index%2?1:-1)*.18*impact;
+    rig.headPivot.rotation.x=.18*impact;
+    for(const limb of rig.limbs){
+     limb.arm.rotation.z=-limb.side*(.3+.48*impact);
+     limb.elbow.rotation.x=-.35*impact;
+     limb.leg.rotation.x=limb.side*.42*impact;
+     limb.knee.rotation.x=.32*impact;
+    }
    }else if(p.actionKind==='receive'){
     c.position.y-=.09*impact;
     striking.leg.rotation.x=-.40*impact;striking.knee.rotation.x=.50*impact;
@@ -1126,7 +1137,7 @@ function resetPositions(kickoffTeam=0){
  shotCharging=false;shotCharge=0;$('shot-gauge').classList.remove('active');
  for(const p of players){
   const h=base(p);
-  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:p.stamina,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
+  Object.assign(p,{x:h.x,z:h.z,vx:0,vz:0,faceX:0,faceZ:teams[p.team].dir,stamina:p.stamina,hasBall:false,decision:.45,carryTime:0,tackleCooldown:0,tackleWindow:0,tackleRecover:0,dispossessedUntil:0,saveCooldown:0,saveAnimation:0,keeperAction:'ready',keeperTime:0,keeperDuration:0,animCycle:p.index*.87+p.team*1.31,animBlend:0,animTurn:0,prevYaw:p.team===0?Math.PI:0,actionKind:'',actionTime:0});
   p.rig.character.rotation.set(0,0,0);p.rig.character.position.set(0,0,0);
   p.mesh.position.set(p.x,0,p.z);p.mesh.rotation.y=p.team===0?Math.PI:0;
   // Sent-off players stay off the pitch.
@@ -1136,7 +1147,7 @@ function resetPositions(kickoffTeam=0){
  const kicker=players.slice(kickoffTeam*11,kickoffTeam*11+10).find(q=>!q.sentOff)||players[kickoffTeam*11];
  kicker.x=0;kicker.z=-teams[kickoffTeam].dir*2;kicker.mesh.position.set(kicker.x,0,kicker.z);
  pendingOffside=null;
- Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
+ Object.assign(ball,{x:0,z:0,vx:0,vz:0,y:1.05,vy:0,owner:kicker,lock:.35,secureOwner:null,secureUntil:0,passTarget:null,passTime:0,releaseTeam:-1,lastTouchTeam:kickoffTeam,isShot:false,restartKind:'KICK OFF'});
  kicker.hasBall=true;selectPlayer(players.slice(0,10).find(q=>!q.sentOff)||players[0]);
 }
 function startTraining(){
@@ -1218,7 +1229,7 @@ function restartPlay(kind,team,x,z){
   if(ball.owner)ball.owner.hasBall=false;
   striker.x=0;striker.z=-13;striker.vx=striker.vz=0;
   striker.mesh.position.set(0,0,-13);striker.hasBall=true;striker.carryTime=0;
-  ball.owner=striker;ball.x=0;ball.z=-13;ball.y=1.05;ball.vx=ball.vz=ball.vy=0;ball.lock=.25;ball.isShot=false;ball.lastTouchTeam=0;
+  ball.owner=striker;ball.secureOwner=null;ball.secureUntil=0;ball.x=0;ball.z=-13;ball.y=1.05;ball.vx=ball.vz=ball.vy=0;ball.lock=.25;ball.isShot=false;ball.lastTouchTeam=0;
   selectPlayer(striker);say('TRY AGAIN',.7);
   return;
  }
@@ -1231,7 +1242,7 @@ function restartPlay(kind,team,x,z){
  taker.faceX=0;taker.faceZ=teams[team].dir;
  taker.mesh.position.set(taker.x,0,taker.z);
  pendingOffside=null;
- ball.owner=taker;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=team;ball.isShot=false;
+ ball.owner=taker;ball.secureOwner=null;ball.secureUntil=0;ball.x=taker.x;ball.z=taker.z;ball.y=1.05;ball.restartKind=kind;ball.vx=0;ball.vz=0;ball.vy=0;ball.lock=.25;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=team;ball.isShot=false;
  if(team===0)selectPlayer(taker);
  setPiece=null;
  if(kind==='FREE KICK'||kind==='PENALTY KICK'){
@@ -1272,7 +1283,7 @@ function crossBall(p){
  const dir=norm(tx-p.x,tz-p.z);
  pendingOffside=isOffsideAtKick(targets.q,p)?{team:p.team,receiver:targets.q,expires:matchTime+4}:null;
  startPlayerAction(p,'cross',.9);
- p.hasBall=false;ball.owner=null;ball.lock=.28;
+ p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.28;
  ball.lastTouchTeam=p.team;ball.isShot=false;ball.passTarget=targets.q;ball.passTime=2.3;
  passesAttempted[p.team]++;lastPass={team:p.team,t:matchTime};
  ball.vx=dir.x*clamp(targets.d*1.25+27,45,90);
@@ -1394,6 +1405,8 @@ function takePossession(p){
  if(shotCharging&&p!==controlledPlayer())cancelShot();
  if(ball.owner)ball.owner.hasBall=false;
  if(p.index!==10&&p.actionKind!=='receive')startPlayerAction(p,'receive');
+ // Ordinary interceptions and passes cancel any previous tackle security.
+ ball.secureOwner=null;ball.secureUntil=0;
  ball.owner=p;ball.lock=.16;ball.passTarget=null;ball.passTime=0;ball.lastTouchTeam=p.team;ball.isShot=false;
  p.hasBall=true;p.carryTime=0;p.decision=.5;p.tackleWindow=0;
  if(p.team===0&&p.index!==10)selectPlayer(p);
@@ -1431,7 +1444,7 @@ function kick(p,shoot=false,through=false,power=.45){
  startPlayerAction(p,shoot?'shoot':through?'through':'pass',power);
  if(setPiece?.taker===p)setPiece=null;
  playMatchSound(shoot?'shot':'kick');
- p.hasBall=false;ball.owner=null;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
+ p.hasBall=false;ball.owner=null;ball.secureOwner=null;ball.secureUntil=0;ball.lock=.27;ball.lastTouchTeam=p.team;ball.isShot=shoot;
  ball.releaseTeam=p.team;ball.passTarget=receiver;ball.passTime=through?2.2:1.65;
  ball.vx=dir.x*strength;ball.vz=dir.z*strength;ball.restartKind=null;
  ball.x=p.x+dir.x*2.35;ball.z=p.z+dir.z*2.35;ball.y=1.3;
@@ -1439,7 +1452,10 @@ function kick(p,shoot=false,through=false,power=.45){
  return true;
 }
 function attemptTackle(p){
- if(p.sentOff||p.tackleCooldown>0||p.tackleRecover>0||ball.owner===p)return false;
+ if(!p||p.sentOff||p.tackleCooldown>0||p.tackleRecover>0||p.dispossessedUntil>matchTime||ball.owner===p)return false;
+ // A successful clean tackle must stick for a short, escapable first-touch window.
+ // The winner can pass or shoot immediately. Opponents can press but not insta-retackle.
+ if(ball.owner===ball.secureOwner&&ball.owner?.team!==p.team&&matchTime<ball.secureUntil)return false;
  // Nobody may challenge during a free kick or penalty until the ball is played.
  if(setPiece&&p!==setPiece.taker&&(setPiece.kind==='PENALTY KICK'||p.team!==setPiece.team))return false;
  if(p.team===1&&Math.random()>difficultySettings().opponentTackle){p.tackleCooldown=.8;return false}
@@ -1483,6 +1499,8 @@ function assessTackle(offender,victim,d=distance(offender,victim)){
 }
 function resolveTackle(p){
  if(p.tackleWindow<=0||!ball.owner||ball.owner.team===p.team)return false;
+ if(p.dispossessedUntil>matchTime)return false;
+ if(ball.owner===ball.secureOwner&&matchTime<ball.secureUntil)return false;
  const victim=ball.owner,d=distance(p,victim);
  if(d>4.0)return false;
  const approach=norm(victim.x-p.x,victim.z-p.z);
@@ -1500,9 +1518,17 @@ function resolveTackle(p){
   }
  }
  tacklesWon[p.team]++;
+ // Knock the beaten player slightly off balance while the new carrier settles.
+ victim.tackleWindow=0;
+ victim.tackleCooldown=Math.max(victim.tackleCooldown,.9);
+ victim.tackleRecover=Math.max(victim.tackleRecover,.62);
+ victim.dispossessedUntil=matchTime+.68;
+ if(victim.index!==10)startPlayerAction(victim,'stumble');
  takePossession(p);
- p.tackleWindow=0;ball.lock=.12;
- if(p.team===0)say('BALL WON',.75);
+ ball.secureOwner=p;ball.secureUntil=matchTime+.64;
+ p.tackleWindow=0;p.tackleRecover=Math.min(p.tackleRecover,.10);
+ ball.lock=.12;
+ if(p.team===0)say('BALL WON · BREAK AWAY!',.75);
  return true;
 }
 function sendOff(p){
@@ -1885,6 +1911,9 @@ function advance(dt){
    const energyScale=.80+.20*(p.stamina/100);
    vx*=energyScale*(p.paceBonus||1);vz*=energyScale*(p.paceBonus||1);
   }
+  // A beaten player briefly recovers their balance rather than matching the
+  // tackler's stride instantly. Movement returns normally after recovery.
+  if(p.dispossessedUntil>matchTime){vx*=.27;vz*=.27}
   // Acceleration / braking prevent instant direction reversals but still respond fast.
   const response=1-Math.exp(-dt*(p===cp?13:9.5));
   if(p.index===10&&['parry','miss','catch'].includes(p.keeperAction)){vx*=.12;vz*=.12}
