@@ -1,6 +1,38 @@
-# ⚽ STRIKER FC 26 | VERSION 1.6.0
+# ⚽ STRIKER FC 26 | VERSION 1.6.1
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.5 introduces a full Clubhouse menu and 96 permanent original footballers across the six clubs. Earlier V1.4 tactics and referee systems remain.
+
+## 🛝 Version 1.6.1: Slide tackles
+
+**Slide tackling is a new, separate defensive move**, not a replacement for the original standing tackle. It is manually triggered; the AI continues using standing tackles to prevent a flood of random slide fouls.
+
+### Controls
+
+| Input | Action |
+|---|---|
+| **V** | Slide tackle (keyboard) |
+| **Shift + left-click** over the 3D pitch | Slide tackle (mouse controls enabled) |
+| **R3** (press the right thumbstick, gamepad button 11) | Slide tackle (standard controller) |
+| **Space / ordinary left-click** | Existing standing tackle or shot |
+
+Slide tackles are only available while the match is live, with enough stamina and within range of the opponent or loose ball.
+
+### Gameplay
+
+- An aimed slide commits the defender to a roughly **0.7-second sliding movement**. The ball-winning window is about **0.45 seconds**.
+- Dedicated grounded animation: hips lower, one boot extends toward the football, the other leg drags and arms balance. Winning the ball keeps the sliding pose until recovery.
+- A slide costs **15 stamina** and has a **2.15-second tackle cooldown**, so it cannot be spammed.
+- A genuinely ball-first challenge can win possession. The short V1.5.2 first-touch protection still applies, and the winner can pass immediately.
+- An attempted slide that misses the ball does not automatically win possession, and the defender must recover.
+- Reckless body-first collisions from behind can trigger a free kick and a yellow card. The foul assessment checks contact geometry and closing speed, not a random chance.
+- A referee whistle stops the slide movement. The referee's existing penalty-area and second-yellow-card systems still apply.
+- Restarting a match clears active slide and recovery timers.
+
+### Validation and limitations
+
+Tests covered live clean slides, animations, possession and immediate passes; sideways misses; distant contacts; reckless rear player-first slide decisions and cards; and a full simulated 240-second match with a manually started slide, halftime, goals, celebrations and replay transitions.
+
+The game was exercised in a mocked Three.js engine and syntax-checked. A real-browser/WebGL playtest remains necessary to confirm gameplay feel, controller R3 support, presentation and timing on physical devices.
 
 ## 🚀 Version 1.6.0: Gameplay Revolution
 
