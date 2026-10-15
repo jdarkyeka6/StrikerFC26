@@ -1,6 +1,26 @@
-# ⚽ STRIKER FC 26 | VERSION 1.1
+# ⚽ STRIKER FC 26 | VERSION 1.2
 
-**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.1 adds a referee and preserves all the V1.0 Matchday features.
+**Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.2 adds optional mouse-button controls while retaining the referee and the entire V1.0 Matchday feature set.
+
+## 🖱️ Version 1.2: Mouse controls
+
+Mouse controls are **enabled by default** and can be turned off using the **Enabled** checkbox in the match setup or pause menu. Mouse gameplay clicks work **only over the 3D pitch while a match is live**, so interacting with menus or match reports stays normal.
+
+| Mouse input | Gameplay action |
+| --- | --- |
+| **Left click (hold, then release)** | Charge and take a shot; tackle when defending |
+| **Right click** | Ground pass |
+| **Middle click / wheel button** | Through ball |
+| **Mouse back button (M4)** | Switch controlled player |
+| **Mouse forward button (M5)** | Lofted cross |
+| **Scroll up** | Camera zoom in |
+| **Scroll down** | Camera zoom out |
+
+The left mouse button automatically releases a full-power shot just like the Space key. Right-click does not open the browser context menu over the pitch during live play. The mouse can be combined with WASD for movement and aiming. Side mouse buttons depend on your mouse and browser; some system/browser mappings may intercept M4/M5. Keyboard and controller bindings have not changed.
+
+### Testing
+
+15 targeted mouse-control checks passed, including left-click charge/release, tackle, right-click pass, middle-click through ball, side-button actions, wheel zoom, menu-click isolation, pause state, and the on/off switch. Real-device browser testing is still recommended.
 
 ## 🟨 Version 1.1: Referee Update
 
