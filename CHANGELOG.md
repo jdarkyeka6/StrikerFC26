@@ -1,5 +1,21 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.6.0 · GAMEPLAY REVOLUTION (15 October 2026)
+
+Implemented **all five critical systems** identified in the V1.5.2 gameplay review.
+
+1. **Tackling and possession:** Defensive-attribute-based reach, ball-contact checks and orientation-aware wins; short recoveries after clean tackles retained so players cannot be instantly retackled.
+2. **Dribbling and physics:** New per-player dribbling attribute, inertia-based foot control, skill-dependent dribble gaps, fast-touch pressure mistakes, genuine released loose balls and distinct drag for travelling shots.
+3. **Passing mechanics:** More directional control, timed receiver leads, better through balls, pressure/skill pass error, stronger preference for open passing lanes, and new **Shift+E / Shift+right-click driven passes**.
+4. **Opponent AI:** Goal- and time-aware pressing, predicted defensive pressure, central lane coverage, offside-conscious attacking runs, progressive passing and shooting decisions, and more assertive forward carries.
+5. **Goalkeeper intelligence:** Anticipatory position adjustment, one-on-one rushing and smothers, goalkeeper-rating-based shot saves, improved catches and parries away from danger.
+
+Kept the six original clubs, 96 permanent profiles, full Clubhouse UI, pause/substitution menus, referee, formations, stadiums, celebration/replay pipeline, training, all difficulties and controller/mouse support.
+
+**Testing:** JavaScript syntax and DOM references passed; targeted simulated tests covered tackle outcomes, dribbling loose-ball velocity, passing options, AI shooting, goalkeeper shot reaction, scored-goal transitions and replay recovery. One full 240-second simulated match completed with halftime and stable player/ball positions. A real browser/WebGL visual/performance playtest remains to be completed.
+
+---
+
 ## Version 1.5.2 · BALL-WINNING TACKLES (15 October 2026)
 
 - Successful tackles now provide a brief 0.64-second secure first touch, preventing immediate counter-tackles by the dispossessed player or another defender.
