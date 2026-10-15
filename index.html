@@ -1272,6 +1272,10 @@ function advance(dt){
  }
  if(ball.owner){
   const p=ball.owner;
+  if(setPiece?.taker===p){
+   // Dead balls must remain on the awarded spot until the taker kicks.
+   ball.x=p.x;ball.z=p.z;ball.y=1.05;ball.vx=ball.vz=ball.vy=0;
+  }else{
   const moving=Math.hypot(p.vx,p.vz)>2.2;
   // Touch-based dribbling: sprinting takes a slightly heavier touch than normal pace.
   const stride=moving?Math.sin(matchTime*15)*.29:0;
@@ -1290,6 +1294,7 @@ function advance(dt){
     restartPlay(ball.lastTouchTeam===(ball.z<0?1:0)?'CORNER KICK':'GOAL KICK',
      ball.lastTouchTeam===(ball.z<0?1:0)?(ball.z<0?0:1):(ball.z<0?1:0),0,ball.z<0?-HL+12:HL-12);
   }
+  } // close normal dribble branch; set-piece ball is stationary
  }else{
   const before={x:ball.x,z:ball.z};
   ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.y+=ball.vy*dt;
