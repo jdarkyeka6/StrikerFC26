@@ -1,5 +1,19 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.8.0 · MATCHDAY STABILITY (16 October 2026)
+
+- Fixed corner kick positions after a defender dribbles the ball over their own goal line.
+- Unified loose-ball and carried-ball end-line restart calculations.
+- Cleared stale pass, offside, manual-target, spin, and release tracking on restarts and kickoffs.
+- Locked team selection and match duration during pause while preserving tactical adjustments.
+- Blocked paused-match replacement through the Club Hub or Free Training entry point.
+- Restored normal Tab, arrow and Space keyboard behaviour in menus and dropdowns.
+- Fixed old introduction and full-time text sticking around when beginning or quitting a match.
+- Advanced the offline cache version to v1.8.0 in both playable builds.
+- Added repeatable offline/web regression tests and a manual QA plan.
+
+
+
 ## Version 1.7.2 · PASSING & KEEPER POSSESSION FIX (15 October 2026)
 
 - Blocked free possession steals caused by pressing Shoot/Tackle beside a goalkeeper holding the ball. Standing, sliding and in-progress tackles cannot dispossess a holding goalkeeper; normal goalkeeper passing remains enabled.
