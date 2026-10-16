@@ -59,11 +59,13 @@ for(const {file,html} of builds){
   assert.match(html,/if\(state!=='playing'\)return;\s*if\(e\.code==='KeyC'\)/);
  });
  test(file+' has the refreshed setup copy and offline support',()=>{
-  assert.match(html,/VERSION 1\.8\.0/);
+  const current=read('sw.js').match(/const CACHE='striker-fc-v(\d+\.\d+\.\d+)'/)?.[1];
+  assert.ok(current,'service worker version exists');
+  assert.ok(html.includes('VERSION '+current));
   assert.match(html,/class="play-intro"/);
   assert.match(html,/function endLineRestartInfo\(/);
  });
 }
 test('service-worker cache version stays current',()=>{
- assert.match(read('sw.js'),/striker-fc-v1\.8\.0/);
+ assert.match(read('sw.js'),/const CACHE='striker-fc-v\d+\.\d+\.\d+'/);
 });

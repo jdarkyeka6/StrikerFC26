@@ -1,3 +1,28 @@
+# ⚽ Striker FC 26 · v1.9.0 | Less HUD, Smarter AI
+
+This update fixes distracting bottom-screen controls and improves tactical AI.
+
+## Match HUD
+- **Compact (default):** slim player name / number, stamina and radar. No persistent action instructions, tactic banner or match-stat bar obscuring the bottom.
+- **Full:** classic detailed help, tactical information and bottom match stats.
+- **Off:** scoreboard and shot-charge gauge stay, bottom player card/radar/tips disappear.
+- Choose your preference under **Settings → Match HUD**. It is stored locally and applies to **both Classic and Broadcast** cameras.
+- **F1 / ?** always opens quick controls, even when the bottom hints are hidden.
+
+## Tactical AI
+- Forwards look for through-ball channels; midfielders provide wide and short options; defenders sit behind the attack.
+- Defenders track nearby opposition runners and try to remain goal-side, not merely follow a fixed formation coordinate.
+- Computer players prefer safer passing lanes under pressure, and the pass routine now uses the specific receiver chosen by the AI.
+- Dribblers change direction to escape pressure or the sideline instead of running straight at defenders every time.
+- Existing difficulty settings, manual passing, goalkeeper protection, goals, tactics and replays remain.
+
+## Verification
+- GitHub Actions runs `node --test tests/*.test.mjs` for the website and standalone offline version.
+- Tactical behaviour is regression-tested with directional, passing-lane, sideline and HUD cases.
+- A real WebGL gameplay test is still necessary before claiming match balance has been fully validated.
+
+---
+
 # STRIKER FC 26 · Version 1.8.0 (Matchday Stability)
 
 This release is **bug-fix focused** and builds on the prior v1.7.3 passing improvements and v1.7.4 simplified UI. The current production branch remains unchanged until all pull requests are tested and merged.
