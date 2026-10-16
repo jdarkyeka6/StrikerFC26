@@ -1,0 +1,20 @@
+name: Striker FC 26 Quality Checks
+on:
+  push:
+    branches:
+      - feature/stability-matchday-v1-8-0
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test web and offline editions
+        run: node --test tests/*.test.mjs

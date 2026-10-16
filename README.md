@@ -1,3 +1,31 @@
+# STRIKER FC 26 · Version 1.8.0 (Matchday Stability)
+
+This release is **bug-fix focused** and builds on the prior v1.7.3 passing improvements and v1.7.4 simplified UI. The current production branch remains unchanged until all pull requests are tested and merged.
+
+## Gameplay fixes
+
+- **Corner kick positioning:** A defender carrying the ball out over their own goal line now gives the attacker an actual corner at the correct flag, rather than a centre-spot restart. Both loose balls and carried balls use one consistent end-line restart calculation.
+- **Stale pass state:** Dead-ball restarts and kickoffs clear incomplete passes, pending offside events, old manual pass locks, shot spin and release state.
+- **Paused match integrity:** Opponent, home club and match duration are locked while the game is paused. Difficulty, tactics, substitutions and formation can still be adjusted.
+- **Club Hub bypass:** A user cannot switch the active club through Club Hub while their match is paused.
+- **Training overwrite:** Free Training cannot silently replace an active paused game.
+- **Keyboard focus:** Tab and arrow keys work normally in menus and form controls. Camera/sound/graphics hotkeys only run during live gameplay.
+- **Match screen continuity:** Starting or quitting a match restores the updated simple match-setup description instead of outdated wording or stale full-time text.
+
+## Run the automated checks
+
+On a full repository checkout with Node.js 22 or newer, use:
+
+```bash
+node --test tests/*.test.mjs
+```
+
+The suite checks the online/offline HTML, JavaScript parsing, passing, menu structure, restart decisions, keyboard guards and pause state. Real Chrome/Edge WebGL gameplay, gamepad and disconnected offline play still need manual verification before merging.
+
+See `QA.md` for a short manual playtest checklist.
+
+---
+
 # ⚽ Striker FC 26 v1.7.4 | Clean Interface Update
 
 - Quick Setup now shows only teams, difficulty, and duration.

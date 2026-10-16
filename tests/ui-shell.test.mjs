@@ -5,6 +5,12 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {dirname,resolve} from 'node:path';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+function cacheVersion(worker){
+ const value=worker.match(/const CACHE='striker-fc-v(\d+\.\d+\.\d+)'/)?.[1];
+ assert.ok(value,'service worker should have a semantic version');
+ return value;
+}
+
 for(const file of ['index.html','offline.html']){
  const html=readFileSync(resolve(root,file),'utf8');
  test(file+' game hooks and navigation preserved',()=>{
@@ -28,6 +34,8 @@ for(const file of ['index.html','offline.html']){
 }
 test('offline and web build versions match service worker',()=>{
  const worker=readFileSync(resolve(root,'sw.js'),'utf8');
- assert.match(worker,/striker-fc-v1\.7\.4/);
- for(const file of ['index.html','offline.html'])assert.match(readFileSync(resolve(root,file),'utf8'),/VERSION 1\.7\.4/);
+ const v=cacheVersion(worker);
+ for(const file of ['index.html','offline.html']){
+  assert.ok(readFileSync(resolve(root,file),'utf8').includes('VERSION '+v));
+ }
 });

@@ -8,6 +8,13 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const site=readFileSync(resolve(root,'index.html'),'utf8');
 const offline=readFileSync(resolve(root,'offline.html'),'utf8');
 const worker=readFileSync(resolve(root,'sw.js'),'utf8');
+
+function cacheVersion(worker){
+ const value=worker.match(/const CACHE='striker-fc-v(\d+\.\d+\.\d+)'/)?.[1];
+ assert.ok(value,'service worker should have a semantic version');
+ return value;
+}
+
 function receiverPicker(content) {
  const code=content.match(/function selectPassReceiver\(options,manualTarget=null\)\{\s*[\s\S]*?\n\}/)?.[0];
  assert.ok(code,'pass selection helper must be present');
@@ -32,8 +39,8 @@ for(const [build,content] of [['website',site],['offline',offline]]) {
   assert.match(content,/manualPassTarget=null;/);
  });
 }
-test('both builds and service-worker cache have v1.7.3',()=>{
- assert.match(site,/VERSION 1\.7\.3/);
- assert.match(offline,/VERSION 1\.7\.3/);
- assert.match(worker,/const CACHE='striker-fc-v1\.7\.3'/);
+test('web and offline use the current cache version',()=>{
+ const v=cacheVersion(worker);
+ assert.ok(site.includes('VERSION '+v));
+ assert.ok(offline.includes('VERSION '+v));
 });
