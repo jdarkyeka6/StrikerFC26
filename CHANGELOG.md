@@ -1,5 +1,16 @@
 # STRIKER FC 26 · Release notes
 
+## Version 1.9.0 · CLEAN HUD & TACTICAL AI (16 October 2026)
+
+- Added Compact / Full / Off on-screen display modes, with a persistent setting.
+- Hid repetitive bottom action hints by default across both camera perspectives.
+- Reworked off-ball attacking support, positional covering and defensive marking.
+- Improved computer passing selection under pressure and wired the chosen receiver into the actual kick.
+- Added pressure-aware dribble movement and new AI/HUD regression cases.
+- Updated the offline single-file edition and service worker cache to v1.9.0.
+
+
+
 ## Version 1.8.0 · MATCHDAY STABILITY (16 October 2026)
 
 - Fixed corner kick positions after a defender dribbles the ball over their own goal line.

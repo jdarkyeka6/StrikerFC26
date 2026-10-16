@@ -34,3 +34,15 @@ The regression tests cover static JavaScript parsing, restart calculations, stat
 - [ ] Test keyboard and Xbox/PlayStation compatible gamepad if available.
 
 Automated test command: `node --test tests/*.test.mjs`
+
+## v1.9.0 HUD and AI
+- [ ] Play Broadcast and Classic with Compact HUD: bottom is clear and player card stays small.
+- [ ] Settings → Match HUD → Full: the detailed guide and stats reappear.
+- [ ] Settings → Match HUD → Off: bottom widgets disappear while the shot gauge and scoreboard remain.
+- [ ] Reload and open offline.html to verify local HUD preference and camera parity.
+- [ ] Opponent defenders should track nearby attackers instead of drifting away.
+- [ ] Watch CPU passing under pressure and verify clear outlets get used.
+- [ ] Look for midfield triangles, forward runs and intelligent dribbling near the touchline.
+- [ ] Confirm beginner remains forgiving and legend remains challenging.
+- [ ] Check free kicks, offside and goalkeepers after the tactical changes.
+
