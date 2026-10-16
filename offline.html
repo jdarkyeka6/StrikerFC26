@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.7.3 · PASSING & KEEPER FIXES</title><meta name="theme-color" content="#071522"/><meta name="application-name" content="Striker FC 26"/><meta name="description" content="Striker FC 26: offline-ready 3D football"/><style>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.7.4 · PASSING & KEEPER FIXES</title><meta name="theme-color" content="#071522"/><meta name="application-name" content="Striker FC 26"/><meta name="description" content="Striker FC 26: offline-ready 3D football"/><style>
 /* Fully local system fonts: no Google Fonts or other network request. */
 :root{font-family:'Segoe UI',Arial,sans-serif;color:#f2fbff;background:#071522;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}#game,canvas{width:100vw;height:100vh;display:block}#game{position:fixed;inset:0}body:after{pointer-events:none;position:fixed;inset:0;content:'';background:linear-gradient(180deg,rgba(2,13,19,.44),transparent 25%,transparent 68%,rgba(2,13,19,.66));z-index:1}.hud,.bottom{position:absolute;z-index:3;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.hud{top:20px;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:220px}.brand-icon{font:900 24px 'Arial Narrow';border:2px solid #67f4ba;width:43px;height:43px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b2b2e;color:white}.brand-icon span{color:#67f4ba}.brand strong,.brand small{display:block}.brand strong{font:800 22px 'Arial Narrow';letter-spacing:2px}.brand strong span{color:#67f4ba}.brand small{font-size:9px;letter-spacing:2.1px;color:#aac2c9}.scoreboard{display:flex;align-items:center;background:rgba(4,23,32,.88);border:1px solid rgba(158,255,224,.22);border-radius:12px;overflow:hidden;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}.club{font:800 16px 'Arial Narrow';letter-spacing:1.6px;padding:14px 16px}.home{color:#84f8cc}.away{color:#ff9d96}.score{font:900 28px 'Arial Narrow';display:flex;align-items:center;gap:12px;background:#07141b;padding:6px 20px}.score span{font-size:18px;color:#8c9eaa}.clock{padding:14px;border-left:1px solid #34535d;font:800 15px 'Arial Narrow';color:#cfe5e5;min-width:62px;text-align:center}.top-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}.pill{border:1px solid #5fe9b7;color:#5fe9b7;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1.7px;background:#021b1bd9}.top-right button{pointer-events:auto;color:#dcfff3;border:1px solid #546c78;background:#041924aa;width:39px;height:39px;border-radius:9px;cursor:pointer}.bottom{bottom:22px;align-items:flex-end;gap:20px}.player-card{background:#041923d9;border:1px solid #6bf3b447;border-radius:12px;display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:238px;backdrop-filter:blur(12px)}.player-no{font:900 46px 'Arial Narrow';color:#7cffc3;line-height:1}.player-card small{display:block;font-size:8px;letter-spacing:1.7px;color:#9cb7bc}.player-card strong{display:block;font:800 18px 'Arial Narrow';letter-spacing:.8px}.player-card span{font:700 9px 'Segoe UI';letter-spacing:1.3px;color:#78e5ba}.action-hint{position:absolute;bottom:80px;left:0;color:#a4eecd;font:800 10px 'Segoe UI';letter-spacing:1.2px;background:#031a24db;padding:7px 11px;border:1px solid #4deab355;border-radius:7px;pointer-events:none}.shot-gauge{position:absolute;bottom:73px;left:0;width:238px;height:5px;background:#274850;border-radius:5px;overflow:hidden;opacity:0;transition:opacity .1s}.shot-gauge.active{opacity:1}.shot-gauge span{display:block;width:0;height:100%;background:linear-gradient(90deg,#67f7b8,#ffde7c,#fb7976)}.stamina{width:4px;height:45px;background:#2f5361;border-radius:4px;margin-left:auto;position:relative;overflow:hidden}.stamina span{position:absolute;bottom:0;width:100%;background:#82fac4;height:100%;transition:height .15s}.controls{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center;font-size:11px;color:#d6e8e8;background:#041923b6;border-radius:9px;padding:12px 16px;max-width:650px}.controls kbd{font:700 10px 'Segoe UI';background:#d4fff0;color:#12382d;padding:4px 6px;border-radius:4px;margin-right:4px}.radar{width:150px;height:95px;border:1px solid #8bccb1;background:#09281f99;border-radius:4px;position:relative;flex-shrink:0}.radar:before{content:'';position:absolute;inset:7px;border:1px solid #8bccb180}.radar-mid{position:absolute;top:7px;bottom:7px;left:50%;width:1px;background:#8bccb180}.radar-mid:after{content:'';position:absolute;width:35px;height:35px;border:1px solid #8bccb180;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}.dot{position:absolute;width:5px;height:5px;border-radius:50%;z-index:1;transform:translate(-50%,-50%)}.dot.a{background:#80ffbf}.dot.b{background:#ff9991}.dot.ball{background:white;width:4px;height:4px}.dot.active{box-shadow:0 0 0 3px #fff7}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;background:linear-gradient(90deg,#04151fee 0%,#051923e8 38%,#07152250 100%);transition:opacity .3s}.overlay.hidden{opacity:0;pointer-events:none}.panel{max-width:590px;margin-left:clamp(28px,9vw,150px)}.eyebrow{color:#7dfbc1;font-size:12px;letter-spacing:3px;font-weight:800}.panel h1{font:900 clamp(70px,9vw,130px)/.85 'Arial Narrow';letter-spacing:-1px;margin:20px 0;text-shadow:0 10px 40px #0004}.panel h1 em{color:#72f4b8;font-style:normal}.panel p{max-width:440px;line-height:1.7;color:#b8cdd2;font-size:14px}.features{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.features span{border:1px solid #41666b;background:#092832b0;padding:9px 12px;font-size:10px;letter-spacing:1px;font-weight:800}
 .half-coach{display:grid;grid-template-columns:1fr 1fr;max-width:550px;gap:14px;margin:18px auto}
@@ -160,10 +160,91 @@
 @media(max-width:560px){.menu-shell{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.menu-sidebar{padding:9px;display:flex;flex-direction:row;align-items:center;overflow-x:auto}.menu-logo{margin:0;flex-shrink:0}.menu-logo-mark{width:36px;height:36px}.menu-nav{flex-direction:row;flex-wrap:nowrap;gap:3px}.menu-nav-btn{padding:9px;min-width:38px}.menu-main{padding:0 12px 28px}.menu-topbar{padding:0 12px;margin:0 -12px 12px}.menu-hero{min-height:265px;padding:18px}.menu-hero h2{font-size:58px}.home-metrics{grid-template-columns:1fr}.home-tiles{grid-template-columns:1fr}.home-tile{min-height:125px}.menu-coming{padding:20px}.roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roster-card{min-height:238px}}
 
 .offline-ready{font-size:11px;font-weight:800;letter-spacing:1px;color:#b8f9dc;margin:8px 0 12px;padding:8px 12px;background:#11332c;border:1px solid #39765d;border-radius:6px;width:fit-content}.offline-ready[data-ready="false"]{color:#a8b5c0;background:#172530;border-color:#324758}
+
+/* V1.7.4 UI: calm HUD, readable navigation, progressive disclosure */
+#menu-play .panel{max-width:720px}
+#menu-play .panel h1{font-size:clamp(38px,5vw,57px);line-height:1.06;letter-spacing:-.5px}
+#menu-play .play-intro,.menu-page-intro p,.settings-cards p{font-size:14px;line-height:1.6;color:#d0e7dd}
+#menu-play .match-setup{max-width:720px}
+.menu-nav-btn{font-size:13px;min-height:44px}
+.menu-section-label{font-size:12px}
+.menu-nav-btn:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #ffe48c;outline-offset:2px}
+.setup-grid{gap:15px}
+.setup-heading{font-size:17px}
+.setup-heading span{font-size:11px}
+.setup-control{font-size:12px;line-height:1.4;letter-spacing:.2px}
+.setup-control select{font-size:13px;min-height:44px;margin-top:7px}
+.quick-difficulty .difficulty-panel{border:0;background:transparent;margin:0;padding:0;max-width:none}
+.quick-difficulty .difficulty-panel label{font-size:12px;letter-spacing:.2px}
+.quick-difficulty .difficulty-panel select{font-size:13px;min-height:44px}
+.quick-difficulty .difficulty-note{font-size:11px!important;line-height:1.4!important}
+.quick-difficulty .difficulty-note:last-child{display:none}
+.ui-disclosure{background:#0e2a35;border:1px solid #7ad6b26a;border-radius:11px;margin:16px 0;padding:0}
+.ui-disclosure summary{display:flex;align-items:center;gap:14px;min-height:48px;padding:14px 17px;font-size:14px;font-weight:800;cursor:pointer;list-style:none;color:#e1fff1}
+.ui-disclosure summary::-webkit-details-marker{display:none}
+.ui-disclosure summary:before{content:'＋';font-size:18px;color:#78eeb1}
+.ui-disclosure[open] summary:before{content:'－'}
+.ui-disclosure[open] summary{border-bottom:1px solid #72cbaa44}
+.ui-disclosure summary small{font-size:12px;color:#badad0;font-weight:500;margin-left:auto;text-align:right}
+.ui-disclosure > .setup-grid,.ui-disclosure > .mouse-panel,.ui-disclosure > p,.ui-disclosure > .offline-download{margin:16px}
+.ui-disclosure > p{font-size:13px;line-height:1.5}
+.ui-disclosure > .offline-download{display:inline-block}
+.ui-disclosure .mouse-panel{max-width:none}
+#match-controls{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);width:min(550px,calc(100vw - 24px));max-height:65vh;overflow:auto;z-index:5;pointer-events:auto;display:block;padding:17px;background:#061d28f5;border:1px solid #8effc3;border-radius:12px;box-shadow:0 18px 55px #000b}
+#match-controls[hidden]{display:none!important}
+.help-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;margin-bottom:12px;color:#e4fff1}
+.help-heading button{border:1px solid #87dbae;background:#173b42;color:#fff;min-width:40px;min-height:40px;border-radius:8px;cursor:pointer}
+#match-controls .help-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#match-controls .help-grid>div{display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.4}
+#match-controls kbd,.control-item kbd{font:800 11px 'Segoe UI',Arial;background:#b9fbd6;color:#0a3027;padding:6px;border-radius:5px}
+#match-controls p{font-size:12px;color:#c5e1d4;line-height:1.5;margin:14px 0 0}
+#hud-help{font-weight:900;font-size:18px}
+.control-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.control-category{background:#0b2832;border:1px solid #629c83;border-radius:11px;padding:18px;min-width:0}
+.control-category h3{font:900 20px 'Segoe UI',Arial;color:#e7fff0;margin:0 0 8px}
+.control-category p{font-size:13px;line-height:1.5;color:#beddd2;margin:0 0 12px}
+.control-item{display:grid;grid-template-columns:minmax(0,45%) minmax(0,1fr);align-items:center;gap:12px;padding:10px 0;border-top:1px solid #629c8340;color:#e8f6ee;font-size:13px;line-height:1.5}
+.control-item kbd{justify-self:start;white-space:normal}
+.ui-play-link{margin-top:20px}
+#menu-club .club-future{margin-top:18px;background:#174047;color:#e3fff0;border:1px solid #71cb9f;border-radius:8px;padding:12px 16px;cursor:pointer}
+@media(max-width:850px){
+.menu-shell{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+.menu-sidebar{display:flex;flex-direction:row;align-items:center;gap:12px;padding:8px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid #7afbc224}
+.menu-logo{margin:0;flex-shrink:0}
+.menu-logo>div{display:block}
+.menu-nav{display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px}
+.menu-nav-btn{min-width:max-content;justify-content:flex-start;font-size:12px;white-space:nowrap;padding:10px 12px}
+.menu-nav-btn>span{font-size:18px}
+.menu-nav-label,.menu-side-foot{display:none}
+.menu-main{padding:0 18px 25px}
+.menu-topbar{padding:0 18px;margin:0 -18px 20px}
+}
+@media(max-width:650px){
+.menu-logo>div{display:none}
+.control-categories{grid-template-columns:1fr}
+.control-item{grid-template-columns:1fr;gap:8px}
+.setup-grid{grid-template-columns:1fr}
+.ui-disclosure summary{flex-wrap:wrap}
+.ui-disclosure summary small{width:100%;margin-left:28px;text-align:left}
+#match-controls .help-grid{grid-template-columns:1fr}
+#menu-play .panel h1{font-size:40px}
+.menu-hero h2{font-size:clamp(40px,9vw,58px)}
+.menu-page-intro h2{font-size:clamp(40px,9vw,60px)}
+.menu-main{padding:0 14px 25px}
+.menu-topbar{padding:0 14px;margin:0 -14px 15px}
+.menu-topbar .menu-season{display:none}
+}
+@media(max-width:450px){
+.menu-nav-btn{font-size:12px;min-height:44px}
+.tactic-indicator{display:none}
+.player-card{min-width:185px;padding:10px}
+#match-controls{bottom:76px}
+}
 </style></head><body>
 <div id="game"></div>
-<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.7.1 · SINGLE-FILE OFFLINE</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
-<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span><small id="player-energy">ENERGY 100%</small><small id="pass-target-hint">F · SELECT PASS TARGET</small></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls"><div><kbd>W A S D</kbd> Move</div><div><kbd>SHIFT</kbd> Sprint</div><div><kbd>SPACE / LMB</kbd> Shoot · Stand tackle</div><div><kbd>Z / X / B</kbd> Finesse · Chip · Low driven</div><div><kbd>H / SLASH / N</kbd> Header · Volley · Bicycle</div><div><kbd>4–8</kbd> Stepover · Roll · Fake · Roulette · Dragback</div><div><kbd>V / SHIFT+LMB / R3</kbd> Slide tackle</div><div><kbd>E / RMB</kbd> Pass</div><div><kbd>SHIFT + E/RMB</kbd> Driven pass</div><div><kbd>R / MMB</kbd> Through ball</div><div><kbd>T / M5</kbd> Cross</div><div><kbd>Q / M4</kbd> Switch</div><div><kbd>1/2/3</kbd> Tactics</div><div><kbd>P</kbd> Subs / formation</div><div><kbd>Tab</kbd> Match Stats</div><div><kbd>F</kbd> Pass target / Jockey</div><div><kbd>Y</kbd> Teammate contain</div><div><kbd>U / PAD VIEW (HOLD)</kbd> Rush goalkeeper</div><div><kbd>J / L · I / K · O</kbd> Set-piece aim · height · runner</div><div><kbd>P</kbd> Pause</div><div><kbd>C</kbd> Camera</div><div><kbd>[ / ]</kbd> Camera zoom</div><div><kbd>G</kbd> Graphics quality</div></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
+<header class="hud"><div class="brand"><span class="brand-icon">S<span>F</span></span><div><strong>STRIKER <span>FC</span></strong><small>VERSION 1.7.1 · SINGLE-FILE OFFLINE</small></div></div><div class="scoreboard"><div class="club home" id="home-club">STRIKER</div><div class="score"><b id="home-score">0</b><span>:</span><b id="away-score">0</b></div><div class="club away" id="away-club">RIVALS</div><div class="clock" id="clock">00:00</div></div><div class="top-right"><span class="pill" id="difficulty-badge">BEGINNER</span><span class="pill" id="status">KICK OFF</span><button id="audio" aria-label="Toggle match sounds" title="Match sound: M">🔊</button><button id="cam" aria-label="Toggle camera view" title="Camera: C">📹</button><button type="button" id="hud-help" aria-controls="match-controls" aria-expanded="false" aria-label="Quick controls" title="Quick controls: F1">?</button><button id="pause" aria-label="Pause or resume">Ⅱ</button></div></header>
+<div class="bottom"><div class="player-card"><div class="player-no" id="player-number">09</div><div><small>CONTROLLED PLAYER</small><strong id="player-name">ALEX MORGAN</strong><span id="player-role">STRIKER</span><small id="player-energy">ENERGY 100%</small><small id="pass-target-hint">F · SELECT PASS TARGET</small></div><div class="stamina"><span id="stamina-bar"></span></div></div><div class="tactic-indicator" id="tactic-indicator">⚙ BALANCED · 4-3-3</div><div class="action-hint" id="action-hint">MOVE TO DRIBBLE • E PASS • HOLD SPACE TO SHOOT</div><div class="shot-gauge" id="shot-gauge"><span id="shot-fill"></span></div><div class="controls" id="match-controls" role="region" aria-label="Quick controls" hidden><div class="help-heading"><strong>QUICK CONTROLS</strong><button type="button" id="close-hud-help" aria-label="Close quick controls">✕</button></div><div class="help-grid">
+<div><kbd>WASD</kbd>Move</div><div><kbd>SHIFT</kbd>Sprint</div><div><kbd>E / RMB</kbd>Pass</div><div><kbd>SPACE / LMB</kbd>Shoot / tackle</div><div><kbd>R / MMB</kbd>Through ball</div><div><kbd>Q</kbd>Switch player</div><div><kbd>F / D-PAD ↑</kbd>Pass target</div><div><kbd>V</kbd>Slide tackle</div></div><p>More controls: pause, then open the Controls menu.</p></div><div class="radar" id="radar"><div class="radar-mid"></div></div></div>
 <div class="message" id="message">KICK OFF</div>
 <div class="half-panel hidden" id="half-panel"><div class="half-card"><div class="eyebrow" id="half-eyebrow">HALF TIME</div><h2 id="half-heading">THE BREAK</h2><div class="half-score" id="half-score">0 : 0</div><p id="half-subtitle">Time to change the game plan.</p>
 <div class="half-coach"><label class="setup-control">SECOND-HALF TACTIC
@@ -183,7 +264,7 @@
 </div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
 <div class="overlay" id="overlay"><div class="menu-shell">
  <aside class="menu-sidebar">
- <div class="menu-logo"><span class="menu-logo-mark">SF</span><div><strong>STRIKER FC 26</strong><small>THE CLUBHOUSE · V1.7.0</small></div></div>
+ <div class="menu-logo"><span class="menu-logo-mark">SF</span><div><strong>STRIKER FC 26</strong><small>THE CLUBHOUSE · V1.7.4</small></div></div>
  <div class="menu-nav-label">FOOTBALL</div>
  <nav class="menu-nav" aria-label="Main game menu">
  <button class="menu-nav-btn selected" data-menu="home"><span>⌂</span> HOME</button>
@@ -191,7 +272,7 @@
  <button class="menu-nav-btn" data-menu="squad"><span>▦</span> MY SQUAD</button>
  <button class="menu-nav-btn" data-menu="club"><span>♜</span> CLUB HUB</button>
  <div class="menu-nav-label">CLUBHOUSE</div>
- <button class="menu-nav-btn" data-menu="packs"><span>✦</span> PACKS <small>SOON</small></button>
+ <button class="menu-nav-btn" data-menu="controls"><span>⌨</span> CONTROLS</button>
  <button class="menu-nav-btn" data-menu="settings"><span>⚙</span> SETTINGS</button>
  </nav>
  <div class="menu-side-foot"><strong id="sidebar-club-name">STRIKER FC</strong><span id="sidebar-record">0 W · 0 D · 0 L</span><span>YOUR CLUB · SEASON 01</span></div>
@@ -218,38 +299,21 @@
  <button id="home-club-button" class="home-tile"><span class="tile-icon">♜</span><strong>YOUR CLUB</strong><small>Meet the players and their identities</small><span class="tile-arrow">↗</span></button>
  </div>
  </section>
- <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel"><div class="eyebrow">STRIKER FC / VERSION 1.7.1</div><div id="offline-status" class="offline-ready" data-ready="false" role="status" aria-live="polite">OFFLINE MODE · INSTALLING LOCAL CACHE…</div><h1>THE PITCH<br/><em>IS YOURS.</em></h1><p>VERSION 1.7.1 · SINGLE-FILE OFFLINE. Once loaded online, the website caches the full game for offline play. Download offline.html to play locally without a server. Total Football, assisted passing, skills, slide tackles and keeper balance remain. Choose your club, stadium and tactics. Play 11v11 or jump into Free Training. Celebrate goals, watch replays, survive halftime and build your club record.</p><div class="features"><span>⚽ 11v11 LIVE FOOTBALL</span><span>🧠 CUSTOM TACTICS</span><span>🎮 CONTROLLER READY</span><span>🎬 REPLAYS & HIGHLIGHTS</span></div>
-<div class="match-setup">
- <div class="setup-heading">MATCH SETUP <span>SEASON 01 · ORIGINAL CLUBS</span></div>
- <div class="setup-grid">
-  <label class="setup-control">YOUR CLUB<select id="home-select" aria-label="Choose your club">
+ <section class="menu-screen" id="menu-play" aria-label="Match setup"><div class="panel">
+<span class="eyebrow">MATCHDAY · QUICK SETUP</span><h1>READY TO <em>PLAY?</em></h1>
+<p class="play-intro">Choose your teams, difficulty and match length. Advanced options are there when you need them.</p>
+<div id="offline-status" class="offline-ready" data-ready="false" role="status" aria-live="polite">OFFLINE MODE · INSTALLING LOCAL CACHE…</div>
+<details class="ui-disclosure" id="offline-options"><summary>Play without internet <small>Offline download</small></summary>
+<p>Download the standalone HTML for fully offline play, or install the website after it finishes caching.</p>
+<a class="offline-download" href="./offline.html" download="StrikerFC26-offline.html">DOWNLOAD OFFLINE GAME ↓</a></details>
+<div class="match-setup"><div class="setup-heading">QUICK SETUP <span>READY IN SECONDS</span></div>
+<div class="setup-grid"><label class="setup-control">YOUR CLUB<select id="home-select" aria-label="Choose your club">
    <option value="striker">STRIKER FC</option><option value="tide">TIDE CITY</option><option value="aurora">AURORA ATHLETIC</option><option value="volt">VOLT UNITED</option><option value="ember">EMBER ROVERS</option><option value="polar">POLAR FC</option>
   </select></label>
   <label class="setup-control">OPPONENT<select id="away-select" aria-label="Choose opponent">
    <option value="ember">EMBER ROVERS</option><option value="striker">STRIKER FC</option><option value="tide">TIDE CITY</option><option value="aurora">AURORA ATHLETIC</option><option value="volt">VOLT UNITED</option><option value="polar">POLAR FC</option>
   </select></label>
-  <label class="setup-control">MATCH LENGTH<select id="duration-select"><option value="240">4 MIN · QUICK MATCH</option><option value="480">8 MIN · STANDARD</option><option value="720">12 MIN · LONG MATCH</option></select></label>
-  <label class="setup-control">STADIUM<select id="stadium-select"><option value="day">DAYLIGHT</option><option value="sunset">GOLDEN HOUR</option><option value="night">NIGHT GAME</option><option value="rain">RAINY NIGHT</option></select></label>
-  <label class="setup-control">YOUR TACTIC<select id="tactic-select"><option value="balanced">BALANCED</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select></label>
-<label class="setup-control">YOUR FORMATION<select id="formation-select"><option value="433">4-3-3 · WIDE</option><option value="442">4-4-2 · TWO STRIKERS</option><option value="4231">4-2-3-1 · CONTROL</option></select></label>
- </div>
- <div class="kit-preview"><span id="kit-home" class="kit-chip"></span><span id="kit-match-label">STRIKER FC vs EMBER ROVERS</span><span id="kit-away" class="kit-chip"></span></div>
-</div><div class="mouse-panel">
- <div class="mouse-title">🖱️ MOUSE BUTTON CONTROLS <label class="mouse-enabled"><input type="checkbox" id="mouse-enabled" checked /> ENABLED</label></div>
- <div class="mouse-bindings">
-  <span><kbd>LEFT CLICK (HOLD)</kbd> Shoot / Stand tackle</span><span><kbd>SHIFT + LEFT CLICK</kbd> Slide tackle</span>
-  <span><kbd>RIGHT CLICK</kbd> Pass</span>
-  <span><kbd>MIDDLE CLICK</kbd> Through ball</span>
-  <span><kbd>BACK BUTTON</kbd> Switch player</span>
-  <span><kbd>FORWARD BUTTON</kbd> Cross</span>
-  <span><kbd>SCROLL WHEEL</kbd> Camera zoom</span>
- </div>
- <div class="mouse-footnote">Mouse controls only work over the pitch during play. Keyboard and controller still work.</div>
-</div><div class="substitutions-panel" id="pause-sub-panel" hidden><strong>🔄 MATCHDAY BENCH</strong><span id="pause-subs-left">5 LEFT</span>
-<div class="subs-grid"><select id="pause-sub-out" aria-label="Player to take off"></select><select id="pause-sub-in" aria-label="Player to bring on"></select></div>
-<button id="pause-sub-apply" type="button">CONFIRM SUBSTITUTION</button>
-<p id="pause-sub-status">Pause during a match to make up to five substitutions.</p></div>
-<div class="difficulty-panel">
+  <div class="setup-control quick-difficulty"><div class="difficulty-panel">
 <label for="difficulty">MATCH DIFFICULTY</label>
 <select id="difficulty" aria-label="Match difficulty">
 <option value="beginner" selected>🟢 Beginner · Learning the controls</option>
@@ -260,13 +324,25 @@
 <p class="difficulty-note" id="difficulty-description">Slow opponents, less pressure and more time on the ball</p>
 <p class="difficulty-note">Change difficulty any time while paused.</p>
 </div>
+</div><label class="setup-control">MATCH LENGTH<select id="duration-select"><option value="240">4 MIN · QUICK MATCH</option><option value="480">8 MIN · STANDARD</option><option value="720">12 MIN · LONG MATCH</option></select></label>
+  </div>
+<details class="ui-disclosure" id="match-advanced"><summary>Advanced match options <small>Stadium · tactics · formation</small></summary>
+<div class="setup-grid"><label class="setup-control">STADIUM<select id="stadium-select"><option value="day">DAYLIGHT</option><option value="sunset">GOLDEN HOUR</option><option value="night">NIGHT GAME</option><option value="rain">RAINY NIGHT</option></select></label>
+  <label class="setup-control">YOUR TACTIC<select id="tactic-select"><option value="balanced">BALANCED</option><option value="attacking">ALL-OUT ATTACK</option><option value="defensive">PARK THE BUS</option></select></label>
+<label class="setup-control">YOUR FORMATION<select id="formation-select"><option value="433">4-3-3 · WIDE</option><option value="442">4-4-2 · TWO STRIKERS</option><option value="4231">4-2-3-1 · CONTROL</option></select></label>
+ </div></details><div class="kit-preview"><span id="kit-home" class="kit-chip"></span><span id="kit-match-label">STRIKER FC vs EMBER ROVERS</span><span id="kit-away" class="kit-chip"></span></div>
+</div>
+<div class="substitutions-panel" id="pause-sub-panel" hidden><strong>🔄 MATCHDAY BENCH</strong><span id="pause-subs-left">5 LEFT</span>
+<div class="subs-grid"><select id="pause-sub-out" aria-label="Player to take off"></select><select id="pause-sub-in" aria-label="Player to bring on"></select></div>
+<button id="pause-sub-apply" type="button">CONFIRM SUBSTITUTION</button>
+<p id="pause-sub-status">Pause during a match to make up to five substitutions.</p></div>
 <button class="primary" id="start">START MATCH <span>↗</span></button>
 <button class="primary highlights-btn" id="training">🎯 FREE TRAINING <span>↗</span></button>
 <button class="primary highlights-btn" id="quit-match" hidden>✕ RETURN TO MAIN MENU <span>↗</span></button>
 <button class="primary highlights-btn" id="highlights" hidden>▶ WATCH MATCH HIGHLIGHTS <span>↗</span></button>
 <button class="primary highlights-btn" id="match-report" hidden>▤ FULL MATCH REPORT <span>↗</span></button>
-<div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">NO INSTALL · INTERNET REQUIRED · KEYBOARD + MOUSE + CONTROLLER</div></div></section>
- <section class="menu-screen" id="menu-squad" aria-label="Squad">
+<div class="club-record" id="club-record">SEASON RECORD · NO MATCHES YET</div><div class="hint">OFFLINE-READY · KEYBOARD + MOUSE + CONTROLLER</div></div></section>
+<section class="menu-screen" id="menu-squad" aria-label="Squad">
  <div class="menu-page-intro"><span class="menu-eyebrow">YOUR STARTING XI & BENCH</span><h2>THE <em>SQUAD.</em></h2><p>Real names, permanent profiles, individual ratings and consistent appearances. Every club has its own 16 players.</p></div>
  <div class="squad-controls"><label>VIEW CLUB <select id="squad-club-select"><option value="striker">STRIKER FC</option><option value="tide">TIDE CITY</option><option value="aurora">AURORA ATHLETIC</option><option value="volt">VOLT UNITED</option><option value="ember">EMBER ROVERS</option><option value="polar">POLAR FC</option></select></label>
  <label>POSITION <select id="squad-filter"><option value="all">ALL PLAYERS</option><option value="FWD">FORWARDS</option><option value="MID">MIDFIELDERS</option><option value="DEF">DEFENDERS</option><option value="GK">GOALKEEPERS</option></select></label><span id="squad-count">16 PLAYERS</span></div>
@@ -275,18 +351,34 @@
  </section>
  <section class="menu-screen" id="menu-club" aria-label="Club info">
  <div class="menu-page-intro"><span class="menu-eyebrow">CLUB DATABASE · SEASON 01</span><h2>THE <em>LEAGUE.</em></h2><p>Six original clubs. Every squad has its own identity, footballers, and team ratings.</p></div>
- <div id="club-list" class="club-list"></div></section>
+ <div id="club-list" class="club-list"></div><button type="button" id="club-packs-link" class="club-future">✦ FUTURE PLAYER PACKS →</button></section>
  <section class="menu-screen" id="menu-packs" aria-label="Packs planned">
- <div class="menu-coming"><span>✦</span><small>FUTURE CLUBHOUSE FEATURE</small><h2>PLAYER <em>PACKS.</em></h2><p>Reserved for the next upgrade. No pack openings, currencies, odds, purchases or collections are active yet.</p><strong>COMING LATER · NOT AVAILABLE</strong></div>
+ <div class="menu-coming"><span>✦</span><small>FUTURE CLUBHOUSE FEATURE</small><h2>PLAYER <em>PACKS.</em></h2><p>Reserved for the next upgrade. No pack openings, currencies, odds, purchases or collections are active yet.</p><strong>COMING LATER · NOT AVAILABLE</strong><div><button type="button" id="packs-back" class="menu-action-secondary">← BACK TO CLUBS</button></div></div>
  </section>
  <section class="menu-screen" id="menu-settings" aria-label="Settings">
- <div class="menu-page-intro"><span class="menu-eyebrow">MAKE IT YOUR GAME</span><h2>GAME <em>SETTINGS.</em></h2><p>Customize your controls and match presentation without leaving the clubhouse.</p></div>
- <div class="settings-cards">
- <div><strong>CONTROLS</strong><p>WASD move · Space / left click shoot or stand tackle · Z finesse / X chip / B low driven · H header / Slash volley / N bicycle · 4–8 skill moves · F pass target / jockey · Y contain / hold U keeper rush · J/L and I/K set-piece aiming · V or Shift+left click slide tackle · R3 on controller slide tackle · E / right click pass · R / middle click through pass · Q switch players</p><button id="settings-mouse">MOUSE INPUT: ON</button></div>
- <div><strong>MATCH DIFFICULTY</strong><p id="settings-difficulty">Beginner · Relaxed play</p><button id="settings-open-match">EDIT MATCH SETTINGS →</button></div>
- <div><strong>CAMERA & GRAPHICS</strong><p>Broadcast follow camera, zoom, low graphics and stadium settings are available during a match.</p><button id="settings-open-camera">EDIT MATCH SETUP →</button></div>
- </div></section>
- </main></div></div>
+<div class="menu-page-intro"><span class="menu-eyebrow">CUSTOMISE YOUR GAME</span><h2>GAME <em>SETTINGS.</em></h2><p>Simple choices first. More detailed options are tucked into their own sections.</p></div>
+<div class="settings-cards">
+<div><strong>Controls</strong><p>A clear guide to movement, passing, shooting and defending.</p><button type="button" id="settings-open-controls">VIEW CONTROLS →</button></div>
+<div><strong>Mouse controls</strong><p>Use mouse buttons for actions, or turn them off for keyboard/controller play.</p><button type="button" id="settings-mouse">MOUSE INPUT: ON</button></div>
+<div><strong>Match difficulty</strong><p id="settings-difficulty">Beginner · Relaxed play</p><button type="button" id="settings-open-match">EDIT MATCH SETUP →</button></div>
+<div><strong>Camera & presentation</strong><p>Camera, graphics, stadium conditions and match length.</p><button type="button" id="settings-open-camera">MATCH SETTINGS →</button></div></div>
+<details class="ui-disclosure" id="input-options"><summary>Mouse button bindings <small>Advanced input</small></summary><div class="mouse-panel">
+ <div class="mouse-title">🖱️ MOUSE BUTTON CONTROLS <label class="mouse-enabled"><input type="checkbox" id="mouse-enabled" checked /> ENABLED</label></div>
+ <div class="mouse-bindings">
+  <span><kbd>LEFT CLICK (HOLD)</kbd> Shoot / Stand tackle</span><span><kbd>SHIFT + LEFT CLICK</kbd> Slide tackle</span>
+  <span><kbd>RIGHT CLICK</kbd> Pass</span>
+  <span><kbd>MIDDLE CLICK</kbd> Through ball</span>
+  <span><kbd>BACK BUTTON</kbd> Switch player</span>
+  <span><kbd>FORWARD BUTTON</kbd> Cross</span>
+  <span><kbd>SCROLL WHEEL</kbd> Camera zoom</span>
+ </div>
+ <div class="mouse-footnote">Mouse controls only work over the pitch during play. Keyboard and controller still work.</div>
+</div></details></section>
+<section class="menu-screen" id="menu-controls" aria-label="How to play">
+<div class="menu-page-intro"><span class="menu-eyebrow">HOW TO PLAY</span><h2>GAME <em>CONTROLS.</em></h2><p>Start with the essentials. Use F1 or ? during a match for quick help.</p></div>
+<div class="control-categories"><section class="control-category"><h3>Essentials</h3><p>The controls you'll use most.</p><div class="control-item"><kbd>W A S D / ARROWS</kbd><span>Move</span></div><div class="control-item"><kbd>SHIFT</kbd><span>Sprint</span></div><div class="control-item"><kbd>E / RIGHT CLICK / GAMEPAD A</kbd><span>Short pass</span></div><div class="control-item"><kbd>SPACE / LEFT CLICK / GAMEPAD B</kbd><span>Hold to shoot, tackle while defending</span></div><div class="control-item"><kbd>Q / GAMEPAD LB</kbd><span>Switch player</span></div></section><section class="control-category"><h3>Attacking</h3><p>Once you're comfortable with the basics.</p><div class="control-item"><kbd>R / MIDDLE CLICK / GAMEPAD Y</kbd><span>Through ball</span></div><div class="control-item"><kbd>T / GAMEPAD X</kbd><span>Cross</span></div><div class="control-item"><kbd>SHIFT + E</kbd><span>Driven pass</span></div><div class="control-item"><kbd>F / D-PAD UP</kbd><span>Select pass target while attacking</span></div><div class="control-item"><kbd>SHIFT + F</kbd><span>Clear the manual pass target</span></div><div class="control-item"><kbd>Z / X / B</kbd><span>Finesse / chip / low driven</span></div><div class="control-item"><kbd>H / SLASH / N</kbd><span>Header / volley / bicycle</span></div><div class="control-item"><kbd>4 / 5 / 6 / 7 / 8</kbd><span>Stepover / roll / fake / roulette / drag-back</span></div></section><section class="control-category"><h3>Defending</h3><p>Protect your goal.</p><div class="control-item"><kbd>SPACE / LEFT CLICK</kbd><span>Standing tackle</span></div><div class="control-item"><kbd>V / SHIFT + LEFT CLICK / R3</kbd><span>Slide tackle</span></div><div class="control-item"><kbd>F</kbd><span>Jockey</span></div><div class="control-item"><kbd>Y</kbd><span>Teammate contain</span></div><div class="control-item"><kbd>HOLD U / GAMEPAD VIEW</kbd><span>Rush goalkeeper</span></div></section><section class="control-category"><h3>Set pieces & match</h3><p>Tools you can learn later.</p><div class="control-item"><kbd>1 / 2 / 3</kbd><span>Tactics</span></div><div class="control-item"><kbd>J / L · I / K · O</kbd><span>Set piece aim / height / runner</span></div><div class="control-item"><kbd>P / ESC</kbd><span>Pause and substitutions</span></div><div class="control-item"><kbd>TAB</kbd><span>Match report</span></div><div class="control-item"><kbd>C / [ / ]</kbd><span>Camera / zoom</span></div><div class="control-item"><kbd>F1</kbd><span>Quick match controls</span></div></section></div>
+<button type="button" id="controls-go-play" class="menu-action-primary ui-play-link">GO TO MATCH SETUP →</button></section>
+</main></div></div>
 <script type="module">
 // Official Three.js r180. Local MIT-licensed engine, no dynamic imports.
 const THREE_CORE=(()=>{
@@ -77847,7 +77939,7 @@ $('half-sub-apply').addEventListener('click',()=>makeSubstitution('half'));
 const RECORD_KEY='strikerfc26-season-one-results';
 // Full Clubhouse menu; all cards read from the same permanent match profiles.
 let activeMenu='home',selectedProfile=null;
-const MENU_LABELS={home:'HOME / CLUBHOUSE',play:'PLAY / MATCH SETUP',squad:'SQUAD / PLAYERS',club:'CLUB HUB / LEAGUE',packs:'PACKS / COMING LATER',settings:'SETTINGS / CONTROLS'};
+const MENU_LABELS={controls:'CONTROLS / HOW TO PLAY',home:'HOME / CLUBHOUSE',play:'PLAY / MATCH SETUP',squad:'SQUAD / PLAYERS',club:'CLUB HUB / LEAGUE',packs:'PACKS / COMING LATER',settings:'SETTINGS / CONTROLS'};
 function clubRecord(id){const rows=readResults().filter(r=>r.home===id);return [rows.filter(r=>r.score[0]>r.score[1]).length,rows.filter(r=>r.score[0]===r.score[1]).length,rows.filter(r=>r.score[0]<r.score[1]).length]}
 function renderDashboard(){
  const id=$('home-select').value,c=CLUBS[id]||CLUBS.striker,roster=clubRoster(id),rec=clubRecord(id);
@@ -77882,7 +77974,7 @@ function openMenuTab(tab){
  if(!MENU_LABELS[tab])return;
  activeMenu=tab;
  document.querySelectorAll('.menu-screen').forEach(x=>x.classList.toggle('selected',x.id==='menu-'+tab));
- document.querySelectorAll('.menu-nav-btn').forEach(x=>x.classList.toggle('selected',x.dataset.menu===tab));
+ document.querySelectorAll('.menu-nav-btn').forEach(x=>{const selected=x.dataset.menu===tab;x.classList.toggle('selected',selected);if(selected)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});
  $('menu-heading').textContent=MENU_LABELS[tab];
  if(tab==='home')renderDashboard();else if(tab==='squad')renderSquad();else if(tab==='club')renderClubs();else if(tab==='settings')renderSettings();
 }
@@ -77890,6 +77982,10 @@ document.querySelectorAll('.menu-nav-btn').forEach(b=>b.addEventListener('click'
 for(const id of ['home-play','home-quick','settings-open-match','settings-open-camera'])$(id).addEventListener('click',()=>openMenuTab('play'));
 $('home-squad').addEventListener('click',()=>openMenuTab('squad'));
 $('home-club-button').addEventListener('click',()=>openMenuTab('club'));
+$('settings-open-controls').addEventListener('click',()=>openMenuTab('controls'));
+$('controls-go-play').addEventListener('click',()=>openMenuTab('play'));
+$('club-packs-link').addEventListener('click',()=>openMenuTab('packs'));
+$('packs-back').addEventListener('click',()=>openMenuTab('club'));
 $('home-training').addEventListener('click',startTraining);
 $('squad-club-select').addEventListener('change',()=>{selectedProfile=null;renderSquad()});
 $('squad-filter').addEventListener('change',renderSquad);
@@ -78239,6 +78335,7 @@ function startTraining(){
  say('TRAINING MODE',1.4);
 }
 function quitToMenu(){
+ setHudHelp(false);
  cancelShot();celebration=null;practiceMode=false;
  replaySession=null;state='menu';statsOpen=false;
  for(const p of players)p.mesh.visible=true;
@@ -78253,6 +78350,7 @@ function quitToMenu(){
 $('training').addEventListener('click',startTraining);
 $('quit-match').addEventListener('click',quitToMenu);
 function newMatch(){
+ setHudHelp(false);
  cameraFocus.set(0,0,0);
  subsUsed=0;usedBench.clear();replacedSlots.clear();
  for(const p of players){p.stamina=100;p.yellow=0;p.sentOff=false}
@@ -78274,7 +78372,7 @@ function newMatch(){
  $('home-score').textContent='0';$('away-score').textContent='0';
  $('start').textContent='START MATCH ↗';
  document.querySelector('.panel h1').innerHTML='THE PITCH<br/><em>IS YOURS.</em>';
- document.querySelector('.panel p').textContent='Striker FC 26 v1.7.3 Offline Edition: downloadable offline.html or installable cached website. All V1.7 Total Football features, six clubs, replays and postponed packs remain.';
+ document.querySelector('.panel p').textContent='Striker FC 26 v1.7.4 Offline Edition: downloadable offline.html or installable cached website. All V1.7 Total Football features, six clubs, replays and postponed packs remain.';
  resetPositions(0);state='playing';$('overlay').classList.add('hidden');
  $('status').textContent='LIVE MATCH';say('KICK OFF',1.2);
 }
@@ -78985,8 +79083,15 @@ function playerMoveInput(){
  const moving=!!(x||z),v=norm(x,z);
  return {x:moving?v.x:0,z:moving?v.z:0,moving};
 }
+function setHudHelp(open){
+ const visible=!!open&&state==='playing';
+ $('match-controls').hidden=!visible;
+ $('hud-help').setAttribute('aria-expanded',String(visible));
+}
+$('hud-help').addEventListener('click',()=>setHudHelp($('match-controls').hidden));
+$('close-hud-help').addEventListener('click',()=>setHudHelp(false));
 window.addEventListener('keydown',e=>{
- if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
+ if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','F1'].includes(e.code))e.preventDefault();
  if(keys.has(e.code))return;
  keys.add(e.code);
  if(state==='replay'){if(['KeyR','Escape','Space','Enter'].includes(e.code))endReplay();return}
@@ -78994,6 +79099,8 @@ window.addEventListener('keydown',e=>{
  if(e.code==='Tab'){e.preventDefault();toggleStats();return}
  if(state==='stats'){if(e.code==='Escape')toggleStats();return}
  if(state==='halftime')return;
+ if(e.code==='F1'){if(state==='playing')setHudHelp($('match-controls').hidden);return}
+ if(e.code==='Escape'&&!$('match-controls').hidden){setHudHelp(false);return}
  if(state==='playing'){
   if(e.code==='Digit1'){setTactic('balanced',true);return}
   if(e.code==='Digit2'){setTactic('attacking',true);return}
@@ -79112,6 +79219,7 @@ function changeCamera(){
  say(cameraMode==='broadcast'?'BROADCAST CAMERA':'CLASSIC CAMERA',.9);
 }
 function togglePause(){
+ setHudHelp(false);
  cancelShot();
  if(state==='playing'){openMenuTab('play');state='paused';$('status').textContent='PAUSED';$('start').textContent='RESUME MATCH ↗';$('overlay').classList.remove('hidden');$('pause-sub-panel').hidden=false;refreshBench()}
  else if(state==='paused'){state='playing';$('status').textContent='LIVE MATCH';$('overlay').classList.add('hidden');$('pause-sub-panel').hidden=true}

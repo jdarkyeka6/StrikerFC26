@@ -1,3 +1,19 @@
+# ⚽ Striker FC 26 v1.7.4 | Clean Interface Update
+
+- Quick Setup now shows only teams, difficulty, and duration.
+- Expand **Advanced match options** for stadium, tactics and formation.
+- Dedicated **Controls** menu has four readable categories.
+- The full in-game controls list is hidden; **? / F1** opens compact help, Escape closes help before pausing.
+- Settings includes expandable mouse-button bindings. Both mouse and gamepad settings remain functional.
+- Tablet/mobile navigation keeps readable labels in a horizontal scrolling bar, and buttons/selects are larger.
+- Planned Packs is moved from the primary menu into Club Hub, but remains accessible.
+- Both the website and the self-contained offline edition have the same changes. Service-worker cache is bumped.
+- No third-party dependencies or football gameplay logic changes.
+
+**Before merging:** run `node --test tests/ui-shell.test.mjs tests/manual-pass-target.test.mjs`; smoke test in Chrome/Edge including actual offline play.
+
+---
+
 # ⚽ STRIKER FC 26 | VERSION 1.7.3
 
 **Original browser-first 3D football game** built for keyboard or controller, with no local Node.js installation needed. Version 1.7.2 fixes passing and the held-ball goalkeeper exploit while preserving complete offline support, the standalone HTML and browser caching from V1.7.1. The existing six-club Clubhouse and all earlier systems remain.
