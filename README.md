@@ -1,3 +1,23 @@
+# ⚽ STRIKER FC 26 · AI 2.0 (v2.0.0)
+
+AI 2.0 improves off-ball and CPU decision making in both playable editions.
+
+## Tactical behaviour
+- **Three coordinated defensive jobs:** nearest AI player presses the ball, second blocks a passing lane, third holds goal-side cover. The human-controlled player is not incorrectly reserved as the lead CPU presser.
+- **Better marking:** defenders favour nearby uncovered runners to reduce several defenders chasing the same threat.
+- **More deliberate support:** forwards make diagonal runs, midfielders provide forward and short outlets, and **one ball-side fullback overlaps** when the attack reaches the opponent's half. The other fullback provides cover.
+- **Player personalities:** passing, pace, shooting and dribbling ratings influence pass choice, shot selection, support speed and dribble decisions.
+- **Score-aware tactics:** teams chase late deficits with additional pressing and higher-risk forward play; teams with a late lead defend more deeply and prefer safer possession. Human attacking/defensive tactics affect team positioning.
+- **Difficulty bug fix:** Beginner shooting range now honours its configured 26m instead of inheriting an unintended 36m minimum.
+- **Tactical regression tests:** position/rating/marking/pressing/overlap/scoring/difficulty scenarios tested in both online and offline versions.
+
+## Testing
+`node --test tests/*.test.mjs`
+
+Automated tests cover source syntax and representative game logic. Actual browser/WebGL gameplay, balanced CPU scoring and controller behaviour still warrant manual match playtesting.
+
+---
+
 # ⚽ Striker FC 26 · v1.9.0 | Less HUD, Smarter AI
 
 This update fixes distracting bottom-screen controls and improves tactical AI.

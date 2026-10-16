@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/stability-matchday-v1-8-0
+      - feature/ai-2-v2-0-0
   pull_request:
   workflow_dispatch:
 permissions:

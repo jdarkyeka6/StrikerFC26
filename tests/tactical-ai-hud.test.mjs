@@ -23,7 +23,10 @@ for(const file of ['index.html','offline.html']){
   assert.match(html,/cameraMode==='broadcast'\?'classic':'broadcast'/);
  });
  test(file+' support runs form passing lanes on both team orientations',()=>{
-  const f=Function('clamp','HW','HL',fn('aiSupportRun')+'\nreturn aiSupportRun;')(clamp,68,105);
+  const f=Function('clamp','HW','HL','aiPlan','aiPlayerStyle',
+   fn('aiSupportRun')+'\nreturn aiSupportRun;')(clamp,68,105,
+    ()=>({risk:.47,width:1,protect:false}),
+    ()=>({vision:.75,pace:.76,dribble:.8}));
   const p={index:0},h={x:0,z:40};
   const a=f(p,{x:0,z:0},h,-1,'attack');
   const b=f(p,{x:0,z:0},h,1,'attack');
@@ -33,7 +36,8 @@ for(const file of ['index.html','offline.html']){
   for(const run of [a,b,mid])assert.ok(Number.isFinite(run.x)&&Number.isFinite(run.z));
  });
  test(file+' AI favours an open lane when under pressure',()=>{
-  const pick=Function('clamp',fn('aiPickPass')+'\nreturn aiPickPass;')(clamp);
+  const pick=Function('clamp','aiPlayerStyle',
+   fn('aiPickPass')+'\nreturn aiPickPass;')(clamp,()=>({vision:.70}));
   const a={q:'blocked',score:55,forward:20,lane:8,d:25};
   const b={q:'clear',score:35,forward:12,lane:0.6,d:23};
   assert.equal(pick([a,b],true).q,'clear');
@@ -41,9 +45,10 @@ for(const file of ['index.html','offline.html']){
   assert.ok(pick([a,b],false));
  });
  test(file+' dribble uses lateral escape and keeps ball in play',()=>{
-  const f=Function('clamp','teams','HW','HL','distance',
+  const f=Function('clamp','teams','HW','HL','distance','aiPlan','aiPlayerStyle',
    fn('aiDribbleTarget')+'\nreturn aiDribbleTarget;')
-   (clamp,[{dir:-1},{dir:1}],68,105,(a,b)=>Math.hypot(a.x-b.x,a.z-b.z));
+   (clamp,[{dir:-1},{dir:1}],68,105,(a,b)=>Math.hypot(a.x-b.x,a.z-b.z),
+    ()=>({risk:.47}),()=>({dribble:.77}));
   const p={team:1,x:60,z:84};
   const spot=f(p,{x:62,z:85});
   assert.ok(spot.x<=59&&spot.x>=-59);
@@ -52,7 +57,7 @@ for(const file of ['index.html','offline.html']){
  test(file+' CPU uses selected pass recipient instead of an unrelated candidate',()=>{
   assert.match(html,/preferredReceiver=null/);
   assert.match(html,/options\.find\(o=>o\.q===preferredReceiver\)/);
-  assert.match(html,/kick\(p,false,!!\(chosen\.forward>22/);
+  assert.match(html,/kick\(p,false,through,\.45,'normal',chosen\.q\)/);
   assert.match(html,/chosen\.q\)/);
   assert.match(html,/function roleTarget\(/);
  });

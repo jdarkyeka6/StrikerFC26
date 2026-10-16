@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 1.9.0 · PASSING & KEEPER FIXES</title><meta name="theme-color" content="#071522"/><meta name="application-name" content="Striker FC 26"/><meta name="description" content="Striker FC 26: offline-ready 3D football"/><style>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>STRIKER FC 26 | VERSION 2.0.0 · PASSING & KEEPER FIXES</title><meta name="theme-color" content="#071522"/><meta name="application-name" content="Striker FC 26"/><meta name="description" content="Striker FC 26: offline-ready 3D football"/><style>
 /* Fully local system fonts: no Google Fonts or other network request. */
 :root{font-family:'Segoe UI',Arial,sans-serif;color:#f2fbff;background:#071522;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}#game,canvas{width:100vw;height:100vh;display:block}#game{position:fixed;inset:0}body:after{pointer-events:none;position:fixed;inset:0;content:'';background:linear-gradient(180deg,rgba(2,13,19,.44),transparent 25%,transparent 68%,rgba(2,13,19,.66));z-index:1}.hud,.bottom{position:absolute;z-index:3;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.hud{top:20px;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:220px}.brand-icon{font:900 24px 'Arial Narrow';border:2px solid #67f4ba;width:43px;height:43px;display:grid;place-items:center;clip-path:polygon(10% 0,90% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b2b2e;color:white}.brand-icon span{color:#67f4ba}.brand strong,.brand small{display:block}.brand strong{font:800 22px 'Arial Narrow';letter-spacing:2px}.brand strong span{color:#67f4ba}.brand small{font-size:9px;letter-spacing:2.1px;color:#aac2c9}.scoreboard{display:flex;align-items:center;background:rgba(4,23,32,.88);border:1px solid rgba(158,255,224,.22);border-radius:12px;overflow:hidden;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}.club{font:800 16px 'Arial Narrow';letter-spacing:1.6px;padding:14px 16px}.home{color:#84f8cc}.away{color:#ff9d96}.score{font:900 28px 'Arial Narrow';display:flex;align-items:center;gap:12px;background:#07141b;padding:6px 20px}.score span{font-size:18px;color:#8c9eaa}.clock{padding:14px;border-left:1px solid #34535d;font:800 15px 'Arial Narrow';color:#cfe5e5;min-width:62px;text-align:center}.top-right{display:flex;align-items:center;gap:10px;min-width:220px;justify-content:flex-end}.pill{border:1px solid #5fe9b7;color:#5fe9b7;padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1.7px;background:#021b1bd9}.top-right button{pointer-events:auto;color:#dcfff3;border:1px solid #546c78;background:#041924aa;width:39px;height:39px;border-radius:9px;cursor:pointer}.bottom{bottom:22px;align-items:flex-end;gap:20px}.player-card{background:#041923d9;border:1px solid #6bf3b447;border-radius:12px;display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:238px;backdrop-filter:blur(12px)}.player-no{font:900 46px 'Arial Narrow';color:#7cffc3;line-height:1}.player-card small{display:block;font-size:8px;letter-spacing:1.7px;color:#9cb7bc}.player-card strong{display:block;font:800 18px 'Arial Narrow';letter-spacing:.8px}.player-card span{font:700 9px 'Segoe UI';letter-spacing:1.3px;color:#78e5ba}.action-hint{position:absolute;bottom:80px;left:0;color:#a4eecd;font:800 10px 'Segoe UI';letter-spacing:1.2px;background:#031a24db;padding:7px 11px;border:1px solid #4deab355;border-radius:7px;pointer-events:none}.shot-gauge{position:absolute;bottom:73px;left:0;width:238px;height:5px;background:#274850;border-radius:5px;overflow:hidden;opacity:0;transition:opacity .1s}.shot-gauge.active{opacity:1}.shot-gauge span{display:block;width:0;height:100%;background:linear-gradient(90deg,#67f7b8,#ffde7c,#fb7976)}.stamina{width:4px;height:45px;background:#2f5361;border-radius:4px;margin-left:auto;position:relative;overflow:hidden}.stamina span{position:absolute;bottom:0;width:100%;background:#82fac4;height:100%;transition:height .15s}.controls{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center;font-size:11px;color:#d6e8e8;background:#041923b6;border-radius:9px;padding:12px 16px;max-width:650px}.controls kbd{font:700 10px 'Segoe UI';background:#d4fff0;color:#12382d;padding:4px 6px;border-radius:4px;margin-right:4px}.radar{width:150px;height:95px;border:1px solid #8bccb1;background:#09281f99;border-radius:4px;position:relative;flex-shrink:0}.radar:before{content:'';position:absolute;inset:7px;border:1px solid #8bccb180}.radar-mid{position:absolute;top:7px;bottom:7px;left:50%;width:1px;background:#8bccb180}.radar-mid:after{content:'';position:absolute;width:35px;height:35px;border:1px solid #8bccb180;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}.dot{position:absolute;width:5px;height:5px;border-radius:50%;z-index:1;transform:translate(-50%,-50%)}.dot.a{background:#80ffbf}.dot.b{background:#ff9991}.dot.ball{background:white;width:4px;height:4px}.dot.active{box-shadow:0 0 0 3px #fff7}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;background:linear-gradient(90deg,#04151fee 0%,#051923e8 38%,#07152250 100%);transition:opacity .3s}.overlay.hidden{opacity:0;pointer-events:none}.panel{max-width:590px;margin-left:clamp(28px,9vw,150px)}.eyebrow{color:#7dfbc1;font-size:12px;letter-spacing:3px;font-weight:800}.panel h1{font:900 clamp(70px,9vw,130px)/.85 'Arial Narrow';letter-spacing:-1px;margin:20px 0;text-shadow:0 10px 40px #0004}.panel h1 em{color:#72f4b8;font-style:normal}.panel p{max-width:440px;line-height:1.7;color:#b8cdd2;font-size:14px}.features{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.features span{border:1px solid #41666b;background:#092832b0;padding:9px 12px;font-size:10px;letter-spacing:1px;font-weight:800}
 .half-coach{display:grid;grid-template-columns:1fr 1fr;max-width:550px;gap:14px;margin:18px auto}
@@ -161,7 +161,7 @@
 
 .offline-ready{font-size:11px;font-weight:800;letter-spacing:1px;color:#b8f9dc;margin:8px 0 12px;padding:8px 12px;background:#11332c;border:1px solid #39765d;border-radius:6px;width:fit-content}.offline-ready[data-ready="false"]{color:#a8b5c0;background:#172530;border-color:#324758}
 
-/* V1.9.0 UI: calm HUD, readable navigation, progressive disclosure */
+/* V2.0.0 UI: calm HUD, readable navigation, progressive disclosure */
 #menu-play .panel{max-width:720px}
 #menu-play .panel h1{font-size:clamp(38px,5vw,57px);line-height:1.06;letter-spacing:-.5px}
 #menu-play .play-intro,.menu-page-intro p,.settings-cards p{font-size:14px;line-height:1.6;color:#d0e7dd}
@@ -284,7 +284,7 @@ body[data-hud="off"] .shot-gauge{bottom:18px}
 </div><div class="commentary-line" id="commentary-line">WELCOME TO STRIKER FC 26</div><div class="match-stats" id="match-stats">POSSESSION 50 / 50 · SHOTS 0 - 0</div>
 <div class="overlay" id="overlay"><div class="menu-shell">
  <aside class="menu-sidebar">
- <div class="menu-logo"><span class="menu-logo-mark">SF</span><div><strong>STRIKER FC 26</strong><small>THE CLUBHOUSE · V1.9.0</small></div></div>
+ <div class="menu-logo"><span class="menu-logo-mark">SF</span><div><strong>STRIKER FC 26</strong><small>THE CLUBHOUSE · V2.0.0</small></div></div>
  <div class="menu-nav-label">FOOTBALL</div>
  <nav class="menu-nav" aria-label="Main game menu">
  <button class="menu-nav-btn selected" data-menu="home"><span>⌂</span> HOME</button>
@@ -79334,11 +79334,13 @@ applyClubs();setTactic('balanced');selectStadium('day');$('squad-club-select').v
 
 // Score-aware opponent tactics. The AI never needs to secretly read inputs.
 function aiPlan(team){
- const goalDifference=score[team]-score[1-team];
- const remaining=Math.max(0,1-matchTime/Math.max(1,MATCH_SECONDS));
- return {urgency:goalDifference<0?1+(1-remaining)*.55:1,
-   protect:goalDifference>0&&remaining<.45,
-   pressBonus:goalDifference<0&&remaining<.40?1:0};
+ const diff=score[team]-score[1-team],left=clamp(1-matchTime/Math.max(1,MATCH_SECONDS),0,1);
+ const chase=diff<0&&left<.65,protect=diff>0&&left<.43;
+ const attack=team===0&&homeTactic==='attacking',defend=team===0&&homeTactic==='defensive';
+ return {urgency:clamp(1+(chase?(1-left)*.32:0)+(attack?.12:0)-(defend?.12:0),.82,1.35),
+  protect,pressBonus:chase&&left<.4?1:0,
+  risk:clamp(.47+(chase?.26:0)+(attack?.15:0)-(protect?.24:0)-(defend?.15:0),.16,.9),
+  width:clamp(1+(chase?.12:0)+(attack?.14:0)-(defend?.08:0),.82,1.3)};
 }
 function keepRunOnside(p,z){
  if(p.index===10)return z;
@@ -79350,32 +79352,104 @@ function keepRunOnside(p,z){
 function aiShouldShoot(p,opponent){
  const side=teams[p.team].dir,toGoal=(goalZ(p.team)-p.z)*side;
  const pressure=opponent?distance(opponent,p):30;
- const range=p.team===1?Math.max(36,difficultySettings().opponentShotRange):43;
+ const range=p.team===1?difficultySettings().opponentShotRange:43;
  const inRange=toGoal<range&&Math.abs(p.x)<GOAL_W*2.1;
  const hasAngle=pressure>4||toGoal<14;
  return inRange&&hasAngle;
 }
-function aiSupportRun(p,owner,h,side,role){
- const flank=h.x>=0?1:-1,diff=h.x-owner.x;
- let x,z;
- if(role==='attack'){x=owner.x+flank*15+diff*.38;z=owner.z+side*(p.index===0?21:15)}
- else if(role==='mid'){const f=p.index%2===0?-1:1;x=owner.x+f*15+diff*.2;z=owner.z+side*(f>0?8:-12)}
- else{x=h.x*.8+owner.x*.2;z=owner.z-side*30}
- return {x:clamp(x,-HW+9,HW-9),z:clamp(z,-HL+12,HL-12),speed:role==='attack'?21:role==='mid'?20:18};
+// Footballers use their own ratings for decisions and positional preferences.
+function aiPlayerStyle(p){
+ const s=p?.profile?.stats||{};
+ return {vision:clamp((s.passing??68)/100,.3,.99),dribble:clamp((s.dribbling??68)/100,.3,.99),
+  shooting:clamp((s.shooting??65)/100,.25,.99),defending:clamp((s.defending??65)/100,.25,.99),
+  pace:clamp((s.pace??70)/100,.3,.99)};
 }
-function aiPickPass(options,pressed=false,protect=false){
+// Split the supporting players into diagonal attackers, short midfield outlets
+// and covering defenders. One ball-side fullback may overlap.
+function aiSupportRun(p,owner,h,side,role){
+ const plan=aiPlan(p.team),skill=aiPlayerStyle(p);
+ const flank=h.x>=0?1:-1,spread=h.x-owner.x;
+ let x,z,speed=18;
+ if(role==='attack'){
+  const centre=Math.abs(h.x)<12;
+  x=centre?owner.x*.24+h.x*.76:owner.x+flank*18*plan.width+spread*.27;
+  z=owner.z+side*(centre?17+skill.pace*9:13+skill.pace*7);
+  speed=18+skill.pace*5;
+ }else if(role==='mid'){
+  const ahead=p.index%2===0;
+  x=owner.x+(ahead?1:-1)*15*plan.width+spread*.20;
+  z=owner.z+side*(ahead?9+plan.risk*5:-14);
+  speed=17+skill.vision*4;
+ }else{
+  x=h.x*.78+owner.x*.22;
+  z=owner.z-side*(26+(1-plan.risk)*10);
+  const overlap=Math.abs(h.x)>HW*.55&&Math.abs(owner.x)>HW*.3&&
+   Math.sign(h.x)===Math.sign(owner.x)&&owner.z*side>0&&!plan.protect&&skill.pace>.65;
+  if(overlap){
+   x=owner.x+flank*8;z=owner.z+side*(9+skill.pace*8);
+   speed=18+skill.pace*5;
+  }
+ }
+ return {x:clamp(x,-HW+8,HW-8),z:clamp(z,-HL+12,HL-12),speed};
+}
+function aiPickPass(options,pressed=false,protect=false,passer=null,plan=null){
  if(!options.length)return null;
- return options.map(o=>({o,value:o.score*.45+clamp(o.forward,-20,36)*.53
-  -Math.max(0,o.lane-2.2)*(pressed?9:5)-Math.max(0,o.d-60)*.42
-  +(protect&&o.forward<0?5:0)})).sort((a,b)=>b.value-a.value)[0]?.o||null;
+ const vision=aiPlayerStyle(passer).vision,risk=plan?.risk??.47;
+ let best=null,top=-Infinity;
+ for(const o of options){
+  const lane=Math.max(0,o.lane-1.5)*(pressed?10:5.5)*(1.2-vision*.33);
+  const vertical=clamp(o.forward,-35,40)*(protect?.08:.22+risk*.37);
+  const value=o.score*.38+vertical-lane-Math.max(0,o.d-60)*.46+
+   (protect&&o.forward<0?4:0)+(pressed&&o.d<25?3:0);
+  if(value>top){best=o;top=value}
+ }
+ return best;
 }
 function aiDribbleTarget(p,opponent){
  const side=teams[p.team].dir,crowded=!!opponent&&distance(opponent,p)<14;
- const move=crowded?(p.x>=opponent.x?1:-1):p.x>HW*.65?-1:p.x<-HW*.65?1:0;
- return {x:clamp(p.x+move*(crowded?13:4),-HW+9,HW-9),
-  z:clamp(p.z+side*(crowded?20:31),-HL+11,HL-11)};
+ const skill=aiPlayerStyle(p),plan=aiPlan(p.team);
+ const lateral=crowded?(p.x>=opponent.x?1:-1):p.x>HW*.65?-1:p.x<-HW*.65?1:0;
+ return {x:clamp(p.x+lateral*(crowded?6+skill.dribble*9:4),-HW+9,HW-9),
+  z:clamp(p.z+side*(crowded?15+skill.dribble*7:26+plan.risk*10),-HL+11,HL-11)};
 }
-function roleTarget(p,press1,press2){
+// Prefer an uncovered runner, instead of every defender marking the nearest player.
+function aiMarkTarget(p,threats,markers,side){
+ let best=null,cost=Infinity;
+ for(const q of threats){
+  const d=distance(p,q);if(d>32)continue;
+  // A teammate can only claim one runner: the one they are closest to.
+  // Simply being nearer to two attackers does not mean both are marked.
+  const covered=markers.some(m=>{
+   if(m===p||m.sentOff||distance(m,q)+2>=d)return false;
+   const assignment=threats.reduce((best,r)=>!best||distance(m,r)<distance(m,best)?r:best,null);
+   return assignment===q;
+  });
+  const value=d+(covered?19:0)-Math.max(0,-q.z*side)*.07;
+  if(value<cost){cost=value;best=q}
+ }
+ return best;
+}
+// The second defender protects a passing lane instead of tackling from behind.
+function aiCoverLane(carrier,outlets,side){
+ const possible=outlets.filter(q=>q!==carrier&&q.index!==10&&!q.sentOff)
+  .sort((a,b)=>distance(a,carrier)-distance(b,carrier));
+ const target=possible[0];
+ if(!target)return {x:carrier.x*.72,z:carrier.z*.72-side*HL*.28};
+ return {x:carrier.x*.57+target.x*.43,z:carrier.z*.57+target.z*.43-side*2};
+}
+function aiChooseAction(p,opponent,choice,plan,cfg,randomValue){
+ const skill=aiPlayerStyle(p),distanceToPress=opponent?distance(p,opponent):99;
+ const pressed=distanceToPress<9,safe=!!choice&&choice.lane<(pressed?3.2:4.3);
+ const carry=(p.team===1?cfg.opponentCarry:2.6)*(plan.protect?.66:1)-(skill.vision-.65)*.6;
+ const chance=clamp((p.team===1?cfg.opponentShootChance:.62)*
+  (.7+skill.shooting*.35)*plan.urgency,.02,.88);
+ if(aiShouldShoot(p,opponent)&&randomValue<chance)return 'shoot';
+ if(safe&&((pressed&&p.carryTime>.17)||p.carryTime>carry*(pressed?.45:1)||
+  (plan.protect&&p.carryTime>1.1)))return 'pass';
+ if(choice&&p.carryTime>carry+1.1)return 'pass';
+ return 'carry';
+}
+function roleTarget(p,press1,press2,press3){
  const owner=ball.owner,side=teams[p.team].dir,h=base(p),role=roleOf(p).group;
  const ownGoal=-side*HL,progress=ball.z*side;
  if(p.index===10){
@@ -79411,19 +79485,27 @@ function roleTarget(p,press1,press2){
   const plan=aiPlan(p.team);
   const predicted={x:clamp(ball.x+(owner?.vx||ball.vx)*.17,-HW+4,HW-4),
    z:clamp(ball.z+(owner?.vz||ball.vz)*.17,-HL+4,HL-4)};
-  if(p===press1)return {x:predicted.x,z:predicted.z,speed:21*plan.urgency};
+  if(p===press1)return {x:predicted.x,z:predicted.z,speed:clamp(21*plan.urgency,16,27)};
   if(p===press2){
-   // Cover the inside passing lane rather than doubling the same attacker.
-   const towardGoal=-side*HL;
-   return {x:clamp(predicted.x*.75,-HW+7,HW-7),
-    z:clamp(predicted.z*.70+towardGoal*.30,-HL+8,HL-8),speed:18*plan.urgency};
+   const source=owner||ball,cover=aiCoverLane(source,players.filter(q=>q.team===source.team),side);
+   return {x:clamp(cover.x,-HW+7,HW-7),z:clamp(cover.z,-HL+8,HL-8),
+    speed:clamp(18*plan.urgency,15,23)};
   }
-  const blend=role==='defence'?.29:role==='mid'?.43:.24;
+  if(p===press3){
+   const goal=-side*HL;
+   return {x:clamp(predicted.x*.58,-HW+8,HW-8),
+    z:clamp(predicted.z*.62+goal*.38,-HL+9,HL-9),
+    speed:clamp(16*plan.urgency,13,20)};
+  }
+  const blend=(role==='defence'?.29:role==='mid'?.43:.24)*(plan.protect?.74:1);
   let x=h.x+ball.x*(role==='mid'?.19:.12),z=h.z+(ball.z-h.z)*blend;
   if(role==='defence'||role==='mid'){
-   const mark=players.filter(q=>q.team!==p.team&&q.index!==10&&!q.sentOff&&distance(q,p)<(role==='defence'?26:17))
-    .sort((a,b)=>(Math.abs(a.x-h.x)*.5+distance(a,p))-(Math.abs(b.x-h.x)*.5+distance(b,p)))[0];
-   if(mark){x=x*.45+mark.x*.55;z=z*.45+(mark.z-side*4)*.55}
+   const threats=players.filter(q=>q.team!==p.team&&q.index!==10&&!q.sentOff);
+   const markers=players.filter(q=>q.team===p.team&&q.index!==10&&!q.sentOff&&
+    (roleOf(q).group==='defence'||roleOf(q).group==='mid')&&
+    q!==press1&&q!==press2&&q!==press3);
+   const runner=aiMarkTarget(p,threats,markers,side);
+   if(runner){x=x*.40+runner.x*.60;z=z*.40+(runner.z-side*4)*.60}
   }
   return {x:clamp(x,-HW+7,HW-7),z:clamp(z,-HL+14,HL-14),
    speed:plan.protect?16:18};
@@ -79476,7 +79558,7 @@ function advance(dt){
  if(pendingOffside&&matchTime>pendingOffside.expires)pendingOffside=null;
  const cp=controlledPlayer(),input=playerMoveInput(),aim=ball.owner||ball;
  const containHeld=ball.owner?.team===1&&(keys.has('KeyY')||!!getPad()?.buttons[7]?.pressed);
- const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner)
+ const pressers=[0,1].map(team=>players.filter(p=>p.team===team&&p.index!==10&&!p.sentOff&&p!==ball.owner&&(team!==0||p!==cp))
   .sort((a,b)=>{
    const priority=p=>distance(p,aim)+(roleOf(p).group==='defence'?7:0)+(p===cp?3:0);
    return priority(a)-priority(b);
@@ -79545,16 +79627,16 @@ function advance(dt){
     const opposition=players.filter(q=>q.team!==p.team&&q.index!==10&&!q.sentOff).sort((a,b)=>distance(a,p)-distance(b,p))[0];
     const pressed=!!opposition&&distance(opposition,p)<9;
     const plan=aiPlan(p.team),opts=passOptions(p,false).filter(o=>!isOffsideAtKick(o.q,p));
-    const chosen=aiPickPass(opts,pressed,plan.protect);
-    const safe=chosen&&chosen.lane<(pressed?3.5:4.5);
+    const chosen=aiPickPass(opts,pressed,plan.protect,p,plan);
     if(p.decision<=0){
-     p.decision=(p.team===1?cfg.opponentThink:.55)*(1+Math.random()*.20)/plan.urgency;
-     if(aiShouldShoot(p,opposition)&&Math.random()<Math.min(.92,(p.team===1?cfg.opponentShootChance:.62)*plan.urgency))
-      kick(p,true,false,.4+Math.random()*.45);
-     else if(chosen&&((pressed&&safe&&p.carryTime>.18)||
-       (safe&&p.carryTime>(p.team===1?cfg.opponentCarry:2.6)*(plan.protect?.55:.8))||
-       p.carryTime>(p.team===1?cfg.opponentCarry:2.6)+.9))
-      kick(p,false,!!(chosen.forward>22&&chosen.lane<2&&Math.random()<.25),.45,'normal',chosen.q);
+     p.decision=(p.team===1?cfg.opponentThink:.55)*
+      (1+Math.random()*.25)/plan.urgency;
+     const action=aiChooseAction(p,opposition,chosen,plan,cfg,Math.random());
+     if(action==='shoot')kick(p,true,false,.40+Math.random()*.45);
+     else if(action==='pass'&&chosen){
+      const through=chosen.forward>23&&chosen.lane<2.2&&plan.risk>.50&&Math.random()<.28;
+      kick(p,false,through,.45,'normal',chosen.q);
+     }
     }
     if(ball.owner===p){
      const dest=aiDribbleTarget(p,opposition),d=norm(dest.x-p.x,dest.z-p.z);
@@ -79566,7 +79648,7 @@ function advance(dt){
   }else{
    const defending=ball.owner?.team!==p.team;
    const ranked=defending?pressers[p.team]:[];
-   const target=roleTarget(p,ranked[0],ranked[1]);
+   const target=roleTarget(p,ranked[0],ranked[1],ranked[2]);
    if(containHeld&&p.team===0&&p===ranked[1]&&ball.owner?.team===1){
     // Second defender presses into the passing lane, but does not auto-tackle.
     const carrier=ball.owner,inside=norm(-carrier.x*.25,-teams[0].dir*15);
