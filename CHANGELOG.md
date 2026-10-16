@@ -1,5 +1,19 @@
 # STRIKER FC 26 · Release notes
 
+## Version 2.0.0 · AI 2.0 (16 October 2026)
+
+- Introduced coordinated ball pressure, passing-lane coverage and goal-side protection.
+- Fixed AI pressing assignment accidentally including the human-controlled player.
+- Added uncovered-runner marking and one-sided fullback overlaps without exposing both flanks.
+- Added forward, diagonal and short supporting runs plus ratings-based player behaviours.
+- Reworked CPU dribbling, pass selection and shooting decisions for score and match situation.
+- Adapted urgency, width and risk when chasing or protecting a late score.
+- Fixed Beginner AI shooting range override so difficulty is honoured.
+- Kept `index.html` and self-contained `offline.html` in sync; advanced the service worker to v2.0.0.
+- Added dynamic scenario regression tests for online and offline modes.
+
+
+
 ## Version 1.9.0 · CLEAN HUD & TACTICAL AI (16 October 2026)
 
 - Added Compact / Full / Off on-screen display modes, with a persistent setting.

@@ -46,3 +46,19 @@ Automated test command: `node --test tests/*.test.mjs`
 - [ ] Confirm beginner remains forgiving and legend remains challenging.
 - [ ] Check free kicks, offside and goalkeepers after the tactical changes.
 
+
+## AI 2.0 Playtest checklist
+
+- [ ] Beginner opponent shoots mostly from its configured shorter range.
+- [ ] Professional and Legend opponents create passes and press without becoming impossibly fast.
+- [ ] Watch defensive team: closest AI pressures, second shades passing lane, third holds shape.
+- [ ] Check human defender does not cause two other CPU defenders to abandon the press.
+- [ ] Attack down left/right wing to observe only the matching fullback overlap.
+- [ ] Confirm striker runs remain onside when a through ball is prepared.
+- [ ] In midfield, watch one option advance and another drop for an outlet.
+- [ ] When down late, opponent presses and risks forward passes more often.
+- [ ] When leading late, team prioritises covering and controlled possession.
+- [ ] Ensure set pieces, passing locks, keeper possession, offsides and replays still function.
+- [ ] Check both Broadcast and Classic cameras with all HUD display settings.
+- [ ] Verify standalone offline.html with network disconnected.
+
