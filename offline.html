@@ -79417,7 +79417,13 @@ function aiMarkTarget(p,threats,markers,side){
  let best=null,cost=Infinity;
  for(const q of threats){
   const d=distance(p,q);if(d>32)continue;
-  const covered=markers.some(m=>m!==p&&!m.sentOff&&distance(m,q)+2<d);
+  // A teammate can only claim one runner: the one they are closest to.
+  // Simply being nearer to two attackers does not mean both are marked.
+  const covered=markers.some(m=>{
+   if(m===p||m.sentOff||distance(m,q)+2>=d)return false;
+   const assignment=threats.reduce((best,r)=>!best||distance(m,r)<distance(m,best)?r:best,null);
+   return assignment===q;
+  });
   const value=d+(covered?19:0)-Math.max(0,-q.z*side)*.07;
   if(value<cost){cost=value;best=q}
  }
