@@ -1,9 +1,10 @@
-/* Striker FC 26 v2.0.0: same-origin offline gameplay cache. */
-const CACHE='striker-fc-v2.0.0';
+/* Striker FC 26 v3.0.0: same-origin offline gameplay cache. */
+const CACHE='striker-fc-v3.0.0';
 const PREFIX='striker-fc-v';
 const CORE=[
  './',
  './index.html',
+ './expansion-v3.js',
  './vendor/three.module.js',
  './vendor/three.core.js',
  './manifest.webmanifest',
