@@ -23,8 +23,16 @@ document.head.append(css);
 document.title='STRIKER FC 26 · VERSION 3.0';
 const club=id=>CLUBS[id]?.name||id;
 const fixtures=()=>{
- const all=[];
- for(let round=0;round<10;round++){let a=[...teams];for(let x=0;x<3;x++){const h=a[x],v=a[5-x];all.push({home:round%2?v:h,away:round%2?h:v,round:round+1})}teams.splice(0,0);}
+ const all=[],a=teams.slice();
+ for(let round=0;round<5;round++){
+  for(let i=0;i<3;i++){
+   const home=a[i],away=a[5-i];
+   all.push({home,away,round:round+1});
+  }
+  a.splice(1,0,a.pop());
+ }
+ const first=all.slice();
+ for(const f of first)all.push({home:f.away,away:f.home,round:f.round+5});
  return all;
 };
 const schedule=fixtures();
